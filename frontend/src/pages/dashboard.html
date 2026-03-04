@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin - Grow House</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="bg-gray-50">
+
+<!-- ================= SIDEBAR ================= -->
+<div class="fixed inset-y-0 left-0 w-64 text-white z-50 bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f]">
+    <div class="flex items-center gap-3 p-6">
+        <img src="../assets/images/Logo-blanco-removebg-preview.png" class="h-10 w-auto">
+        <div>
+            <h1 class="font-bold text-lg">Grow House</h1>
+            <p class="text-sm">Panel Administrador</p>
+        </div>
+    </div>
+
+    <nav class="mt-6">
+        <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+            <i class="fas fa-chart-bar"></i> Estadisticas
+        </a>
+        <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+            <i class="fas fa-shopping-cart"></i> Productos
+        </a>
+        <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+            <i class="fas fa-bag-shopping"></i> Pedidos
+        </a>
+        <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+            <i class="fas fa-users"></i> Clientes
+        </a>
+        <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+            <i class="fas fa-ticket-alt"></i> Cupones
+        </a>
+    </nav>
+    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+        <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
+            <i class="fas fa-home mr-2"></i>
+            Volver al inicio
+        </a>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Cerrar Sesión
+        </button>
+    </div>
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="ml-64 p-8">
+
+    <!-- Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">Estadisticas Generales</h2>
+        <p class="text-gray-600">Resumen general de tu negocio</p>
+    </div>
+
+    <!-- ================= STATS CARDS ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+        <!-- Ventas Hoy -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas Hoy</p>
+                    <h3 id="salesToday" class="text-2xl font-bold text-gray-800">$0</h3>
+                </div>
+                <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-calendar-day text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Mes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas del Mes</p>
+                    <h3 id="salesMonth" class="text-2xl font-bold text-green-600">$0</h3>
+                </div>
+                <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Año -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas del Año</p>
+                    <h3 id="salesYear" class="text-2xl font-bold text-purple-600">$0</h3>
+                </div>
+                <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas Stock -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Alertas de Stock</p>
+                    <h3 id="lowStock" class="text-2xl font-bold text-red-600">0</h3>
+                </div>
+                <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= SEGUNDA FILA ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+        <!-- Total Clientes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Clientes</p>
+                    <h3 id="totalCustomers" class="text-2xl font-bold text-gray-800">0</h3>
+                </div>
+                <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-users text-yellow-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Productos -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Productos</p>
+                    <h3 id="totalProducts" class="text-2xl font-bold text-gray-800">0</h3>
+                </div>
+                <div class="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-box text-indigo-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedidos Pendientes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Pedidos Pendientes</p>
+                    <h3 id="pendingOrders" class="text-2xl font-bold text-orange-600">0</h3>
+                </div>
+                <div class="bg-orange-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clock text-orange-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- tables -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Últimas Ventas -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6 border-b">
+                <h3 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ventas Recientes</h3>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Cliente</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Total</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="recentSalesTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Productos con Bajo Stock -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6 border-b">
+                <h3 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Productos con Bajo Stock</h3>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Producto</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Stock</th>
+                    </tr>
+                </thead>
+                <tbody id="lowStockTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- 1. Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- 2. Admin Auth -->
+<script src="../scripts/admin-auth.js"></script>
+
+<script>
+const API_URL = "http://localhost:5000/api/admin/dashboard";
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+
+async function loadDashboard() {
+    try {
+        const token = localStorage.getItem('growhouse-auth-token');
+
+        const response = await axios.get(API_URL, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const data = response.data.data; // Assuming response.data.success and response.data.data
+
+        document.getElementById('salesToday').textContent = formatCurrency(data.salesToday);
+        document.getElementById('salesMonth').textContent = formatCurrency(data.salesMonth);
+        document.getElementById('salesYear').textContent = formatCurrency(data.salesYear);
+        document.getElementById('lowStock').textContent = data.lowStockCount;
+        document.getElementById('totalCustomers').textContent = data.totalCustomers;
+        document.getElementById('totalProducts').textContent = data.totalProducts;
+        document.getElementById('pendingOrders').textContent = data.pendingOrders;
+
+        renderRecentSales(data.recentSales);
+        renderLowStock(data.lowStockProducts);
+
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+        alert("Error cargando dashboard: " + (error.response?.data?.message || error.message));
+    }
+}
+
+function renderRecentSales(sales) {
+    const tbody = document.getElementById('recentSalesTable');
+    tbody.innerHTML = sales.map(s => `
+        <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">${s.customerName}</td>
+            <td class="px-6 py-4">${formatCurrency(s.total)}</td>
+            <td class="px-6 py-4">${new Date(s.createdAt).toLocaleDateString()}</td>
+        </tr>
+    `).join('');
+}
+
+function renderLowStock(products) {
+    const tbody = document.getElementById('lowStockTable');
+    tbody.innerHTML = products.map(p => `
+        <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4">${p.name}</td>
+            <td class="px-6 py-4 text-red-600 font-bold">${p.quantity}</td>
+        </tr>
+    `).join('');
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

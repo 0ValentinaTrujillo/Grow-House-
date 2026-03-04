@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Dashboard | Clientes - Grow House</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body class="bg-gray-50">
+
+<!-- Sidebar -->
+<div class="fixed inset-y-0 left-0 w-64 text-white z-50 bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f]">
+
+    <div class="flex items-center gap-3 p-6">
+        <img src="../assets/images/Logo-blanco-removebg-preview.png" class="h-10">
+        <div>
+            <h1 class="font-bold text-lg">Grow House</h1>
+            <p class="text-sm">Panel Administrador</p>
+        </div>
+    </div>
+
+        <nav class="mt-6">
+            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-chart-bar"></i> Estadisticas
+            </a>
+            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Productos</span>
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-bag-shopping"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Cupones</span>
+            </a>
+        </nav>
+        
+        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+            <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
+                <i class="fas fa-home mr-2"></i>
+                Volver al inicio
+            </a>
+            <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+
+</div>
+
+<!-- Main Content -->
+<div class="ml-64 p-8">
+<!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Gestión de Clientes</h2>
+                <p class="text-gray-600">Administra tus usuarios registrados</p>
+            </div>
+        </div>
+
+    <!-- Filters -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+            <input type="text" id="searchInput" placeholder="Buscar por nombre o email"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nivel</label>
+            <select id="levelFilter"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+                <option value="">Todos los niveles</option>
+                <option value="bronze">Bronze</option>
+                <option value="silver">Silver</option>
+                <option value="gold">Gold</option>
+                <option value="platinum">Platinum</option>
+            </select>
+        </div>
+        <div class="flex items-end">
+            <button onclick="loadCustomers()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                <i class="fas fa-search mr-2"></i> Buscar
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+        <!-- Total Clientes -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Total Clientes</p>
+                <h3 id="totalCustomers" class="text-2xl font-bold text-gray-800">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <i class="fas fa-users text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Activos -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Activos</p>
+                <h3 id="activeCustomers" class="text-2xl font-bold text-green-600">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600">
+                <i class="fas fa-user-check text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Inactivos -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Inactivos</p>
+                <h3 id="inactiveCustomers" class="text-2xl font-bold text-red-600">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100 text-red-600">
+                <i class="fas fa-user-slash text-lg"></i>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nivel</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Compras</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="customersTable">
+                    <tr>
+                        <td colspan="6" class="text-center py-6">Cargando...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
+
+            <div class="text-sm text-gray-700"> Mostrando página <span id="pageInfo">1</span> de <span id="totalPages">20</span>
+            </div>
+
+            <div class="flex gap-2">
+
+                <button onclick="previousPage()" id="prevBtn"
+                    class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 
+                        disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <i class="fas fa-chevron-left"></i>
+                </button>                    
+                <span class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                    Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+                </span>
+                <button onclick="nextPage()" id="nextBtn"
+                    class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 
+                        disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+
+const token = localStorage.getItem('growhouse-auth-token');
+
+if(!token){
+    alert("Sesión expirada. Inicia sesión nuevamente.");
+    window.location.href = "login.html";
+}
+
+const API = 'http://localhost:5000/api/admin/customers';
+let currentPage = 1;
+let totalPages = 1;
+
+async function loadCustomers(page = 1) {
+
+    currentPage = page;
+
+    const search = document.getElementById('searchInput').value;
+    const level = document.getElementById('levelFilter').value;
+
+    const params = new URLSearchParams({
+        page,
+        search,
+        level,
+        limit: 10
+    });
+
+    const token = localStorage.getItem('growhouse-auth-token');
+
+
+    const res = await fetch(`${API}?${params}`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const data = await res.json();
+
+    const tbody = document.getElementById('customersTable');
+    tbody.innerHTML = '';
+
+    if(data.success){
+
+        data.data.forEach(c => {
+
+    tbody.innerHTML += `
+    <tr class="border-t hover:bg-gray-50 transition">
+
+        <td class="px-6 py-4 text-gray-600">
+            ${c.firstName} ${c.lastName}
+        </td>
+
+        <td class="px-6 py-4 text-gray-600">
+            ${c.email}
+        </td>
+
+        <!-- NIVEL estilo badge -->
+        <td class="px-6 py-4">
+            ${
+                c.customerLevel
+                ? `<span class="px-3 py-1 text-xs font-semibold rounded-full capitalize
+                    ${
+                        c.customerLevel === 'bronze' ? 'bg-amber-100 text-amber-700' :
+                        c.customerLevel === 'silver' ? 'bg-gray-200 text-gray-700' :
+                        c.customerLevel === 'gold' ? 'bg-yellow-100 text-yellow-700' :
+                        c.customerLevel === 'platinum' ? 'bg-purple-100 text-purple-700' :
+                        'bg-gray-100 text-gray-600'
+                    }">
+                    ${c.customerLevel}
+                </span>`
+                : `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-500">
+                    -
+                </span>`
+            }
+        </td>
+
+        <!-- TOTAL COMPRAS estilo destacado -->
+        <td class="px-6 py-4">
+            <div class="font-semibold text-gray-900">
+                $${(c.totalSpent || 0).toLocaleString()}
+            </div>
+            <div class="text-xs text-gray-400">
+                Total acumulado
+            </div>
+        </td>
+
+        <!-- ESTADO estilo pill verde/rojo -->
+        <td class="px-6 py-4">
+            ${
+                c.isActive
+                ? `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">
+                    Activo
+                </span>`
+                : `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">
+                    Inactivo
+                </span>`
+            }
+        </td>
+
+        <!-- ACCIONES solo cambiar estado -->
+        <td class="px-6 py-4">
+            <div class="flex items-center">
+                <button onclick="toggleStatus('${c._id}', ${!c.isActive})"
+                    class="w-9 h-9 flex items-center justify-center rounded-full
+                    ${c.isActive 
+                        ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                        : 'bg-green-100 text-green-600 hover:bg-green-200'
+                    } transition"
+                    title="${c.isActive ? 'Desactivar cliente' : 'Activar cliente'}">
+                    <i class="fas ${c.isActive ? 'fa-user-slash' : 'fa-user-check'}"></i>
+                </button>
+            </div>
+    </tr>
+    `;
+
+        });
+
+        totalPages = data.pagination.pages;
+
+        document.getElementById('pageInfo').innerText = currentPage;
+        document.getElementById('totalPages').innerText = totalPages;
+
+        updateStats(data.data);
+    }
+}
+
+function updateStats(customers){
+    document.getElementById('totalCustomers').innerText = customers.length;
+    document.getElementById('activeCustomers').innerText =
+        customers.filter(c => c.isActive).length;
+    document.getElementById('inactiveCustomers').innerText =
+        customers.filter(c => !c.isActive).length;
+}
+
+async function toggleStatus(id, newStatus){
+
+    if(!confirm("¿Seguro que deseas cambiar el estado?")) return;
+
+    const token = localStorage.getItem('growhouse-auth-token');
+
+
+    const res = await fetch(`${API}/${id}/status`,{
+        method:'PUT',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ isActive: newStatus })
+    });
+
+    const data = await res.json();
+
+    if(data.success){
+        loadCustomers(currentPage);
+    } else {
+        alert("Error al actualizar estado");
+    }
+}
+
+function previousPage(){
+    if(currentPage > 1) loadCustomers(currentPage - 1);
+}
+
+function nextPage(){
+    if(currentPage < totalPages) loadCustomers(currentPage + 1);
+}
+
+loadCustomers();
+
+</script>
+
+</body>
+</html>
