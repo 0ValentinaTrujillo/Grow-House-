@@ -546,8 +546,10 @@ function createFavoriteCard(favorite) {
     
     return `
         <div class="favorite-card bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl" 
-             style="opacity: 0; transform: translateY(20px);"
-             data-favorite-id="${favorite.id}">
+             style="opacity: 0; transform: translateY(20px); font-family: 'Poppins', sans-serif;"
+             data-favorite-id="${favorite.id}"
+                onmouseenter="this.style.boxShadow='0 8px 30px rgba(76, 175, 80, 0.25), 0 0 20px rgba(134, 197, 134, 0.15)'; this.style.transform='translateY(-4px)';"
+                onmouseleave="this.style.boxShadow='0 4px 15px rgba(134, 197, 134, 0.15)'; this.style.transform='translateY(0)';">
             
             <div class="relative h-64 overflow-hidden bg-gray-100">
                 <img 
@@ -558,18 +560,18 @@ function createFavoriteCard(favorite) {
                 >
                 <button 
                     onclick="removeFromFavorites('${favorite.id}')"
-                    class="absolute top-4 right-4 bg-white/90 hover:bg-red-50 text-red-600 p-3 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+                    class="absolute top-4 right-4 bg-white/90 hover:bg-red-50 text-red-600 p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
                     title="Eliminar de favoritos"
                 >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
                 </button>
             </div>
             
-            <div class="p-6">
+            <div class="p-5">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold text-green-600 uppercase tracking-wide">
+                    <span class="text-xs font-normal text-green-600 uppercase tracking-wide">
                         ${favorite.category}
                     </span>
                     <span class="text-xs text-gray-400">
@@ -577,29 +579,27 @@ function createFavoriteCard(favorite) {
                     </span>
                 </div>
                 
-                <h3 class="text-lg font-bold text-gray-900 mb-2">
+                <h3 class="text-lg font-bold text-gray-900 mb-1">
                     ${favorite.name}
                 </h3>
                 
-                <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+                <p class="text-sm font-light text-gray-500 mb-3 line-clamp-2">
                     ${favorite.description || 'Sin descripción'}
                 </p>
                 
-                <div class="text-2xl font-bold text-green-800 mb-4">
+                <div class="text-xl font-bold text-green-800 mb-4">
                     ${formatPrice(favorite.price)}
                 </div>
                 
                 <div class="flex gap-2">
                     <button 
                         onclick="viewProductDetail('${favorite.id}')"
-                        class="flex-1 bg-green-700 hover:bg-green-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300"
-                    >
+                        class="ver-detalles-btn bg-green-700 text-white px-4 py-1.5 rounded-lg hover:bg-green-600 transition duration-300 text-sm text-center flex-1 font-medium">
                         Ver Detalles
                     </button>
                     <button 
                         onclick="addToCartFromFavorite('${favorite.id}')"
-                        class="flex-1 bg-green-800 hover:bg-green-900 text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200"
-                    >
+                        class="flex-1 bg-green-800 hover:bg-green-900 text-white text-sm font-medium py-1.5 px-4 rounded-lg transition-all duration-200">
                         Al Carrito
                     </button>
                 </div>

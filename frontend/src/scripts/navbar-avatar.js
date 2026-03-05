@@ -54,98 +54,25 @@ const NavbarAvatarManager = {
     /**
      * Cargar y mostrar avatar
      */
-    load: function() {
+    load: function () {
         try {
-            // Verificar si el usuario está autenticado
-            if (!window.authAPI || !window.authAPI.isAuthenticated()) {
-                console.log('ℹ️ Usuario no autenticado');
-                return;
-            }
+            if (!window.authAPI || !window.authAPI.isAuthenticated()) return;
 
             const user = window.authAPI.getUser();
-            if (!user || !user.id) {
-                console.log('ℹ️ No hay datos del usuario');
-                return;
-            }
+            if (!user) return;
 
-            console.log('👤 Actualizando avatar del navbar para usuario:', user.firstName);
-
-            // Obtener imagen guardada - PRIMERO intenta con ProfileImageManager
-            let savedImage = null;
-            
-            if (window.ProfileImageManager) {
-                // Si ProfileImageManager está disponible, usarlo
-                const image = window.ProfileImageManager.getUserImage(user.id);
-                if (image) {
-                    savedImage = JSON.stringify({ base64: image });
-                    console.log('🖼️ Imagen obtenida desde ProfileImageManager');
-                }
-            }
-            
-            // Si no, intentar directamente desde localStorage
-            if (!savedImage) {
-                const storageKey = `growhouse-user-avatar:${user.id}`;
-                savedImage = localStorage.getItem(storageKey);
-                console.log('🖼️ Imagen obtenida desde localStorage');
-            }
-
-            // Si no hay imagen guardada, intentar usar el avatar del usuario (de Google)
-            let avatarUrl = null;
-            if (!savedImage && user.avatar) {
-                avatarUrl = user.avatar;
-                console.log('🖼️ Avatar URL obtenida desde user.avatar (Google):', avatarUrl);
-            }
-
-            // Actualizar TODOS los avatares en la página
-            const avatarDivs = document.querySelectorAll('#user-avatar-menu');
             const imgElements = document.querySelectorAll('#user-avatar-menu-image');
             const initialsElements = document.querySelectorAll('#user-initials');
+            const avatarDivs = document.querySelectorAll('#user-avatar-menu');
 
-            console.log(`📍 Encontrados ${avatarDivs.length} avatares en el navbar`);
-
-            if (savedImage) {
-                try {
-                    const imageData = JSON.parse(savedImage);
-                    
-                    // Actualizar todas las instancias
-                    imgElements.forEach((img, idx) => {
-                        img.src = imageData.base64;
-                        img.classList.remove('hidden');
-                        console.log(`✅ Imagen cargada en avatar ${idx + 1}`);
-                    });
-                    
-                    initialsElements.forEach((span, idx) => {
-                        span.classList.add('hidden');
-                        console.log(`✅ Iniciales ocultadas en avatar ${idx + 1}`);
-                    });
-                    
-                    avatarDivs.forEach(div => {
-                        div.style.backgroundColor = 'transparent';
-                    });
-                    
-                    console.log('🖼️ Imagen de perfil cargada en todos los navbars');
-                } catch (e) {
-                    console.warn('⚠️ Error al parsear imagen:', e);
-                    this.showInitials(user);
-                }
-            } else if (avatarUrl) {
-                // Usar avatar URL de Google
-                imgElements.forEach((img, idx) => {
-                    img.src = avatarUrl;
+            // Usar avatar guardado en el objeto user (sincronizado desde backend)
+            if (user.avatar) {
+                imgElements.forEach(img => {
+                    img.src = user.avatar;
                     img.classList.remove('hidden');
-                    console.log(`✅ Avatar URL cargada en avatar ${idx + 1}: ${avatarUrl}`);
                 });
-                
-                initialsElements.forEach((span, idx) => {
-                    span.classList.add('hidden');
-                    console.log(`✅ Iniciales ocultadas en avatar ${idx + 1}`);
-                });
-                
-                avatarDivs.forEach(div => {
-                    div.style.backgroundColor = 'transparent';
-                });
-                
-                console.log('🖼️ Avatar URL de Google cargada en todos los navbars');
+                initialsElements.forEach(span => span.classList.add('hidden'));
+                avatarDivs.forEach(div => div.style.backgroundColor = 'transparent');
             } else {
                 this.showInitials(user);
             }

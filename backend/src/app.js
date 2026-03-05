@@ -125,8 +125,17 @@ app.use(mongoSanitize({ replaceWith: '_' }));
 app.use(xss());
 
 const { sanitizeInput, preventSQLInjection } = require('./middleware/sanitize');
-app.use(sanitizeInput);
-app.use(preventSQLInjection);
+
+// Excluir /api/avatar porque el base64 contiene caracteres especiales
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/avatar')) return next();
+    sanitizeInput(req, res, next);
+});
+
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/avatar')) return next();
+    preventSQLInjection(req, res, next);
+});
 
 // =============================================
 // CONECTAR DB
@@ -158,6 +167,7 @@ app.use("/api/auth", authRoutes);
 // =============================================
 app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/avatar', require('./routes/avatar.routes'));
 
 // 🔥RUTA DE ADMINISTRADOR
 app.use('/api/admin', adminRoutes);

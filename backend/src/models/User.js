@@ -195,20 +195,9 @@ const userSchema = new mongoose.Schema({
     // =============================================
 
     avatar: {
-        type: String,                                 // URL de la imagen de perfil
-        trim: true,
-        validate: {
-            validator: function (url) {
-                if (!url) return true;                // Avatar opcional
-
-                /**
-                 * Validar que sea una URL válida de imagen
-                 */
-                const urlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp)$/i;
-                return urlRegex.test(url);
-            },
-            message: 'El avatar debe ser una URL válida de imagen'
-        }
+        type: String,
+        default: null
+        // Sin validación de URL, acepta base64
     },
 
     // =============================================
@@ -252,18 +241,8 @@ const userSchema = new mongoose.Schema({
 
     avatar: {
         type: String,
-        validate: {
-            validator: function (url) {
-                if (!url) return true;                // Avatar 
-
-                /**
-                 * Validar que sea una URL válida de imagen
-                 */
-                const urlRegex = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|bmp)$/i;
-                return urlRegex.test(url);
-            },
-            message: 'El avatar debe ser una URL válida de imagen'
-        }
+        default: null
+        // Sin validación de URL, acepta base64
     },
 
     dateOfBirth: {
