@@ -23,6 +23,7 @@ const mongoose = require("mongoose");
 // ruta chatbot 
 const chatbotRoutes = require('./routes/chatbot');
 
+
 console.log('🚀 Iniciando Grow House Backend...');
 
 // Crear aplicación Express
@@ -60,6 +61,7 @@ app.use((req, res, next) => {
     if (url.includes('/auth')) requestType = '🔐';
     if (url.includes('/chatbot')) requestType = '🤖'; 
     if (url.includes('/health')) requestType = '💚';
+    if (url.includes('/recomendaciones')) requestType = '🌿';
     
     console.log(`${requestType} ${timestamp} - ${method} ${url} - IP: ${ip}`);
     next();
@@ -175,11 +177,15 @@ app.use('/api/admin', adminRoutes);
 // IA
 app.use('/api/chatbot', chatbotRoutes);
 
+//recomendaciones
+app.use('/api/recomendaciones', require('./routes/recomendaciones'));
+
 console.log('✅ Rutas activas:');
-console.log('   📱 /api/products - e productos');
+console.log('   📱 /api/products - Gestion de productos');
 console.log('   🔐 /api/auth - Autenticacion y usuarios');
 console.log('   📦 /api/orders - Gestión de pedidos');
 console.log('   👑 /api/admin - Panel Administrador');
+console.log('   🌿 /api/recomendaciones - Recomendaciones personalizadas');
 
 // =============================================
 // HEALTH

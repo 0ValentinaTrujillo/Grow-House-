@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agregar Planta — Zuri</title>
+  <title>Mis Plantas — Zuri</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,18 +13,17 @@
       --verde-claro: #46d560;
       --verde-l:     #207719;
       --verde-ñ:     #3ab325ee;
-      --gris-texto:  #3a3c3f;
-      --azul:        #2563eb;
-      --azul-claro:  #3b82f6;
+      --gris-texto:  #6b7280;
     }
 
     body {
       font-family: 'Poppins', sans-serif;
       background: #ffffff;
       min-height: 100vh;
-      padding: 20px 20px 40px;
+      padding: 20px 20px 110px;
     }
 
+    /* ── HEADER ── */
     .header {
       text-align: center;
       margin-bottom: 28px;
@@ -42,26 +41,19 @@
       margin-bottom: 6px;
     }
 
-    .header p { color: var(--gris-texto); font-size: 1rem; }
-
-    /* ── GRID DOS COLUMNAS ── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 24px;
-      align-items: start;
+    .header p {
+      color: var(--gris-texto);
+      font-size: 1rem;
     }
 
-    @media (max-width: 860px) {
-      .main-grid { grid-template-columns: 1fr; }
-    }
-
+    /* ── CARD ── */
     .card {
       background: white;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
+      border: 2px solid var(--borde-verde);
       padding: 28px;
+      margin-bottom: 20px;
     }
 
     .card-title {
@@ -71,282 +63,103 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 6px;
     }
 
-    .btn-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .contador {
+      font-size: 0.84rem;
+      color: var(--gris-texto);
+      margin-bottom: 18px;
+    }
+
+    /* ── PLANTA CARD ── */
+    .planta-card {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border: 2px solid var(--borde-verde);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
       gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      padding: 14px 18px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--verde), var(--verde-claro));
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(4, 111, 26, 0.5);
-    }
-
-    .btn-secondary {
-      background: linear-gradient(135deg, var(--azul), var(--azul-claro));
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
-    }
-
-    .btn:disabled {
-      background: #9ca3af !important;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    .btn-full {
-      width: 100%;
-      padding: 18px;
-      font-size: 1.05rem;
-      margin-top: 4px;
-    }
-
-    .btn-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: white;
-      border-radius: 30px;
-      color: black;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      font-size: 0.88rem;
-      padding: 8px 18px;
-      cursor: pointer;
-      text-decoration: none;
-      margin-bottom: 20px;
-      transition: all .2s;
-      box-shadow: 0 2px 8px rgba(148, 148, 155, 0.473);
-    }
-
-    .btn-back:hover { background: #e5e7eb; transform: translateX(-1px); }
-
-    .zona-img {
-      width: 100%;
-      aspect-ratio: 4/3;
-      border-radius: 16px;
-      border: 2px dashed #a7f3d0;
-      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      overflow: hidden;
-      position: relative;
-      transition: border-color .25s;
-    }
-
-    .zona-img:hover { border-color: var(--verde); }
-    .zona-img.llena { border-style: solid; cursor: default; }
-    .zona-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; }
-
-    .placeholder-img { text-align: center; color: var(--gris-texto); pointer-events: none; }
-    .placeholder-img .ico { font-size: 3.5rem; margin-bottom: 10px; display: block; }
-    .placeholder-img p   { font-size: 0.9rem; font-weight: 500; }
-    .placeholder-img small { font-size: 0.75rem; opacity: .7; }
-
-    .btn-cambiar {
-      position: absolute;
-      bottom: 14px; right: 14px;
-      background: rgba(0,0,0,.55);
-      color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 7px 16px;
-      font-size: 0.78rem;
-      font-family: 'Poppins', sans-serif;
-      cursor: pointer;
-    }
-
-    #file-input { display: none; }
-    #camera-container { display: none; }
-
-    .camera-wrap {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
       margin-bottom: 14px;
-    }
-
-    #camera-preview { width: 100%; border-radius: 16px; display: block; }
-
-    .capture-btn {
-      position: absolute;
-      bottom: 16px; left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-    }
-
-    .badge-foto {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: var(--verde);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 20px; height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s linear infinite;
-      vertical-align: middle;
-    }
-
-    .spinner-lg {
-      width: 50px; height: 50px;
-      border-width: 5px;
-      border-color: rgba(32,119,25,.2);
-      border-top-color: var(--verde);
-      margin: 0 auto 16px;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .loading-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--gris-texto);
-    }
-
-    .info-box {
-      background: linear-gradient(135deg, var(--verde-bg), var(--verde-bg2));
-      border: 2px solid var(--borde-verde);
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .info-box h3 { color: var(--verde); margin-bottom: 8px; font-size: 1rem; }
-    .info-box p  { color: #374151; font-size: 0.88rem; line-height: 1.6; }
-
-    .datos-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .dato {
-      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
-      border: 2px solid var(--borde-verde);
-      border-radius: 14px;
-      padding: 14px;
-    }
-
-    .dato .label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--gris-texto);
-      margin-bottom: 4px;
-    }
-
-    .dato .valor { font-weight: 700; color: var(--verde); font-size: 0.92rem; }
-
-    .planta-resultado {
-      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
-      border: 2px solid var(--borde-verde);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
+      cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
 
-    .planta-resultado:hover {
+    .planta-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 20px 40px -8px rgba(100, 221, 96, 0.5);
     }
 
-    .resultado-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .resultado-nombre { color: var(--verde); font-size: 1.25rem; font-weight: 700; margin-bottom: 3px; }
-    .resultado-cientifico { font-style: italic; color: var(--gris-texto); font-size: 0.82rem; }
-
-    .resultado-number {
-      background: var(--verde);
-      color: white;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.85rem;
+    .planta-thumb {
+      width: 76px; height: 76px;
+      border-radius: 14px;
+      background: white;
+      border: 2px solid var(--borde-verde);
       flex-shrink: 0;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
     }
 
-    .recomendaciones-box {
-      background: linear-gradient(135deg, #fae8ff, #f3e8ff);
-      border: 2px solid #d8b4fe;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
+    .planta-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
-    .recomendaciones-box h3 { color: #7c3aed; margin-bottom: 10px; font-size: 1rem; }
-    .recomendaciones-box ul { padding-left: 18px; }
-    .recomendaciones-box li { font-size: 0.88rem; line-height: 1.7; color: #374151; }
+    .planta-info { flex: 1; overflow: hidden; }
 
-    .img-generada { border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(32, 119, 25, 0.15); margin-bottom: 16px; }
-    .img-generada img { width: 100%; display: block; }
-    .img-generada-label { background: linear-gradient(135deg, var(--verde-bg), var(--verde-bg2)); padding: 10px; text-align: center; color: var(--verde); font-weight: 700; font-size: 0.85rem; }
-
-    .btn-guardar {
-      width: 100%;
-      padding: 18px;
-      border-radius: 14px;
-      border: none;
-      background: linear-gradient(135deg, var(--verde), var(--verde-claro));
-      color: white;
-      font-family: 'Poppins', sans-serif;
+    .planta-nombre {
       font-weight: 700;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: all .3s;
-      box-shadow: 0 10px 25px rgba(4, 111, 26, 0.4);
+      font-size: 1rem;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
     }
 
-    .btn-guardar:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(4, 111, 26, 0.6); }
-    .btn-guardar:disabled { background: #9ca3af; box-shadow: none; cursor: not-allowed; transform: none; }
+    .planta-cientifico {
+      font-style: italic;
+      color: #1a1a1a;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
 
+    .planta-desc {
+      color: var(--gris-texto);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .badge-dificultad {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #1a1a1a;
+      color: white;
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .btn-borrar {
+      position: absolute;
+      bottom: 10px; right: 12px;
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color .2s;
+      padding: 4px;
+    }
+
+    .btn-borrar:hover { color: #e44; }
+
+    /* ── VACÍO ── */
     .empty-state {
       text-align: center;
       padding: 50px 20px;
@@ -355,315 +168,159 @@
       color: var(--gris-texto);
     }
 
-    .empty-state .icono { font-size: 4rem; margin-bottom: 12px; }
+    .empty-state .icono { font-size: 4rem; margin-bottom: 14px; }
+    .empty-state p { font-size: 0.95rem; line-height: 1.7; }
 
+    /* ── FOOTER TIP ── */
     .footer {
       text-align: center;
       color: rgb(48, 48, 48);
       padding: 18px 20px;
       background: linear-gradient(135deg, var(--verde-l), var(--verde-ñ));
+      border: 2px solid var(--borde-verde);
       border-radius: 14px;
       font-size: 0.88rem;
-      margin-top: 4px;
     }
 
-    /* ── URL BASE API ── */
-    /* Si cambias el puerto del backend, solo cambia esta variable */
+    /* ── FAB ── */
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 24px;
+      width: 62px; height: 62px;
+      background: linear-gradient(135deg, var(--verde), var(--verde-claro));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(148, 148, 155, 0.473);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s;
+      z-index: 99;
+    }
 
-    #canvas { display: none; }
+    .fab:hover {
+      transform: scale(1.12) rotate(90deg);
+      box-shadow: 0 15px 35px rgba(148, 148, 155, 0.473);
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 108px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--verde);
+      color: white;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all .38s;
+      z-index: 999;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top-color: #207719;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1 id="titulo-header">Agregar Planta</h1>
-    <p id="sub-header">Captura tu planta y la IA la identificará</p>
+    <h1>Mis Plantas</h1>
+    <p>Tu jardín digital personal Zuri</p>
   </div>
 
-  <a href="mis_plantas.html" class="btn-back">← Mis Plantas</a>
-
-  <div class="main-grid">
-
-    <!-- CARD IZQUIERDA: CAPTURA -->
-    <div class="card" id="card-captura">
-      <div class="card-title">Captura tu Planta</div>
-
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="iniciarCamara()">Usar Cámara</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">Cargar Foto</button>
-      </div>
-
-      <input type="file" id="file-input" accept="image/*" onchange="cargarImagen(event)">
-
-      <div id="camera-container">
-        <div class="camera-wrap">
-          <video id="camera-preview" autoplay playsinline></video>
-          <button class="btn btn-primary capture-btn" onclick="tomarFoto()">Tomar Foto</button>
-        </div>
-      </div>
-
-      <div id="preview-container"></div>
-
-      <button id="btn-analizar" class="btn btn-primary btn-full" onclick="analizarPlanta()" disabled>
-         Analizar Planta con IA
-      </button>
-    </div>
-
-    <!-- CARD DERECHA: RESULTADO -->
-    <div class="card" id="card-resultado">
-      <div class="card-title">Información de la Planta</div>
-      <div id="panel-resultado">
-        <div class="empty-state">
-          <div class="icono">🪴</div>
-          <p style="font-size:1rem;margin-bottom:6px">Esperando análisis...</p>
-          <p style="font-size:0.88rem">La IA identificará tu planta automáticamente</p>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /main-grid -->
-
-  <div class="footer"> <strong>Tip:</strong> Toma la foto con buena luz para mejores resultados
+  <div class="card">
+    <div class="card-title">Plantas registradas</div>
+    <div id="lista"></div>
   </div>
 
-  <canvas id="canvas"></canvas>
+  <div class="footer"> <strong>Tip:</strong> Toca el <strong>+</strong> para registrar una nueva planta con IA
+  </div>
+
+  <a href="registro_plantas.html" class="fab" title="Agregar planta">＋</a>
+  <div class="toast" id="toast"></div>
 
 <script>
-  // ✅ Cambia SOLO aquí si tu backend usa otro puerto
-  const API_BASE = 'http://127.0.0.1:5000';
-
   const CLAVE = 'zuri_plantas_v1';
-  let imagenActual   = null;
-  let analisisActual = null;
-  let stream         = null;
 
-  /* ─── localStorage helpers ─── */
   function cargarPlantas() {
     try { return JSON.parse(localStorage.getItem(CLAVE)) || []; } catch { return []; }
   }
-  function guardarPlantasLocal(arr) {
+
+  function guardarPlantas(arr) {
     localStorage.setItem(CLAVE, JSON.stringify(arr));
   }
 
-  /* ─── MODO DETALLE: ?ver=ID ─── */
-  const params = new URLSearchParams(location.search);
-  const idVer  = params.get('ver');
-
-  if (idVer) {
-    const planta = cargarPlantas().find(p => String(p.id) === String(idVer));
-    document.getElementById('titulo-header').textContent = 'Detalle de Planta';
-    document.getElementById('sub-header').textContent    = planta ? planta.nombre_comun : 'No encontrada';
-    document.getElementById('card-captura').style.display = 'none';
-    planta ? mostrarDetalle(planta)
-           : (document.getElementById('panel-resultado').innerHTML =
-              '<div class="empty-state"><div class="icono">❌</div><p>Planta no encontrada</p></div>');
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
   }
 
-  /* ─── CÁMARA ─── */
-  async function iniciarCamara() {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const video = document.getElementById('camera-preview');
-      video.srcObject = stream;
-      video.style.display = 'block';
-      document.getElementById('camera-container').style.display = 'block';
-      document.getElementById('preview-container').innerHTML = '';
-    } catch {
-      alert('No se pudo acceder a la cámara. Intenta cargar una imagen.');
-    }
+  function borrar(id, e) {
+    e.stopPropagation();
+    let plantas = cargarPlantas();
+    const nombre = plantas.find(p => p.id === id)?.nombre_comun || 'Planta';
+    plantas = plantas.filter(p => p.id !== id);
+    guardarPlantas(plantas);
+    toast(`🗑 ${nombre} eliminada`);
+    render();
   }
 
-  function tomarFoto() {
-    const video  = document.getElementById('camera-preview');
-    const canvas = document.getElementById('canvas');
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    imagenActual = canvas.toDataURL('image/jpeg');
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    document.getElementById('camera-container').style.display = 'none';
-    mostrarPreview(imagenActual);
-  }
+  function render() {
+    const plantas  = cargarPlantas();
+    const lista    = document.getElementById('lista');
+    const contador = document.getElementById('contador');
 
-  /* ─── CARGAR IMAGEN ─── */
-  function cargarImagen(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => { imagenActual = ev.target.result; mostrarPreview(imagenActual); };
-    reader.readAsDataURL(file);
-  }
 
-  function mostrarPreview(src) {
-    document.getElementById('preview-container').innerHTML = `
-      <div style="position:relative;margin-top:18px;">
-        <img src="${src}" alt="Vista previa" style="width:100%;border-radius:14px;box-shadow:0 5px 15px rgba(0,0,0,.1);">
-        <div class="badge-foto">✓ Foto lista</div>
-      </div>`;
-    document.getElementById('btn-analizar').disabled = false;
-    document.getElementById('panel-resultado').innerHTML = `
-      <div class="empty-state">
-        <div class="icono">🪴</div>
-        <p style="font-size:1rem;">Presiona <strong>"Analizar Planta con IA"</strong></p>
-      </div>`;
-    analisisActual = null;
-  }
-
-  /* ─── ANALIZAR CON IA (llama al backend) ─── */
-  async function analizarPlanta() {
-    if (!imagenActual) return;
-
-    const btn = document.getElementById('btn-analizar');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Analizando...';
-
-    document.getElementById('panel-resultado').innerHTML = `
-      <div class="loading-state">
-        <div class="spinner spinner-lg"></div>
-        <p style="font-size:1.05rem;margin-bottom:8px;">Analizando tu planta…</p>
-        <p style="font-size:0.88rem;color:#9ca3af;">La IA está trabajando (10–20 seg)</p>
-      </div>`;
-
-    try {
-      const response = await fetch(`${API_BASE}/api/registro/analizar`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ imagen: imagenActual })
-      });
-
-      const data = await response.json();
-      if (!data.success) throw new Error(data.message || 'Error en el servidor');
-
-      analisisActual = data.data;
-      mostrarResultado(analisisActual);
-
-    } catch (err) {
-      document.getElementById('panel-resultado').innerHTML = `
+    if (plantas.length === 0) {
+      lista.innerHTML = `
         <div class="empty-state">
-          <div style="font-size:3rem;">❌</div>
-          <p style="color:#dc2626;margin-top:14px;font-weight:600;">Error al analizar</p>
-          <p style="font-size:0.85rem;margin-top:8px;">${err.message}</p>
+          <div class="spinner"></div>
+          <p>Aún no tienes plantas registradas.</p>
         </div>`;
+      return;
     }
 
-    btn.disabled = false;
-    btn.innerHTML = 'Analizar Planta con IA';
-  }
-
-  /* ─── MOSTRAR RESULTADO ─── */
-  function mostrarResultado(data) {
-    const recs = Array.isArray(data.recomendaciones)
-      ? data.recomendaciones.map(r => `<li>${r}</li>`).join('')
-      : `<li>${data.recomendaciones}</li>`;
-
-    document.getElementById('panel-resultado').innerHTML = `
-      <div class="planta-resultado">
-        <div class="resultado-header">
-          <div>
-            <div class="resultado-nombre">${data.nombre_comun}</div>
-            <div class="resultado-cientifico">${data.nombre_cientifico}</div>
-          </div>
-          <span class="resultado-number">✓</span>
+    lista.innerHTML = plantas.map(p => `
+      <div class="planta-card" onclick="location.href='agregar-planta.html?ver=${p.id}'">
+        <div class="planta-thumb">
+          ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre_comun}">` : '🪴'}
         </div>
-        <div class="datos-grid">
-          <div class="dato"><div class="label">Familia</div><div class="valor">${data.familia || '—'}</div></div>
-          <div class="dato"><div class="label">Dificultad</div><div class="valor">${data.nivel_dificultad || '—'}</div></div>
-          <div class="dato"><div class="label">Riego</div><div class="valor">${data.cuidados?.riego || data.riego || '—'}</div></div>
-          <div class="dato"><div class="label">Luz</div><div class="valor">${data.cuidados?.luz || data.luz || '—'}</div></div>
+        <div class="planta-info">
+          <div class="planta-nombre">${p.nombre_comun}</div>
+          <div class="planta-cientifico">${p.nombre_cientifico}</div>
+          <div class="planta-desc">${p.descripcion}</div>
         </div>
-        <div class="info-box">
-          <h3>Descripción</h3>
-          <p>${data.descripcion}</p>
-        </div>
+        <span class="badge-dificultad">${p.nivel_dificultad}</span>
+        <button class="btn-borrar" onclick="borrar(${p.id}, event)" title="Eliminar">🗑</button>
       </div>
-      ${data.recomendaciones ? `
-        <div class="recomendaciones-box">
-          <h3>Recomendaciones</h3>
-          <ul>${recs}</ul>
-        </div>` : ''}
-      <button class="btn-guardar" onclick="guardarPlanta()">
-        Guardar en Mis Plantas
-      </button>`;
+    `).join('');
   }
 
-  /* ─── GUARDAR EN BACKEND + localStorage ─── */
-  async function guardarPlanta() {
-    if (!analisisActual) return;
-
-    const btnGuardar = document.querySelector('.btn-guardar');
-    if (btnGuardar) { btnGuardar.disabled = true; btnGuardar.textContent = 'Guardando...'; }
-
-    try {
-      const response = await fetch(`${API_BASE}/api/registro/analizar-y-guardar`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ imagen: imagenActual, analisis: analisisActual })
-      });
-
-      const result = await response.json();
-      if (!result.success) throw new Error(result.message || 'Error al guardar');
-
-      // También guardar en localStorage para que mis-plantas.html lo muestre
-      const plantas = cargarPlantas();
-      plantas.push({
-        id:                result.data._id || Date.now(),
-        imagen:            imagenActual,
-        fecha:             new Date().toLocaleDateString('es-ES'),
-        nombre_comun:      analisisActual.nombre_comun,
-        nombre_cientifico: analisisActual.nombre_cientifico,
-        familia:           analisisActual.familia,
-        nivel_dificultad:  analisisActual.nivel_dificultad,
-        descripcion:       analisisActual.descripcion,
-        cuidados:          analisisActual.cuidados,
-        recomendaciones:   analisisActual.recomendaciones
-      });
-      guardarPlantasLocal(plantas);
-
-      location.href = 'mis-plantas.html?guardada=1';
-
-    } catch (err) {
-      alert('Error al guardar: ' + err.message);
-      if (btnGuardar) { btnGuardar.disabled = false; btnGuardar.textContent = '💾 Guardar en Mis Plantas'; }
-    }
+  const params = new URLSearchParams(location.search);
+  if (params.get('guardada')) {
+    history.replaceState({}, '', location.pathname);
+    toast('✅ Planta guardada correctamente');
   }
 
-  /* ─── MOSTRAR DETALLE (solo lectura) ─── */
-  function mostrarDetalle(data) {
-    const recs = Array.isArray(data.recomendaciones)
-      ? data.recomendaciones.map(r => `<li>${r}</li>`).join('')
-      : '';
-
-    document.getElementById('panel-resultado').innerHTML = `
-      ${data.imagen ? `
-        <div class="img-generada">
-          <img src="${data.imagen}" alt="${data.nombre_comun}">
-          <div class="img-generada-label">Foto registrada</div>
-        </div>` : ''}
-      <div class="planta-resultado">
-        <div class="resultado-header">
-          <div>
-            <div class="resultado-nombre">${data.nombre_comun}</div>
-            <div class="resultado-cientifico">${data.nombre_cientifico}</div>
-          </div>
-          <span class="resultado-number">${data.fecha || ''}</span>
-        </div>
-        <div class="datos-grid">
-          <div class="dato"><div class="label">Familia</div><div class="valor">${data.familia || '—'}</div></div>
-          <div class="dato"><div class="label">Dificultad</div><div class="valor">${data.nivel_dificultad || '—'}</div></div>
-          <div class="dato"><div class="label">Riego</div><div class="valor">${data.cuidados?.riego || '—'}</div></div>
-          <div class="dato"><div class="label">Luz</div><div class="valor">${data.cuidados?.luz || '—'}</div></div>
-        </div>
-        <div class="info-box">
-          <h3>Descripción</h3>
-          <p>${data.descripcion}</p>
-        </div>
-      </div>
-      ${recs ? `
-        <div class="recomendaciones-box">
-          <h3>Recomendaciones</h3>
-          <ul>${recs}</ul>
-        </div>` : ''}`;
-  }
+  render();
 </script>
 </body>
 </html>

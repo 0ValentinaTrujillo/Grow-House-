@@ -104,6 +104,120 @@
         .has-submenu {
             cursor: pointer;
         }
+        /* ===============================
+        BOTÓN CHAT (CACTUS) - RESPONSIVE
+        ================================ */
+        .chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: none;
+            border: none; /* ❌ Sin borde */
+            border-radius: 100%;
+            cursor: pointer;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15); /* ✅ Sombra */
+        }
+
+        .chat-btn.blur {
+            filter: blur(0.8px);
+            opacity: 0.75;
+        }
+
+        /* ===============================
+        ICONO - RESPONSIVE
+        ================================ */
+        .icon {
+            width: 90px;   /* ✅ Más grande en móvil */
+            height: 90px;
+            display: block;
+            border-radius: 50%;
+        }
+
+        /* Tablets */
+        @media (min-width: 640px) {
+            .icon {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .chat-btn {
+                bottom: 50px;
+                right: 100px;
+            }
+            .icon {
+                width: 130px;
+                height: 130px;
+            }
+        }
+
+        /* ===============================
+        PANEL FLOTANTE - RESPONSIVE
+        ================================ */
+        .emergency-screen {
+            position: fixed;
+            z-index: 9999;
+            display: none;
+
+            /* Mobile: ocupa casi toda la pantalla */
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 85vh;
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Tablets */
+        @media (min-width: 640px) {
+            .emergency-screen {
+                bottom: 20px;
+                right: 20px;
+                left: auto;
+                width: 400px;
+                height: 500px;
+                border-radius: 18px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .emergency-screen {
+                bottom: 50px;
+                right: 250px;
+                width: 550px;
+                height: 550px;
+            }
+        }
+
+        .emergency-screen.active {
+            display: block;
+        }
+
+        /* ===============================
+        CONTENEDOR CHAT
+        ================================ */
+        .chat-container {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: inherit;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ===============================
+        IFRAME
+        ================================ */
+        .chat-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body class="bg-white font-sans antialiased">
@@ -442,6 +556,24 @@
                     </p>
                 </div>
             </div>
+
+            <!-- Botón flotante del chatbot -->
+        <button id="chat-toggle" class="chat-btn">
+            <img
+                src="../assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
+                id="icon-cactus"
+                class="icon"
+                alt="Chat Zuri"
+            >
+        </button>
+
+        <!-- Panel flotante del chatbot -->
+        <div id="emergency-screen" class="emergency-screen">
+            <div class="chat-container">
+                <iframe src="chatboot.html" class="chat-iframe"></iframe>
+            </div>
+        </div>
+
         </footer>
         
 <!-- Auth API - PRIMERO -->
@@ -469,6 +601,10 @@
 <script src="../scripts/rating.js"></script>
 <script src="../scripts/main.js"></script>
 
+<!--chatbot-->
+    <script src="../scripts/chatbot.js"></script>
+    <script src="../scripts/chat-ui.js"></script>
+
     <!-- Submenú Seguridad -->
     <div id="submenu-seguridad" class="floating-submenu">
         <div class="px-4 py-2 border-b border-gray-100">
@@ -489,15 +625,15 @@
         <div class="px-4 py-2 border-b border-gray-100">
             <p class="text-gray-700 text-sm font-medium">Zuri</p>
         </div>
-        <a href="zuri-chat.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="registro_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">📋</span>
             <span class="text-gray-700 text-sm">Registrar plantas</span>
         </a>
-        <a href="zuri-plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="mis_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">🪴</span>
             <span class="text-gray-700 text-sm">Mis plantas</span>
         </a>
-        <a href="zuri-consejos.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="plantas_IA.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">💡</span>
             <span class="text-gray-700 text-sm">Transformar espacios</span>
         </a>
@@ -787,6 +923,53 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+</script>
+<script>
+    // Cerrar chat al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const chatPanel = document.getElementById('emergency-screen');
+            const chatBtn = document.getElementById('chat-toggle');
+
+            if (
+                chatPanel.classList.contains('active') &&
+                !chatPanel.contains(e.target) &&
+                !chatBtn.contains(e.target)
+            ) {
+                chatPanel.classList.remove('active');
+                chatBtn.classList.remove('blur');
+                chatBtn.style.bottom = '';   // ✅ Resetea la posición al original del CSS
+                chatBtn.style.right = '';    // ✅ Por si acaso también resetea right
+            }
+        });
+        // Ajustar posición del botón en móvil cuando el chat está abierto
+        function ajustarBotonMobile() {
+            const chatBtn = document.getElementById('chat-toggle');
+            const isMobile = window.innerWidth < 640;
+            
+            if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
+                chatBtn.style.bottom = 'calc(85vh + 10px)';
+            } else {
+                chatBtn.style.bottom = '';
+            }
+        }
+
+        document.getElementById('chat-toggle').addEventListener('click', function() {
+            setTimeout(ajustarBotonMobile, 50);
+        });
+
+        document.addEventListener('click', function(e) {
+            const chatPanel = document.getElementById('emergency-screen');
+            const chatBtn = document.getElementById('chat-toggle');
+
+            if (
+                chatPanel.classList.contains('active') &&
+                !chatPanel.contains(e.target) &&
+                !chatBtn.contains(e.target)
+            ) {
+                chatPanel.classList.remove('active');
+                chatBtn.classList.remove('blur');
+            }
+        });
 </script>
 </body>
 </html>

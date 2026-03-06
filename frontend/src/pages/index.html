@@ -520,7 +520,7 @@
             </li>
 
             <li onclick="location.href='decoraciones.html'" style="cursor: pointer;">
-                <img src="https://media.istockphoto.com/id/157403714/es/foto/enano-de-jard%C3%ADn.jpg?s=612x612&w=0&k=20&c=rXXqSZQBr9AR8YKcx6u_ESJ_iis-3qSm00GBPB7JG7I="
+                <img src="https://m.media-amazon.com/images/I/81bESfVXHbS._AC_UF894,1000_QL80_.jpg"
                     alt="">
                 <div class="content">
                     <span>
@@ -561,21 +561,44 @@
             </div>
     </section>
 
-    <!--Seccion Productos segun resultados de la encuesta -->
-    <section id="productos" class="py-16 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-8">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-                    Productos Recomendados 
-                    <span class="text-yellow-400">Para ti</span>
-                </h2>
-                <p class="text-xl text-gray-900 max-w-10xl mx-auto leading-relaxed">
-                    Descubre nuestros productos más populares y recomendados para el cultivo indoor, seleccionados
-                    especialmente para ti.
-                </p>
-                <div class="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 rounded-full"></div>
-            </div>
-        <!--Ajustar aqui en un div / ver el ejemplo de productos destacados-->
+    <!-- Sección Productos Recomendados Para Ti -->
+    <section id="productosrecomendadosparati" class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+
+        <!-- Encabezado igual al de Productos Destacados -->
+        <div class="text-center mb-8">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+            Productos Recomendados
+            <span class="text-yellow-400">Para ti</span>
+        </h2>
+        <p class="text-xl text-gray-900 max-w-10xl mx-auto leading-relaxed">
+            Basado en tus preferencias, seleccionamos las plantas perfectas para tu espacio y estilo de vida.
+        </p>
+        <div class="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 rounded-full"></div>
+        </div>
+
+        <!-- Pills de filtros activos (se ocultan si no hay encuesta) -->
+        <div id="recom-filtros-activos" class="flex flex-wrap justify-center gap-2 mb-8" style="display:none!important"></div>
+
+        <!-- Grid dinámico — mismo id-pattern que featured-grid -->
+        <div id="recom-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+
+        <!-- Estado inicial: el usuario aún no hizo la encuesta -->
+        <div id="recom-estado-inicial" class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family: 'Poppins', sans-serif;">
+            <p class="text-gray-500 text-lg text-center">
+            Aún no has completado la encuesta.<br>
+            ¡Descubre qué planta es perfecta para ti!
+            </p>
+            <a href="recomendaciones.html"
+            class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
+                    px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
+                    hover:shadow-lg hover:shadow-white text-sm">
+            Hacer la encuesta
+            </a>
+        </div>
+
+        </div>
+    </div>
     </section>
 
 
@@ -701,6 +724,8 @@
     <script src="../scripts/chatbot.js"></script>
     <script src="../scripts/chat-ui.js"></script>
 
+    <script src="../scripts/recomendaciones.js"> </script>
+
         <!-- Submenú Seguridad -->
     <div id="submenu-seguridad" class="floating-submenu">
         <div class="px-4 py-2 border-b border-gray-100">
@@ -721,15 +746,15 @@
         <div class="px-4 py-2 border-b border-gray-100">
             <p class="text-gray-700 text-sm font-medium">Zuri</p>
         </div>
-        <a href="zuri-chat.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="registro_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">📋</span>
             <span class="text-gray-700 text-sm">Registrar plantas</span>
         </a>
-        <a href="zuri-plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="mis_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">🪴</span>
             <span class="text-gray-700 text-sm">Mis plantas</span>
         </a>
-        <a href="zuri-consejos.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="plantas_IA.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">💡</span>
             <span class="text-gray-700 text-sm">Transformar espacios</span>
         </a>
@@ -923,6 +948,132 @@ async function cargarProductosDestacados() {
     }
 }
 document.addEventListener('DOMContentLoaded', cargarProductosDestacados);
+</script>
+<!-- RECOMENDACIONES PARA TI -->
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🌿 Script recomendaciones iniciado');
+    console.log('🔑 Token:', getToken() ? 'existe' : 'NO existe');
+
+    if (!getToken()) { 
+        console.log('⚠️ Sin token → mostrando invitación');
+        mostrarInvitacion(); 
+        return; 
+    }
+    // ... resto del código
+(function () {
+  const API = 'http://localhost:5000';
+
+  function getToken() {
+    return localStorage.getItem('token') || null;
+  }
+
+  function authHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
+    return h;
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+
+    if (!getToken()) { mostrarInvitacion(); return; }
+
+    const guardado = sessionStorage.getItem('plantaRecomendaciones');
+    if (guardado) {
+      try {
+        const { plantas, filtros } = JSON.parse(guardado);
+        sessionStorage.removeItem('plantaRecomendaciones');
+        renderGrid(plantas, filtros);
+        return;
+      } catch { sessionStorage.removeItem('plantaRecomendaciones'); }
+    }
+
+    mostrarSpinner();
+    try {
+      const estadoRes = await fetch(`${API}/api/recomendaciones/estado`, { headers: authHeaders() });
+      if (!estadoRes.ok) { mostrarInvitacion(); return; }
+
+      const estado = await estadoRes.json();
+      if (!estado.completada) { mostrarInvitacion(); return; }
+
+      const recomRes = await fetch(`${API}/api/recomendaciones`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify(estado.preferencias),
+      });
+      if (!recomRes.ok) { mostrarInvitacion(); return; }
+
+      const data = await recomRes.json();
+      renderGrid(data.recomendaciones, data.preferencias);
+
+    } catch (e) {
+      console.error('Error recomendaciones:', e);
+      mostrarInvitacion();
+    }
+  });
+
+  function mostrarInvitacion() {
+    setGrid(`
+      <div id="recom-estado-inicial" class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family: 'Poppins', sans-serif;">
+            <p class="text-gray-500 text-lg text-center">
+            Aún no has completado la encuesta.<br>
+            ¡Descubre qué planta es perfecta para ti!
+            </p>
+            <a href="recomendaciones.html"
+            class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
+                    px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
+                    hover:shadow-lg hover:shadow-white text-sm">
+            Hacer la encuesta
+            </a>
+        </div>`);
+  }
+
+  function mostrarSpinner() {
+    setGrid(`
+      <div class="col-span-full flex flex-col items-center justify-center py-16">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+        <p class="text-gray-600 text-lg">Cargando tus plantas ideales…</p>
+      </div>`);
+  }
+
+  function renderGrid(plantas, filtros) {
+    console.log('✅ createProductCard:', typeof createProductCard);
+    console.log('✅ plantas:', plantas?.length);
+
+    if (!plantas?.length) {
+      setGrid(`
+        <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4">
+          <p class="text-gray-500 text-lg text-center">No encontramos plantas con esos filtros.</p>
+        </div>`);
+      return;
+    }
+
+    const grid = document.getElementById('recom-grid');
+    if (!grid) { console.error('❌ No existe #recom-grid en el HTML'); return; }
+    grid.innerHTML = '';
+
+    plantas.forEach((planta, i) => {
+      if (typeof createProductCard !== 'function') {
+        console.error('❌ createProductCard no está definida');
+        return;
+      }
+      const card = createProductCard(planta);
+      card.style.opacity   = '0';
+      card.style.transform = 'translateY(18px)';
+      card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
+      grid.appendChild(card);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        card.style.opacity   = '1';
+        card.style.transform = 'translateY(0)';
+      }));
+    });
+  }
+
+  function setGrid(html) {
+    const el = document.getElementById('recom-grid');
+    if (el) el.innerHTML = html;
+  }
+})();
 </script>
 <script>
     // Cerrar chat al hacer clic fuera

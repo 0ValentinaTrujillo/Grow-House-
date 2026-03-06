@@ -331,6 +331,29 @@ const userSchema = new mongoose.Schema({
     }
 
 }, 
+ {
+    // =============================================
+    // 👇 ENCUESTA DE RECOMENDACIONES — AGREGADO AQUÍ
+    // Guardamos las preferencias de cada usuario
+    // una sola vez, nunca se sobreescriben.
+    // =============================================
+        encuesta: {
+            completada: {
+            type: Boolean,
+            default: false,
+        },
+        fechaRespuesta: {
+            type: Date,
+            default: null,
+        },
+        preferencias: {
+            ubicacion:   { type: String, default: '' },
+            tipo:        { type: String, default: '' },
+            presupuesto: { type: Number, default: 0  },
+            preferencia: { type: String, default: '' },
+        },
+    },
+},
 
 {
     // =============================================
