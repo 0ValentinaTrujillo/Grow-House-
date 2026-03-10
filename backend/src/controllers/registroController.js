@@ -24,8 +24,6 @@ exports.analizarPlanta = async (req, res) => {
       return res.status(500).json({ success: false, message: 'API key de OpenAI no configurada' });
     }
 
-    console.log('🌿 Analizando planta con OpenAI...');
-
     const base64Data = imagen.includes(',') ? imagen.split(',')[1] : imagen;
 
     const completion = await openai.chat.completions.create({
@@ -40,7 +38,6 @@ exports.analizarPlanta = async (req, res) => {
             },
             {
               type: "text",
-              // ✅ El prompt ahora pide exactamente los campos que usa el HTML y el modelo
               text: `Analiza esta planta en detalle. Responde SOLO con un objeto JSON con este formato exacto, sin texto adicional:
               {
                 "nombre_comun": "nombre común de la planta en español",
@@ -81,17 +78,12 @@ exports.analizarPlanta = async (req, res) => {
       throw new Error('No se pudo procesar la respuesta de IA');
     }
 
-    console.log(`✅ Análisis completado: ${resultado.nombre_comun}`);
-
     res.status(200).json({ success: true, data: resultado });
 
   } catch (error) {
-    console.error('❌ Error al analizar planta:', error);
-
     if (error.status === 429) {
       return res.status(429).json({ success: false, message: 'Demasiadas solicitudes. Espera un momento.' });
     }
-
     res.status(500).json({
       success: false,
       message: 'Error al analizar la planta con IA',
@@ -105,7 +97,6 @@ exports.analizarPlanta = async (req, res) => {
 // ======================================================
 exports.analizarYGuardar = async (req, res) => {
   try {
-    // ✅ Ahora también acepta imagen ya analizada para evitar doble llamada a OpenAI
     const { imagen, analisis: analisisExistente } = req.body;
 
     if (!imagen && !analisisExistente) {
@@ -114,7 +105,6 @@ exports.analizarYGuardar = async (req, res) => {
 
     let analisis = analisisExistente;
 
-    // Solo llama a OpenAI si no viene análisis previo
     if (!analisis) {
       const base64Data = imagen.includes(',') ? imagen.split(',')[1] : imagen;
 
@@ -162,8 +152,8 @@ exports.analizarYGuardar = async (req, res) => {
       analisis = JSON.parse(completion.choices[0].message.content);
     }
 
-    // ✅ Guardar usando los mismos nombres de campo que el modelo
     const nuevaPlanta = new Planta({
+      usuario: req.user._id,
       nombre_comun: analisis.nombre_comun,
       nombre_cientifico: analisis.nombre_cientifico,
       familia: analisis.familia,
@@ -178,7 +168,6 @@ exports.analizarYGuardar = async (req, res) => {
     });
 
     await nuevaPlanta.save();
-    console.log(`✅ Planta guardada: ${nuevaPlanta.nombre_comun}`);
 
     res.status(201).json({
       success: true,
@@ -187,7 +176,6 @@ exports.analizarYGuardar = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Error al analizar y guardar:', error);
     res.status(500).json({
       success: false,
       message: 'Error al analizar y guardar la planta',
@@ -201,15 +189,9 @@ exports.analizarYGuardar = async (req, res) => {
 // ======================================================
 exports.obtenerPlantas = async (req, res) => {
   try {
-    const plantas = await Planta.find().sort({ fecha: -1 });
-
-    res.status(200).json({
-      success: true,
-      count: plantas.length,
-      data: plantas
-    });
+    const plantas = await Planta.find({ usuario: req.user._id }).sort({ fecha: -1 });
+    res.status(200).json({ success: true, count: plantas.length, data: plantas });
   } catch (error) {
-    console.error('Error al obtener plantas:', error);
     res.status(500).json({ success: false, message: 'Error al obtener las plantas', error: error.message });
   }
 };
@@ -219,15 +201,10 @@ exports.obtenerPlantas = async (req, res) => {
 // ======================================================
 exports.obtenerPlantaPorId = async (req, res) => {
   try {
-    const planta = await Planta.findById(req.params.id);
-
-    if (!planta) {
-      return res.status(404).json({ success: false, message: 'Planta no encontrada' });
-    }
-
+    const planta = await Planta.findOne({ _id: req.params.id, usuario: req.user._id });
+    if (!planta) return res.status(404).json({ success: false, message: 'Planta no encontrada' });
     res.status(200).json({ success: true, data: planta });
   } catch (error) {
-    console.error('Error al obtener planta:', error);
     res.status(500).json({ success: false, message: 'Error al obtener la planta', error: error.message });
   }
 };
@@ -237,15 +214,14 @@ exports.obtenerPlantaPorId = async (req, res) => {
 // ======================================================
 exports.actualizarPlanta = async (req, res) => {
   try {
-    const planta = await Planta.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-
-    if (!planta) {
-      return res.status(404).json({ success: false, message: 'Planta no encontrada' });
-    }
-
+    const planta = await Planta.findOneAndUpdate(
+      { _id: req.params.id, usuario: req.user._id },
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!planta) return res.status(404).json({ success: false, message: 'Planta no encontrada' });
     res.status(200).json({ success: true, message: 'Planta actualizada exitosamente', data: planta });
   } catch (error) {
-    console.error('Error al actualizar planta:', error);
     res.status(500).json({ success: false, message: 'Error al actualizar la planta', error: error.message });
   }
 };
@@ -255,15 +231,10 @@ exports.actualizarPlanta = async (req, res) => {
 // ======================================================
 exports.eliminarPlanta = async (req, res) => {
   try {
-    const planta = await Planta.findByIdAndDelete(req.params.id);
-
-    if (!planta) {
-      return res.status(404).json({ success: false, message: 'Planta no encontrada' });
-    }
-
+    const planta = await Planta.findOneAndDelete({ _id: req.params.id, usuario: req.user._id });
+    if (!planta) return res.status(404).json({ success: false, message: 'Planta no encontrada' });
     res.status(200).json({ success: true, message: 'Planta eliminada exitosamente' });
   } catch (error) {
-    console.error('Error al eliminar planta:', error);
     res.status(500).json({ success: false, message: 'Error al eliminar la planta', error: error.message });
   }
 };

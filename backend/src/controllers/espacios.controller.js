@@ -1,4 +1,5 @@
 const OpenAI = require("openai");
+const { toFile } = require('openai');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -41,22 +42,39 @@ const analizarEspacio = async (req, res) => {
           content: [
             {
               type: "text",
-              text: `Eres experto en diseño interior.
+              text: `Eres experto en diseño interior y plantas de interior.
 
-Analiza esta imagen y responde SOLO en JSON válido sin texto adicional.
+Analiza DETALLADAMENTE esta imagen:
+- Tipo de espacio (sala, cocina, oficina, dormitorio, etc.)
+- Nivel de luz natural disponible (alta, media, baja)
+- Estilo decorativo (moderno, rústico, minimalista, etc.)
+- Espacios vacíos donde podrían ir plantas
+- Colores predominantes
+- Tamaño aproximado del espacio
+
+Basándote EXCLUSIVAMENTE en lo que ves en la imagen:
+- Si el espacio es pequeño o ya está lleno: recomienda 1-2 plantas
+- Si el espacio es mediano con algunos lugares disponibles: recomienda 2-3 plantas
+- Si el espacio es grande con muchos lugares disponibles: recomienda 4-5 plantas
+- Si hay poca luz natural: recomienda solo plantas de sombra
+- Si hay mucha luz: recomienda plantas de sol
+- No fuerces plantas donde no caben o no tienen sentido
+
+Responde SOLO en JSON válido sin texto adicional:
 
 {
-  "descripcion_espacio": "texto",
-  "descripcion_visual_detallada": "texto",
+  "descripcion_espacio": "descripción detallada del espacio, tipo, iluminación, tamaño y estilo",
   "plantas_sugeridas": [
     {
       "nombre_cientifico_y_comun": "texto",
-      "numero_y_ubicacion": "texto",
-      "descripcion_planta": "texto"
+      "numero_y_ubicacion": "ubicación exacta y específica dentro de ESTE espacio",
+      "descripcion_planta": "por qué esta planta es perfecta para ESTE espacio específico, sus necesidades de luz y cuidados"
     }
   ],
-  "recomendaciones": "texto"
-}`
+  "recomendaciones": "consejos específicos para decorar ESTE espacio con plantas, considerando su iluminación, tamaño y estilo"
+}
+
+El array plantas_sugeridas debe tener exactamente la cantidad de plantas que el espacio necesita y puede albergar. Cada planta debe tener una ubicación diferente y estar completamente justificada por las características reales del espacio analizado.`
             },
             {
               type: "image_url",

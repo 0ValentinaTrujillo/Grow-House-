@@ -371,6 +371,16 @@
     /* Si cambias el puerto del backend, solo cambia esta variable */
 
     #canvas { display: none; }
+
+    .to-black {
+      color: black;
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .to-black:hover {
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -423,8 +433,8 @@
 
   </div><!-- /main-grid -->
 
-  <div class="footer"> <strong>Tip:</strong> Toma la foto con buena luz para mejores resultados
-  </div>
+  <div class="footer"> <strong>Tip:</strong> Toma la foto con buena luz para mejores resultados <a href="index.html" class="to-black">Inicio</a>
+  </div> 
 
   <canvas id="canvas"></canvas>
 
@@ -511,44 +521,50 @@
 
   /* ─── ANALIZAR CON IA (llama al backend) ─── */
   async function analizarPlanta() {
-    if (!imagenActual) return;
+  if (!imagenActual) return;
 
-    const btn = document.getElementById('btn-analizar');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Analizando...';
+  const token = localStorage.getItem('growhouse-auth-token');
+  if (!token) { alert('Debes iniciar sesión para analizar plantas.'); return; }
 
+  const btn = document.getElementById('btn-analizar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Analizando...';
+
+  document.getElementById('panel-resultado').innerHTML = `
+    <div class="loading-state">
+      <div class="spinner spinner-lg"></div>
+      <p style="font-size:1.05rem;margin-bottom:8px;">Analizando tu planta…</p>
+      <p style="font-size:0.88rem;color:#9ca3af;">La IA está trabajando (10–20 seg)</p>
+    </div>`;
+
+  try {
+    const response = await fetch(`${API_BASE}/api/registro/analizar`, {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ imagen: imagenActual })
+    });
+
+    const data = await response.json();
+    if (!data.success) throw new Error(data.message || 'Error en el servidor');
+
+    analisisActual = data.data;
+    mostrarResultado(analisisActual);
+
+  } catch (err) {
     document.getElementById('panel-resultado').innerHTML = `
-      <div class="loading-state">
-        <div class="spinner spinner-lg"></div>
-        <p style="font-size:1.05rem;margin-bottom:8px;">Analizando tu planta…</p>
-        <p style="font-size:0.88rem;color:#9ca3af;">La IA está trabajando (10–20 seg)</p>
+      <div class="empty-state">
+        <div style="font-size:3rem;">❌</div>
+        <p style="color:#dc2626;margin-top:14px;font-weight:600;">Error al analizar</p>
+        <p style="font-size:0.85rem;margin-top:8px;">${err.message}</p>
       </div>`;
-
-    try {
-      const response = await fetch(`${API_BASE}/api/registro/analizar`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ imagen: imagenActual })
-      });
-
-      const data = await response.json();
-      if (!data.success) throw new Error(data.message || 'Error en el servidor');
-
-      analisisActual = data.data;
-      mostrarResultado(analisisActual);
-
-    } catch (err) {
-      document.getElementById('panel-resultado').innerHTML = `
-        <div class="empty-state">
-          <div style="font-size:3rem;">❌</div>
-          <p style="color:#dc2626;margin-top:14px;font-weight:600;">Error al analizar</p>
-          <p style="font-size:0.85rem;margin-top:8px;">${err.message}</p>
-        </div>`;
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = 'Analizar Planta con IA';
   }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Analizar Planta con IA';
+}
 
   /* ─── MOSTRAR RESULTADO ─── */
   function mostrarResultado(data) {
@@ -588,44 +604,34 @@
 
   /* ─── GUARDAR EN BACKEND + localStorage ─── */
   async function guardarPlanta() {
-    if (!analisisActual) return;
+  if (!analisisActual) return;
 
-    const btnGuardar = document.querySelector('.btn-guardar');
-    if (btnGuardar) { btnGuardar.disabled = true; btnGuardar.textContent = 'Guardando...'; }
+  const token = localStorage.getItem('growhouse-auth-token');
+  if (!token) { alert('Debes iniciar sesión para guardar plantas.'); return; }
 
-    try {
-      const response = await fetch(`${API_BASE}/api/registro/analizar-y-guardar`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ imagen: imagenActual, analisis: analisisActual })
-      });
+  const btnGuardar = document.querySelector('.btn-guardar');
+  if (btnGuardar) { btnGuardar.disabled = true; btnGuardar.textContent = 'Guardando...'; }
 
-      const result = await response.json();
-      if (!result.success) throw new Error(result.message || 'Error al guardar');
+  try {
+    const response = await fetch(`${API_BASE}/api/registro/analizar-y-guardar`, {
+      method:  'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ imagen: imagenActual, analisis: analisisActual })
+    });
 
-      // También guardar en localStorage para que mis-plantas.html lo muestre
-      const plantas = cargarPlantas();
-      plantas.push({
-        id:                result.data._id || Date.now(),
-        imagen:            imagenActual,
-        fecha:             new Date().toLocaleDateString('es-ES'),
-        nombre_comun:      analisisActual.nombre_comun,
-        nombre_cientifico: analisisActual.nombre_cientifico,
-        familia:           analisisActual.familia,
-        nivel_dificultad:  analisisActual.nivel_dificultad,
-        descripcion:       analisisActual.descripcion,
-        cuidados:          analisisActual.cuidados,
-        recomendaciones:   analisisActual.recomendaciones
-      });
-      guardarPlantasLocal(plantas);
+    const result = await response.json();
+    if (!result.success) throw new Error(result.message || 'Error al guardar');
 
-      location.href = 'mis-plantas.html?guardada=1';
+    location.href = 'mis_plantas.html?guardada=1';
 
-    } catch (err) {
-      alert('Error al guardar: ' + err.message);
-      if (btnGuardar) { btnGuardar.disabled = false; btnGuardar.textContent = '💾 Guardar en Mis Plantas'; }
-    }
+  } catch (err) {
+    alert('Error al guardar: ' + err.message);
+    if (btnGuardar) { btnGuardar.disabled = false; btnGuardar.textContent = '💾 Guardar en Mis Plantas'; }
   }
+}
 
   /* ─── MOSTRAR DETALLE (solo lectura) ─── */
   function mostrarDetalle(data) {

@@ -38,7 +38,8 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https:"],
             imgSrc: ["'self'", "data:", "https:"],
-            fontSrc: ["'self'", "https:", "data:"]
+            fontSrc: ["'self'", "https:", "data:"],
+            connectSrc: ["'self'"] 
         }
     }
 }));
@@ -62,6 +63,7 @@ app.use((req, res, next) => {
     if (url.includes('/chatbot')) requestType = '🤖'; 
     if (url.includes('/health')) requestType = '💚';
     if (url.includes('/recomendaciones')) requestType = '🌿';
+    if (url.includes('/espacios')) requestType = '🏠';
     
     console.log(`${requestType} ${timestamp} - ${method} ${url} - IP: ${ip}`);
     next();
@@ -124,19 +126,13 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // SANITIZACIÓN
 // =============================================
 app.use(mongoSanitize({ replaceWith: '_' }));
-app.use(xss());
 
-const { sanitizeInput, preventSQLInjection } = require('./middleware/sanitize');
-
-// Excluir /api/avatar porque el base64 contiene caracteres especiales
+// ✅ xss() excluye rutas con imágenes base64
 app.use((req, res, next) => {
-    if (req.path.startsWith('/api/avatar')) return next();
-    sanitizeInput(req, res, next);
-});
-
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/avatar')) return next();
-    preventSQLInjection(req, res, next);
+    if (req.path.startsWith('/api/avatar') || req.path.startsWith('/api/registro')) {
+        return next();
+    }
+    xss()(req, res, next);
 });
 
 // =============================================
@@ -180,12 +176,20 @@ app.use('/api/chatbot', chatbotRoutes);
 //recomendaciones
 app.use('/api/recomendaciones', require('./routes/recomendaciones'));
 
+// Registro
+app.use('/api/registro', require('./routes/registro'));
+
+//Espacios
+app.use('/api/espacios', require('./routes/espacios'));
+
 console.log('✅ Rutas activas:');
 console.log('   📱 /api/products - Gestion de productos');
 console.log('   🔐 /api/auth - Autenticacion y usuarios');
 console.log('   📦 /api/orders - Gestión de pedidos');
 console.log('   👑 /api/admin - Panel Administrador');
 console.log('   🌿 /api/recomendaciones - Recomendaciones personalizadas');
+console.log('   🌿 /api/registro - Registro de plantas ');
+console.log('   🌿 /api/espacios - Decorar espacios')
 
 // =============================================
 // HEALTH
