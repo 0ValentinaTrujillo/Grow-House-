@@ -2,16 +2,16 @@
 <html lang="en">
 
 <head>
-    <base href="/src/pages/">
-    <link rel="stylesheet" href="styles.css">
+    
+    <link rel="stylesheet" href="/src/pages/styles.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grow House</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/output.css">
-    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="stylesheet" href="/src/styles/output.css">
+    <link rel="stylesheet" href="/src/styles/styles.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -246,20 +246,20 @@
         <nav class="navegation mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center text-2xl font-bold">
-                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
+                    <img src="/src/assets/images/Green and White Plants Organic Logo.png" alt="Logo"
                         class="w-12 h-12 rounded-full object-cover mr-4">
-                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                    <a href="/" class="text-green-800 font-bold">Grow House</a>
                 </div>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8">
-                    <a href="index.html"
+                    <a href="/"
                         class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
                         Inicio
                         <span
                             class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                     </a>
-                    <a href="productos.html"
+                    <a href="/src/pages/productos.html"
                         class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
                         Productos
                         <span
@@ -305,7 +305,7 @@
                         </svg>
                     </button>
                     <!--Carrito-->
-                    <a href="carrito.html" class="relative flex items-center justify-center">
+                    <a href="/src/pages/carrito.html" class="relative flex items-center justify-center">
                         <i class="fas fa-shopping-cart text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200">
                         </i>
                         <span id="cart-counter"
@@ -361,13 +361,13 @@
                             <!-- ================= ADMIN ================= -->
                             <div id="admin-options" style="display:none;">
 
-                                <a href="dashboard.html"
+                                <a href="/src/pages/dashboard.html"
                                     class="flex items-center px-4 py-3 hover:bg-gray-50 transition">
                                     <span class="mr-3 text-lg">📊</span>
                                     <span class="text-gray-700 text-sm font-medium">Dashboard</span>
                                 </a>
 
-                                <a href="perfil.html"
+                                <a href="/src/pages/perfil.html"
                                     class="flex items-center px-4 py-3 hover:bg-gray-50 transition">
                                     <span class="mr-3 text-lg">👤</span>
                                     <span class="text-gray-700 text-sm font-medium">Perfil</span>
@@ -378,7 +378,7 @@
                             <!-- ================= CLIENTE ================= -->
                             <div id="client-options" style="display:none;">
 
-                                <a href="perfil.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <a href="/src/pages/perfil.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
                                     <span class="mr-3 text-lg">👤</span>
                                     <span class="text-gray-700 text-sm font-medium">Perfil</span>
                                 </a>
@@ -389,12 +389,12 @@
                                     <i class="fas fa-chevron-left ml-auto text-gray-400 text-xs"></i>
                                 </div>
 
-                                <a href="favoritos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <a href="/src/pages/favoritos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
                                     <span class="mr-3 text-lg">❤️</span>
                                     <span class="text-gray-700 text-sm font-medium">Favoritos</span>
                                 </a>
 
-                                <a href="mis-pedidos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                <a href="/src/pages/mis-pedidos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
                                     <span class="mr-3 text-lg">📦</span>
                                     <span class="text-gray-700 text-sm font-medium">Mis Pedidos</span>
                                 </a>
@@ -424,7 +424,7 @@
                     <div id="auth-buttons" class="flex items-center space-x-4">
 
                         <!-- Iniciar Sesión -->
-                        <a href="login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
+                        <a href="/src/pages/login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
                                 rounded-full bg-white/60 backdrop-blur-sm
                                 hover:bg-gray-50 hover:border-green-900
                                 transition-all duration-300 shadow-sm hover:shadow-md">
@@ -432,7 +432,7 @@
                         </a>
 
                         <!-- Registrarse -->
-                        <a href="register.html" class="px-6 py-2.5 font-semibold text-white 
+                        <a href="/src/pages/register.html" class="px-6 py-2.5 font-semibold text-white 
                                 rounded-full bg-gradient-to-r from-green-800 to-green-700
                                 hover:shadow-lg hover:scale-105
                                 transition-all duration-300">
@@ -445,10 +445,10 @@
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
                 <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
 
-                    <a href="index.html"
+                    <a href="/"
                         class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
 
-                    <a href="productos.html"
+                    <a href="/src/pages/productos.html"
                         class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
 
                     <a href="index.html#categorias"
@@ -500,7 +500,7 @@
 
         <ul class="cards-container">
 
-            <li onclick="location.href='plantas.html'" style="cursor: pointer;">
+            <li onclick="location.href='/src/pages/plantas.html'" style="cursor: pointer;">
                 <img src="https://cdn.agroempresario.com/images/posts/fb5c06964dc19ebc3052a82017083a0bff799d8451de76d2_840.jpg"
                     alt="">
                 <div class="content">
@@ -510,7 +510,7 @@
                 </div>
             </li>
 
-            <li onclick="location.href='materas.html'" style="cursor: pointer;">
+            <li onclick="location.href='/src/pages/materas.html'" style="cursor: pointer;">
                 <img src="https://alsolarvivero.com/cdn/shop/files/Imagen3_e2782426-21f6-4a14-9765-b24ebc363a94.jpg?v=1697228248&width=416"
                     alt="">
                 <div class="content">
@@ -520,7 +520,7 @@
                 </div>
             </li>
 
-            <li onclick="location.href='decoraciones.html'" style="cursor: pointer;">
+            <li onclick="location.href='/src/pages/decoraciones.html'" style="cursor: pointer;">
                 <img src="https://m.media-amazon.com/images/I/81bESfVXHbS._AC_UF894,1000_QL80_.jpg"
                     alt="">
                 <div class="content">
@@ -530,7 +530,7 @@
                 </div>
             </li>
 
-            <li onclick="location.href='implementos.html'" style="cursor: pointer;">
+            <li onclick="location.href='/src/pages/implementos.html'" style="cursor: pointer;">
                 <img src="https://www.verdeesvida.es/files/novelty/13072023121658_Epoca%20MMV.jpg" alt="">
                 <div class="content">
                     <span>
@@ -590,7 +590,7 @@
             Aún no has completado la encuesta.<br>
             ¡Descubre qué planta es perfecta para ti!
             </p>
-            <a href="recomendaciones.html"
+            <a href="/src/pages/recomendaciones.html"
             class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
                     px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
                     hover:shadow-lg hover:shadow-white text-sm">
@@ -648,9 +648,9 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
                     <ul class="space-y-2">
-                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="/src/pages/productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
                         <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                        <li><a href="/src/pages/carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
                     </ul>
                 </div>
 
@@ -679,7 +679,7 @@
         <!-- Botón flotante del chatbot -->
         <button id="chat-toggle" class="chat-btn">
             <img
-                src="../assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
+                src="/src/assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
                 id="icon-cactus"
                 class="icon"
                 alt="Chat Zuri"
@@ -695,51 +695,51 @@
 
     </footer>
     <!-- Config - PRIMERO -->
-    <script src="../scripts/config.js"></script>
+    <script src="/src/scripts/config.js"></script>
     <!-- Auth API - PRIMERO -->
-    <script src="../scripts/auth-api.js"></script>
+    <script src="/src/scripts/auth-api.js"></script>
 
     <!-- Profile Image Manager - ANTES del Navbar Avatar -->
-    <script src="../scripts/profile-image.js"></script>
+    <script src="/src/scripts/profile-image.js"></script>
 
     <!-- Navbar Avatar Manager -->
-    <script src="../scripts/navbar-avatar.js"></script>
+    <script src="/src/scripts/navbar-avatar.js"></script>
 
     <!-- UI Manager - SEGUNDO (NUEVO) -->
-    <script src="../scripts/ui-manager.js"></script>
+    <script src="/src/scripts/ui-manager.js"></script>
 
     <!-- Session Manager - TERCERO -->
-    <script src="../scripts/session.js"></script>
+    <script src="/src/scripts/session.js"></script>
 
     <!-- Novedades y Notificaciones Manager -->
-    <script src="../scripts/novedades-notificaciones.js"></script>
-    <script src="../scripts/plantas-notificaciones.js"></script>
+    <script src="/src/scripts/novedades-notificaciones.js"></script>
+    <script src="/src/scripts/plantas-notificaciones.js"></script>
 
     <!-- Carrito y otros scripts - DESPUÉS -->
-    <script src="../scripts/carrito.js"></script>
+    <script src="/src/scripts/carrito.js"></script>
     <!--API productos-->
-    <script src="../scripts/api.js"></script>
-    <script src="../scripts/productos-api.js"></script>
-    <script src="../scripts/rating.js"></script>
+    <script src="/src/scripts/api.js"></script>
+    <script src="/src/scripts/productos-api.js"></script>
+    <script src="/src/scripts/rating.js"></script>
 
-    <script src="../scripts/main.js"></script>
+    <script src="/src/scripts/main.js"></script>
 
     <!--chatbot-->
-    <script src="../scripts/chatbot.js"></script>
-    <script src="../scripts/chat-ui.js"></script>
+    <script src="/src/scripts/chatbot.js"></script>
+    <script src="/src/scripts/chat-ui.js"></script>
 
-    <script src="../scripts/recomendaciones.js"> </script>
+    <script src="/src/scripts/recomendaciones.js"> </script>
 
         <!-- Submenú Seguridad -->
     <div id="submenu-seguridad" class="floating-submenu">
         <div class="px-4 py-2 border-b border-gray-100">
             <p class="text-gray-700 text-sm font-medium">Seguridad</p>
         </div>
-        <a href="recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="/src/pages/recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">🔑</span>
             <span class="text-gray-700 text-sm">Cambiar Contraseña</span>
         </a>
-        <a href="privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="/src/pages/privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">🛡️</span>
             <span class="text-gray-700 text-sm">Privacidad</span>
         </a>
@@ -750,15 +750,15 @@
         <div class="px-4 py-2 border-b border-gray-100">
             <p class="text-gray-700 text-sm font-medium">Zuri</p>
         </div>
-        <a href="registro_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="/src/pages/registro_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">📋</span>
             <span class="text-gray-700 text-sm">Registrar plantas</span>
         </a>
-        <a href="mis_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="/src/pages/mis_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">🪴</span>
             <span class="text-gray-700 text-sm">Mis plantas</span>
         </a>
-        <a href="plantas_IA.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+        <a href="/src/pages/plantas_IA.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
             <span class="mr-3">💡</span>
             <span class="text-gray-700 text-sm">Transformar espacios</span>
         </a>
@@ -930,7 +930,7 @@
                         Aún no has completado la encuesta.<br>
                         ¡Descubre qué planta es perfecta para ti!
                     </p>
-                    <a href="recomendaciones.html"
+                    <a href="/src/pages/recomendaciones.html"
                     class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800
                             text-white font-normal px-6 py-3 rounded-xl transition-all duration-300
                             hover:-translate-y-1 hover:shadow-lg text-sm">
