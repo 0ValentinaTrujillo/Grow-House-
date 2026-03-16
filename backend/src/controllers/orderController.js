@@ -6,7 +6,6 @@
 const Order = require('../models/Order');
 const Product = require('../models/product');
 
-console.log('📦 Controlador de pedidos cargado');
 
 // =============================================
 // FUNCIÓN 1: OBTENER PEDIDOS DEL USUARIO AUTENTICADO
@@ -443,4 +442,3 @@ module.exports = {
     getOrderStats
 };
 
-console.log('✅ Controlador de pedidos exportado: 7 funciones disponibles');

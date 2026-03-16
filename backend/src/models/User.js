@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-console.log('👤 Iniciando creación del modelo User con seguridad avanzada...');
 
 // =============================================
 // ESQUEMA DEL USUARIO
@@ -388,23 +387,13 @@ userSchema.virtual('formattedTotalSpent').get(function() {
 // =============================================
 
 userSchema.pre('save', async function(next) {
-    console.log(`🔍 Procesando usuario antes de guardar: ${this.email}`);
-
     if (!this.isModified('password')) {
-        console.log(`💤 Usuario ${this.email}: contraseña no modificada, saltando encriptación`);
         return next();
     }
 
     try {
-        console.log(`🔐 Encriptando contraseña para usuario: ${this.email}`);
         const saltRounds = 12;
-        const originalLength = this.password.length;
         this.password = await bcrypt.hash(this.password, saltRounds);
-        console.log(`✅ Contraseña encriptada exitosamente:`);
-        console.log(`   📧 Email: ${this.email}`);
-        console.log(`   📏 Longitud original: ${originalLength} caracteres`);
-        console.log(`   🔒 Longitud encriptada: ${this.password.length} caracteres`);
-        console.log(`   🛡️ Nivel de seguridad: ${saltRounds} rounds`);
         next();
     } catch (error) {
         console.error(`❌ Error encriptando contraseña para ${this.email}:`);
@@ -413,17 +402,8 @@ userSchema.pre('save', async function(next) {
     }
 });
 
-userSchema.post('save', function(doc) {
-    console.log(`✅ Usuario guardado exitosamente:`);
-    console.log(`   👤 Nombre: ${doc.fullName}`);
-    console.log(`   📧 Email: ${doc.email}`);
-    console.log(`   👑 Rol: ${doc.role}`);
-    console.log(`   📊 Nivel: ${doc.customerLevel}`);
-    console.log(`   🆔 ID: ${doc._id}`);
-});
 
 userSchema.pre('remove', function(next) {
-    console.log(`🗑️ Preparando eliminación de usuario: ${this.email}`);
     next();
 });
 
@@ -433,20 +413,8 @@ userSchema.pre('remove', function(next) {
 
 userSchema.methods.comparePassword = async function(candidatePassword) {
     try {
-        console.log(`🔍 Verificando contraseña para usuario: ${this.email}`);
-        const startTime = Date.now();
-        const isMatch = await bcrypt.compare(candidatePassword, this.password);
-        const endTime = Date.now();
-        if (isMatch) {
-            console.log(`✅ Contraseña CORRECTA para: ${this.email}`);
-        } else {
-            console.log(`❌ Contraseña INCORRECTA para: ${this.email}`);
-        }
-        console.log(`   ⏱️ Tiempo de verificación: ${endTime - startTime}ms`);
-        return isMatch;
+        return await bcrypt.compare(candidatePassword, this.password);
     } catch (error) {
-        console.error(`❌ Error verificando contraseña para ${this.email}:`);
-        console.error(`   🐛 Error: ${error.message}`);
         throw new Error('Error interno al verificar contraseña');
     }
 };
@@ -461,7 +429,6 @@ userSchema.methods.incrementLoginAttempts = function() {
     const updates = { $inc: { loginAttempts: 1 } };
     if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
         updates.$set = { lockUntil: Date.now() + 30 * 60 * 1000 };
-        console.log(`🔒 Cuenta bloqueada temporalmente: ${this.email}`);
     }
     return this.updateOne(updates);
 };
@@ -478,17 +445,12 @@ userSchema.methods.addPurchase = function(orderTotal) {
     this.totalSpent  += orderTotal;
     const pointsEarned = Math.floor(orderTotal / 1000);
     this.loyaltyPoints += pointsEarned;
-    console.log(`💰 Compra registrada para ${this.email}:`);
-    console.log(`   💵 Total: ${orderTotal.toLocaleString('es-CO')}`);
-    console.log(`   🏆 Puntos ganados: ${pointsEarned}`);
-    console.log(`   📊 Nuevo nivel: ${this.customerLevel}`);
     return this.save();
 };
 
 userSchema.methods.addToWishlist = function(productId) {
     if (!this.wishlist.includes(productId)) {
         this.wishlist.push(productId);
-        console.log(`❤️ Producto agregado a wishlist de ${this.email}`);
         return this.save();
     }
     return Promise.resolve(this);
@@ -496,25 +458,20 @@ userSchema.methods.addToWishlist = function(productId) {
 
 userSchema.methods.removeFromWishlist = function(productId) {
     this.wishlist = this.wishlist.filter(id => !id.equals(productId));
-    console.log(`💔 Producto removido de wishlist de ${this.email}`);
     return this.save();
 };
 
 userSchema.methods.generateAuthToken = function() {
-    console.log(`🎫 Generando token JWT para usuario: ${this.email}`);
     const payload = {
         id:    this._id,
         email: this.email,
         role:  this.role
     };
-    const token = jwt.sign(
+    return jwt.sign(
         payload,
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRE || '30d' }
     );
-    console.log('✅ Token JWT generado exitosamente');
-    console.log(`📅 Expira en: ${process.env.JWT_EXPIRE || '30d'}`);
-    return token;
 };
 
 userSchema.methods.getPublicProfile = function() {
@@ -544,17 +501,14 @@ userSchema.methods.getPublicProfile = function() {
 // =============================================
 
 userSchema.statics.findByEmail = function(email) {
-    console.log(`🔍 Buscando usuario por email: ${email}`);
     return this.findOne({ email: email.toLowerCase() }).select('+password');
 };
 
 userSchema.statics.findByCredentials = async function(email) {
-    console.log(`🔐 Buscando usuario para login: ${email}`);
     return this.findOne({ email: email.toLowerCase() }).select('+password');
 };
 
 userSchema.statics.getActiveUsers = function(limit = 50) {
-    console.log(`👥 Obteniendo usuarios activos (límite: ${limit})...`);
     return this.find({ isActive: true })
         .sort({ createdAt: -1 })
         .limit(limit)
@@ -562,12 +516,10 @@ userSchema.statics.getActiveUsers = function(limit = 50) {
 };
 
 userSchema.statics.getUsersByRole = function(role) {
-    console.log(`👑 Obteniendo usuarios con rol: ${role}...`);
     return this.find({ role: role, isActive: true }).sort({ createdAt: -1 });
 };
 
 userSchema.statics.getUserStats = function() {
-    console.log('📈 Calculando estadísticas de usuarios...');
     return this.aggregate([
         {
             $group: {
@@ -611,7 +563,6 @@ userSchema.statics.getUsersByLevel = function(level) {
     if (!range) {
         throw new Error('Nivel de cliente inválido. Usar: bronze, silver, gold, platinum');
     }
-    console.log(`🏆 Buscando usuarios nivel ${level}...`);
     return this.find({
         totalSpent: {
             $gte: range.min,
@@ -627,9 +578,4 @@ userSchema.statics.getUsersByLevel = function(level) {
 
 const User = mongoose.model('User', userSchema);
 
-console.log('✅ Modelo User creado exitosamente');
-console.log('📋 Collection en MongoDB: users');
-
 module.exports = User;
-
-console.log('📦 Modelo User exportado y listo para usar');

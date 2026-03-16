@@ -4,7 +4,6 @@
 
 const mongoose = require('mongoose');
 
-console.log('🎟️ Iniciando creación del modelo Coupon...');
 
 // =============================================
 // ESQUEMA DEL CUPÓN
@@ -268,21 +267,13 @@ couponSchema.virtual('usagePercentage').get(function() {
 // =============================================
 
 couponSchema.pre('save', function(next) {
-    console.log(`💾 Procesando cupón: ${this.code}`);
-    
-    // Actualizar estado basado en fechas
     const now = new Date();
     if (now > this.expiryDate) {
         this.status = 'expired';
-        console.log(`⏰ Cupón expirado: ${this.code}`);
     }
-    
-    // Verificar límite de uso
     if (this.usageLimit && this.usageCount >= this.usageLimit) {
         this.status = 'inactive';
-        console.log(`🚫 Cupón agotado: ${this.code}`);
     }
-    
     next();
 });
 
@@ -346,7 +337,6 @@ couponSchema.methods.recordUsage = function(userId, orderValue, discountApplied)
         orderValue: orderValue
     });
     
-    console.log(`✅ Uso registrado - Cupón: ${this.code}, Usuario: ${userId}`);
     return this.save();
 };
 
@@ -406,8 +396,5 @@ couponSchema.statics.getCouponStats = function() {
 // =============================================
 
 const Coupon = mongoose.model('Coupon', couponSchema);
-
-console.log('✅ Modelo Coupon creado exitosamente');
-console.log('📋 Collection en MongoDB: coupons');
 
 module.exports = Coupon;

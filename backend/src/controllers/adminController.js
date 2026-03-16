@@ -9,7 +9,6 @@ const Coupon = require('../models/Coupon');
 const Campaign = require('../models/Campaign');
 const nodemailer = require('nodemailer');
 
-console.log('🎮 Inicializando controlador de administrador');
 
 const createTransporter = async () => {
     return nodemailer.createTransport({
@@ -1388,11 +1387,3 @@ exports.createPhysicalOrder = async (req, res) => {
     }
 };
 
-console.log('✅ Controlador de administrador configurado');
-console.log('🎮 Funciones disponibles:');
-console.log('   📊 Dashboard y estadísticas');
-console.log('   📱 CRUD de productos');
-console.log('   🛒 Gestión de pedidos');
-console.log('   👥 Gestión de clientes');
-console.log('   📧 Marketing');
-console.log('   📈 Reportes');

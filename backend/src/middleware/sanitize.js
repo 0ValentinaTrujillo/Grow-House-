@@ -1,5 +1,3 @@
-console.log('🧹 Inicializando middleware de sanitización personalizado');
-
 const sanitizeObject = (obj) => {
     if (typeof obj !== 'object' || obj === null) {
         return obj;
@@ -94,4 +92,3 @@ module.exports = {
     preventSQLInjection
 };
 
-console.log('✅ Middleware de sanitización personalizado exportado');

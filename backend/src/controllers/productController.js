@@ -6,7 +6,6 @@
 const mongoose = require('mongoose');
 const Product = require('../models/product');
 
-console.log('🎮 Controlador de productos Grow House inicializado');
 
 // =============================================
 // FUNCIÓN DE IA - GENERAR INFO DEL PRODUCTO
@@ -401,4 +400,3 @@ module.exports = {
     deleteProduct
 };
 
-console.log('✅ Controlador exportado: 5 funciones CRUD disponibles');

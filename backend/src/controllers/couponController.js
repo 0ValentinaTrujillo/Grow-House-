@@ -4,7 +4,6 @@
 
 const Coupon = require('../models/Coupon');
 
-console.log('🎟️ Inicializando controlador de cupones');
 
 // =============================================
 // CRUD DE CUPONES
@@ -476,10 +475,3 @@ exports.toggleCouponStatus = async (req, res) => {
 };
 
 
-console.log('✅ Controlador de cupones configurado');
-console.log('🎟️ Funcionalidades disponibles:');
-console.log('   📋 CRUD completo de cupones');
-console.log('   ✅ Validación y aplicación');
-console.log('   📊 Estadísticas y reportes');
-console.log('   🔄 Activar/desactivar');
-console.log('   🎲 Generación automática de códigos');

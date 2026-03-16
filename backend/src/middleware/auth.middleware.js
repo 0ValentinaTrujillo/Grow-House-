@@ -5,7 +5,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-console.log('🔐 Inicializando middleware de autenticación');
+;
 
 // =============================================
 // VERIFICAR TOKEN JWT
@@ -52,7 +52,6 @@ exports.protect = async (req, res, next) => {
         // 6. Agregar usuario al request
         req.user = user;
         
-        console.log(`✅ Usuario autenticado: ${user.email} (${user.role})`);
         
         next();
         
@@ -97,15 +96,13 @@ exports.authorize = (req, res, next) => {
         
         // Verificar que sea administrador
         if (req.user.role !== 'admin') {
-            console.log(`⛔ Acceso denegado - Usuario ${req.user.email} no es admin`);
-            
+                
             return res.status(403).json({
                 success: false,
                 message: 'Acceso denegado: Se requieren privilegios de administrador'
             });
         }
         
-        console.log(`✅ Administrador verificado: ${req.user.email}`);
         
         next();
         
@@ -185,9 +182,3 @@ exports.verificarPropietarioOAdmin = async (req, res, next) => {
     }
 };
 
-console.log('✅ Middleware de autenticación configurado');
-console.log('🔒 Funciones disponibles:');
-console.log('   • protect - Validar JWT');
-console.log('   • authorize - Solo administradores');
-console.log('   • verificarRol - Roles específicos');
-console.log('   • verificarPropietarioOAdmin - Propietario o admin');

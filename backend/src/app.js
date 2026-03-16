@@ -4,8 +4,15 @@
 
 require('dotenv').config(); // Cargar variables de entorno PRIMERO
 
-// ✅ Verificar API key sin exponerla
-console.log('OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✓ Configurada' : '✗ No encontrada');
+// Banner de inicio
+console.log('╔════════════════════════════════════╗');
+console.log('║     GROW HOUSE API  v1.0.0         ║');
+console.log('╚════════════════════════════════════╝');
+console.log(`  ▸ Entorno   ${process.env.NODE_ENV || 'development'}`);
+console.log(`  ▸ Puerto    ${process.env.PORT || 5000}`);
+console.log(`  ▸ MongoDB   growhouse @ Atlas`);
+console.log(`  ▸ OpenAI    ${process.env.OPENAI_API_KEY ? 'configurado ✓' : 'no configurado ✗'}`);
+console.log('  ─────────────────────────────────');
 
 
 const express = require('express');
@@ -24,7 +31,6 @@ const mongoose = require("mongoose");
 const chatbotRoutes = require('./routes/chatbot');
 
 
-console.log('🚀 Iniciando Grow House Backend...');
 
 // Crear aplicación Express
 const app = express();
@@ -47,7 +53,6 @@ app.use(helmet({
     }
 }));
 
-console.log('🛡️  Helmet activado - Headers de seguridad configurados');
 
 // =============================================
 // LOGGING PERSONALIZADO
@@ -182,14 +187,6 @@ app.use('/api/registro', require('./routes/registro'));
 //Espacios
 app.use('/api/espacios', require('./routes/espacios'));
 
-console.log('✅ Rutas activas:');
-console.log('   📱 /api/products - Gestion de productos');
-console.log('   🔐 /api/auth - Autenticacion y usuarios');
-console.log('   📦 /api/orders - Gestión de pedidos');
-console.log('   👑 /api/admin - Panel Administrador');
-console.log('   🌿 /api/recomendaciones - Recomendaciones personalizadas');
-console.log('   🌿 /api/registro - Registro de plantas ');
-console.log('   🌿 /api/espacios - Decorar espacios')
 
 // =============================================
 // HEALTH

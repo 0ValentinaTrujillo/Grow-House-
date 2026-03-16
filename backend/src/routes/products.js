@@ -24,7 +24,7 @@ const {
     sendEmailCampaign
 } = require('../controllers/adminController');
 
-console.log('🛣️ Inicializando rutas de productos Grow House');
+;
 
 // =============================================
 // RUTAS ESPECIALES PARA ECOMMERCE (DEBEN IR PRIMERO)
@@ -221,16 +221,5 @@ router.get('/:id', getProductById);
 router.post('/', protect, authorize('admin'), createProduct);
 router.put('/:id', protect, authorize('admin'), updateProduct);
 router.delete('/:id', protect, authorize('admin'), deleteProduct);
-
-// =============================================
-// LOGS
-// =============================================
-
-console.log('✅ Rutas de productos configuradas correctamente');
-console.log('   📱 GET /api/products');
-console.log('   🔍 GET /api/products/:id');
-console.log('   🏷️ GET /api/products/category/:category');
-console.log('   🏢 GET /api/products/brand/:brand');
-console.log('   🔎 GET /api/products/search/:query');
 
 module.exports = router;

@@ -40,9 +40,4 @@ router.post('/chat', requireAuth, chatbotController.chat);      // 🔒 Requiere
 router.get('/health', chatbotController.health);                // 🔓 Pública
 router.get('/suggestions', chatbotController.quickSuggestions); // 🔓 Pública
 
-console.log('✅ Rutas del chatbot registradas:');
-console.log('   POST /api/chatbot/chat      🔒 (requiere auth)');
-console.log('   GET  /api/chatbot/health');
-console.log('   GET  /api/chatbot/suggestions');
-
 module.exports = router;

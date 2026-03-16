@@ -80,14 +80,12 @@ router.post("/google-login", async (req, res) => {
             });
             await user.save();
             isNewUser = true;
-            console.log(`✅ Nueva cuenta creada con Google: ${user.email}`);
         } else if (!user.googleId) {
             // 3b. Existe por email pero nunca usó Google → vincular la cuenta
             user.googleId        = payload.sub;
             user.isEmailVerified = true;
             if (!user.avatar && payload.picture) user.avatar = payload.picture;
             await user.save();
-            console.log(`🔗 Cuenta vinculada con Google: ${user.email}`);
         }
 
         if (!user.isActive) {

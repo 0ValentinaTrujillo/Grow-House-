@@ -19,7 +19,6 @@ const {
 // Importar middleware de autenticación
 const { protect, authorize } = require('../middleware/auth');
 
-console.log('📦 Configurando rutas de pedidos...');
 
 // =============================================
 // RUTAS PÚBLICAS (ninguna - todos los pedidos requieren autenticación)
@@ -84,18 +83,5 @@ router.get('/', protect, authorize('admin'), getAllOrders);
  * @body    { status: 'shipped', note: 'Enviado por Servientrega' }
  */
 router.put('/:id/status', protect, authorize('admin'), updateOrderStatus);
-
-console.log('✅ Rutas de pedidos configuradas:');
-console.log('   📋 GET /api/orders/my-orders - Mis pedidos');
-console.log('   🔍 GET /api/orders/:id - Detalle de pedido');
-console.log('   ➕ POST /api/orders - Crear pedido');
-console.log('   ❌ POST /api/orders/cancel/:id - Cancelar pedido');
-console.log('   📊 GET /api/orders/stats - Estadísticas (Admin)');
-console.log('   📋 GET /api/orders - Todos los pedidos (Admin)');
-console.log('   🔄 PUT /api/orders/:id/status - Actualizar estado (Admin)');
-
-// =============================================
-// EXPORTAR ROUTER
-// =============================================
 
 module.exports = router;

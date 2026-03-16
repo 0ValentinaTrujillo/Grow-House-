@@ -5,7 +5,6 @@
 // Importar librerías necesarias
 const mongoose = require('mongoose');
 
-console.log('📦 Iniciando creación del modelo Order con relaciones avanzadas...');
 // =============================================
 // ESQUEMA DEL PEDIDO
 // =============================================
@@ -483,9 +482,8 @@ orderSchema.virtual('formattedTotals').get(function() {
  * Ejecuta cálculos automáticos antes de guardar el pedido
  */
 orderSchema.pre('save', async function(next) {
-    this.wasNew = this.isNew; 
-    console.log(`💾 Procesando pedido antes de guardar: ${this.orderNumber || 'NUEVO'}`);
-    
+    this.wasNew = this.isNew;
+
     try {
         // =============================================
         // 1. GENERAR NÚMERO DE PEDIDO SI ES NUEVO
@@ -507,15 +505,12 @@ orderSchema.pre('save', async function(next) {
             }
             
             this.orderNumber = `${year}-${month}-${String(sequence).padStart(4, '0')}`;
-            console.log(`🔢 Número de pedido generado: ${this.orderNumber}`);
         }
-        
+
         // =============================================
         // 2. CALCULAR TOTALES AUTOMÁTICAMENTE
         // =============================================
-        
-        console.log(`🧮 Calculando totales para ${this.products.length} productos...`);
-        
+
         // Calcular subtotal
         this.totals.subtotal = this.products.reduce((sum, item) => {
             return sum + (item.price * item.quantity);
@@ -529,31 +524,23 @@ orderSchema.pre('save', async function(next) {
         
         // Calcular total final
         this.totals.total = this.totals.subtotal + this.totals.tax + this.totals.shipping - this.totals.discount;
-        
-        console.log(`💰 Cálculos completados:`);
-        console.log(`   Subtotal: $${this.totals.subtotal.toLocaleString('es-CO')}`);
-        console.log(`   Impuestos (${(this.totals.taxRate * 100)}%): $${this.totals.tax.toLocaleString('es-CO')}`);
-        console.log(`   Envío: $${this.totals.shipping.toLocaleString('es-CO')}`);
-        console.log(`   Descuento: $${this.totals.discount.toLocaleString('es-CO')}`);
-        console.log(`   TOTAL: $${this.totals.total.toLocaleString('es-CO')}`);
-        
+
         // =============================================
         // 3. AGREGAR ENTRADA AL HISTORIAL DE ESTADO
         // =============================================
-        
+
         if (this.isNew) {
             this.statusHistory.push({
                 status: this.status,
                 date: new Date(),
                 note: 'Pedido creado'
             });
-            console.log(`📝 Estado inicial agregado al historial: ${this.status}`);
         }
         
         next();
         
     } catch (error) {
-        console.error(`❌ Error en middleware pre-save: ${error.message}`);
+        console.error('❌ Error en middleware pre-save de Order:', error.message);
         next(error);
     }
 });
@@ -561,22 +548,13 @@ orderSchema.pre('save', async function(next) {
  * MIDDLEWARE POST-SAVE
  */
 orderSchema.post('save', async function(doc) {
-    console.log(`✅ Pedido guardado exitosamente:`);
-    console.log(`   📦 Número: ${doc.orderNumber}`);
-    console.log(`   👤 Usuario: ${doc.user}`);
-    console.log(`   💰 Total: ${doc.formattedTotals.total}`);
-    console.log(`   📊 Estado: ${doc.statusText}`);
-    console.log(`   🛒 Productos: ${doc.totalItems} items`);
-    console.log(`   🆔 ID: ${doc._id}`);
-
-    // ✅ NUEVO: Actualizar totalSpent del usuario al crear una orden
+    // Actualizar totalSpent del usuario al crear una orden
     if (doc.wasNew) {
         try {
             const User = require('./User');
             const user = await User.findById(doc.user);
             if (user) {
                 await user.addPurchase(doc.totals.total);
-                console.log(`💰 totalSpent actualizado para: ${user.email}`);
             }
         } catch (err) {
             console.error('❌ Error actualizando totalSpent:', err.message);
@@ -599,26 +577,16 @@ orderSchema.methods.calculateShipping = function() {
     if (subtotal >= 200000) {
         return 0;
     }
-    
-    // Costo base de envío
-    let shippingCost = 25000; // $25,000 costo base
-    
-    // Ajustes según método de envío
+
+    let shippingCost = 25000;
+
     switch (this.shippingMethod) {
-        case 'express':
-            shippingCost = 45000; // $45,000
-            break;
-        case 'overnight':
-            shippingCost = 75000; // $75,000
-            break;
-        case 'pickup':
-            shippingCost = 0; // Gratis si recoge en tienda
-            break;
-        default:
-            shippingCost = 25000; // Standard
+        case 'express':    shippingCost = 45000; break;
+        case 'overnight':  shippingCost = 75000; break;
+        case 'pickup':     shippingCost = 0;     break;
+        default:           shippingCost = 25000;
     }
-    
-    console.log(`🚚 Envío ${this.shippingMethod}: $${shippingCost.toLocaleString('es-CO')}`);
+
     return shippingCost;
 };
 // =============================================
@@ -629,7 +597,6 @@ orderSchema.methods.calculateShipping = function() {
  * Método para cambiar estado del pedido
  */
 orderSchema.methods.changeStatus = function(newStatus, note = '', updatedBy = null) {
-    console.log(`📋 Cambiando estado de ${this.status} a ${newStatus}`);
     
     // Validar transición de estado
     const validTransitions = {
@@ -661,8 +628,7 @@ orderSchema.methods.changeStatus = function(newStatus, note = '', updatedBy = nu
     if (newStatus === 'delivered') {
         this.deliveredDate = new Date();
     }
-    
-    console.log(`✅ Estado cambiado a ${newStatus}${note ? ': ' + note : ''}`);
+
     return this.save();
 };
 
@@ -678,19 +644,9 @@ orderSchema.methods.addProduct = function(productData) {
     );
     
     if (existingProductIndex >= 0) {
-        // Actualizar cantidad si ya existe
         this.products[existingProductIndex].quantity += quantity;
-        console.log(`📦 Cantidad actualizada para producto existente: ${name}`);
     } else {
-        // Agregar nuevo producto
-        this.products.push({
-            product,
-            quantity,
-            price,
-            name,
-            image
-        });
-        console.log(`📦 Nuevo producto agregado: ${name} x${quantity}`);
+        this.products.push({ product, quantity, price, name, image });
     }
     
     return this.save();
@@ -705,9 +661,7 @@ orderSchema.methods.removeProduct = function(productId) {
     );
     
     if (productIndex >= 0) {
-        const removedProduct = this.products[productIndex];
         this.products.splice(productIndex, 1);
-        console.log(`🗑️ Producto removido: ${removedProduct.name}`);
         return this.save();
     } else {
         throw new Error('Producto no encontrado en el pedido');
@@ -742,7 +696,6 @@ orderSchema.methods.getEstimatedDeliveryDays = function() {
  * Obtener pedidos por usuario
  */
 orderSchema.statics.findByUser = function(userId, options = {}) {
-    console.log(`🔍 Buscando pedidos del usuario: ${userId}`);
     
     const query = this.find({ user: userId });
     
@@ -762,7 +715,6 @@ orderSchema.statics.findByUser = function(userId, options = {}) {
  * Obtener estadísticas de ventas
  */
 orderSchema.statics.getSalesStats = function(dateFrom, dateTo) {
-    console.log(`📊 Calculando estadísticas de ventas...`);
     
     const matchStage = {
         status: { $in: ['delivered', 'shipped'] }, // Solo pedidos completados/enviados
@@ -803,7 +755,6 @@ orderSchema.statics.getSalesStats = function(dateFrom, dateTo) {
  * Obtener órdenes por estado
  */
 orderSchema.statics.getOrdersByStatus = function(status) {
-    console.log(`📋 Obteniendo pedidos con estado: ${status}`);
     
     return this.find({ status })
                .populate('user', 'firstName lastName email')
@@ -815,7 +766,6 @@ orderSchema.statics.getOrdersByStatus = function(status) {
  * Obtener pedidos pendientes de hace más de X días
  */
 orderSchema.statics.getPendingOrders = function(daysOld = 2) {
-    console.log(`⏰ Buscando pedidos pendientes de hace más de ${daysOld} días...`);
     
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
@@ -830,7 +780,6 @@ orderSchema.statics.getPendingOrders = function(daysOld = 2) {
  * Obtener top productos más vendidos
  */
 orderSchema.statics.getTopProducts = function(limit = 10) {
-    console.log(`🏆 Obteniendo top ${limit} productos más vendidos...`);
     
     return this.aggregate([
         { $match: { status: { $in: ['delivered', 'shipped'] } } },
@@ -863,7 +812,6 @@ orderSchema.statics.getTopProducts = function(limit = 10) {
  * Obtener ventas por mes
  */
 orderSchema.statics.getMonthlySales = function(year) {
-    console.log(`📅 Obteniendo ventas mensuales para el año ${year}...`);
     
     return this.aggregate([
         {
@@ -901,23 +849,4 @@ orderSchema.statics.getMonthlySales = function(year) {
 
 const Order = mongoose.model('Order', orderSchema);
 
-console.log('✅ Modelo Order creado exitosamente');
-console.log('📋 Collection en MongoDB: orders');
-console.log('🔗 Relaciones configuradas:');
-console.log('   • Order → User (belongsTo)');
-console.log('   • Order → Products (belongsToMany)');
-console.log('   • Historial de estados incluido');
-console.log('🧮 Funcionalidades avanzadas:');
-console.log('   • Cálculos automáticos de totales');
-console.log('   • Generación automática de número de pedido');
-console.log('   • Validaciones de transición de estados');
-console.log('   • Métodos de análisis de ventas');
-console.log('📦 Modelo Order exportado y listo para usar');
-
-// =============================================
-// EXPORTAR EL MODELO
-// =============================================
-
 module.exports = Order;
-
-console.log('🔗 Modelo Order exportado con relaciones avanzadas');

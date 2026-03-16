@@ -5,7 +5,6 @@
 // Importar librerías necesarias
 const mongoose = require('mongoose');
 
-console.log('📱 Iniciando creación del modelo Product...');
 // =============================================
 // ESQUEMA DEL PRODUCTO
 // =============================================
@@ -138,19 +137,12 @@ mainImage: {
                 const isValid = isTrustedDomain || hasImageExtension;
                 
                 if (isValid) {
-                    if (isTrustedDomain) {
-                        console.log(`✅ Imagen de dominio confiable: ${urlObj.hostname}`);
-                    } else {
-                        console.log(`✅ Imagen con extensión válida: ${url}`);
-                    }
                     return true;
                 }
-                
-                console.log(`❌ URL rechazada (no es dominio confiable ni tiene extensión): ${url}`);
+
                 return false;
-                
+
             } catch (error) {
-                console.log(`❌ URL inválida: ${url}`);
                 return false;
             }
         },
@@ -354,22 +346,13 @@ productSchema.virtual('statusText').get(function () {
 
 // MIDDLEWARE PRE-SAVE
 productSchema.pre('save', function(next) {
-    console.log(`💾 Procesando producto antes de guardar: ${this.name}`);
-    
     // 1. SINCRONIZAR inStock CON quantity
     this.inStock = this.quantity > 0;
-    
-    if (this.quantity === 0) {
-        console.log(`📦 Producto sin stock: ${this.name}`);
-    } else {
-        console.log(`📦 Stock disponible: ${this.quantity} unidades`);
-    }
-    
+
     // 2. CALCULAR DESCUENTO AUTOMÁTICAMENTE
     if (this.originalPrice && this.price) {
         const discountCalculated = Math.round(((this.originalPrice - this.price) / this.originalPrice) * 100);
         this.discount = discountCalculated;
-        console.log(`🏷️ Descuento calculado automáticamente: ${discountCalculated}%`);
     }
 
     // 3. GENERAR KEYWORDS PARA BÚSQUEDA
@@ -399,8 +382,6 @@ productSchema.pre('save', function(next) {
 
     this.keywords = [...new Set(keywords)].filter(word => word.length > 2);
 
-    console.log(`🔍 Keywords generadas: ${this.keywords.join(', ')}`);
-    
     // 4. NORMALIZAR TAGS
     if (this.tags && this.tags.length > 0) {
         this.tags = [...new Set(
@@ -408,21 +389,11 @@ productSchema.pre('save', function(next) {
                 .filter(tag => typeof tag === 'string' && tag.trim().length > 0)
                 .map(tag => tag.toLowerCase().trim())
         )];
-
-        console.log(`🏷️ Tags normalizadas: ${this.tags.join(', ')}`);
     }
     
     next();
 });
 
-// MIDDLEWARE POST-SAVE
-productSchema.post('save', function(doc) {
-    console.log(`✅ Producto guardado exitosamente:`);
-    console.log(`   📱 Nombre: ${doc.name}`);
-    console.log(`   💰 Precio: ${doc.formattedPrice}`);
-    console.log(`   📦 Stock: ${doc.quantity} unidades (${doc.stockStatus})`);
-    console.log(`   🆔 ID: ${doc._id}`);
-});
 
 // =============================================
 // CREAR EL MODELO DESDE EL ESQUEMA
@@ -430,18 +401,4 @@ productSchema.post('save', function(doc) {
 
 const Product = mongoose.model('Product', productSchema);
 
-console.log('✅ Modelo Product creado exitosamente');
-console.log('📋 Collection en MongoDB: products');
-console.log('🔧 Funcionalidades disponibles:');
-console.log('   • Crear productos: new Product(data)');
-console.log('   • Buscar productos: Product.find()');
-console.log('   • Actualizar productos: Product.findByIdAndUpdate()'); 
-console.log('   • Eliminar productos: Product.findByIdAndDelete()');
-
-// =============================================
-// EXPORTAR EL MODELO PARA USAR EN OTROS ARCHIVOS
-// =============================================
-
 module.exports = Product;
-
-console.log('📦 Modelo Product exportado y listo para usar');

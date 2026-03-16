@@ -12,7 +12,6 @@ const { protect, authorize } = require('../middleware/auth');
 const adminController = require('../controllers/adminController');
 const couponController = require('../controllers/couponController');
 
-console.log('🔐 Inicializando rutas del panel administrador');
 
 // =============================================
 // TODAS LAS RUTAS REQUIEREN AUTENTICACIÓN DE ADMIN
@@ -278,18 +277,5 @@ router.get('/reports/sales', adminController.generateSalesReport);
  * @access  Admin
  */
 router.get('/reports/customers', adminController.generateCustomerReport);
-
-// =============================================
-// LOG DE RUTAS CONFIGURADAS
-// =============================================
-
-console.log('✅ Rutas de administrador configuradas:');
-console.log('   📊 Dashboard y Analytics');
-console.log('   📱 Gestión de Productos');
-console.log('   🛒 Gestión de Pedidos');
-console.log('   👥 Gestión de Clientes');
-console.log('   🎟️ Gestión de Cupones');
-console.log('   📧 Marketing y Promociones');
-console.log('   📈 Reportes y Análisis');
 
 module.exports = router;

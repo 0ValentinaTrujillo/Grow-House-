@@ -4,11 +4,6 @@
 
 const OpenAI = require('openai');
 
-// Verificar API Key al iniciar (sin crashear el servidor si falta)
-console.log('🔑 OpenAI API Key:', process.env.OPENAI_API_KEY ?
-  `Configurada (${process.env.OPENAI_API_KEY.substring(0, 10)}...)` :
-  '❌ NO ENCONTRADA'
-);
 
 // Inicialización lazy: el cliente se crea solo cuando se necesita
 let _openai = null;

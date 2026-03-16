@@ -5,7 +5,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-console.log('🔐 Inicializando middleware de autenticación');
+;
 
 // =============================================
 // MIDDLEWARE: PROTECT - VERIFICAR TOKEN JWT
@@ -13,26 +13,18 @@ console.log('🔐 Inicializando middleware de autenticación');
 
 const protect = async (req, res, next) => {
     let token;
-    
-    console.log('🔒 Middleware protect: Verificando autenticación...');
 
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
     ) {
-        // Token con formato Bearer
         token = req.headers.authorization.split(' ')[1];
-        console.log('   ✅ Token encontrado en header (Bearer)');
     } else if (req.headers.authorization) {
-        // Token sin Bearer
         token = req.headers.authorization;
-        console.log('   ✅ Token encontrado en header (directo)');
     }
-    
-    // Si no hay token en headers, verificar en cookies (opcional)
+
     if (!token && req.cookies && req.cookies.token) {
         token = req.cookies.token;
-        console.log('   ✅ Token encontrado en cookies');
     }
     
     // =============================================
@@ -40,7 +32,6 @@ const protect = async (req, res, next) => {
     // =============================================
     
     if (!token) {
-        console.log('   ❌ No se encontró token');
         return res.status(401).json({
             success: false,
             error: 'No autorizado',
@@ -54,25 +45,10 @@ const protect = async (req, res, next) => {
         // PASO 3: VERIFICAR Y DECODIFICAR TOKEN
         // =============================================
         
-        console.log('   🔍 Verificando token con JWT_SECRET...');
-        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        console.log('   ✅ Token válido');
-        console.log(`   👤 Usuario ID: ${decoded.id}`);
-        console.log(`   📧 Email: ${decoded.email}`);
-        console.log(`   🎭 Rol: ${decoded.role}`);
-        
-        // =============================================
-        // PASO 4: BUSCAR USUARIO EN BASE DE DATOS
-        // =============================================
-        
-        console.log('   🔍 Buscando usuario en MongoDB...');
-
         const user = await User.findById(decoded.id).select('-password');
         
         if (!user) {
-            console.log('   ❌ Usuario no encontrado en BD');
             return res.status(401).json({
                 success: false,
                 error: 'Usuario no encontrado',
@@ -86,7 +62,6 @@ const protect = async (req, res, next) => {
          
         // Verificar si la cuenta está activa
         if (!user.isActive) {
-            console.log('   ❌ Cuenta desactivada');
             return res.status(401).json({
                 success: false,
                 error: 'Cuenta desactivada',
@@ -96,7 +71,6 @@ const protect = async (req, res, next) => {
         
         // Verificar si la cuenta está bloqueada (demasiados intentos fallidos)
         if (user.isLocked) {
-            console.log('   🔒 Cuenta bloqueada temporalmente');
             return res.status(401).json({
                 success: false,
                 error: 'Cuenta bloqueada',
@@ -104,21 +78,7 @@ const protect = async (req, res, next) => {
             });
         }
         
-        console.log('   ✅ Usuario válido y activo');
-        
-        // =============================================
-        // PASO 6: AGREGAR USUARIO A REQUEST
-        // =============================================
-        
         req.user = user;
-        
-        console.log('   🎉 Autenticación exitosa');
-        console.log(`   📝 req.user establecido para: ${user.email}`);
-        
-        // =============================================
-        // PASO 7: CONTINUAR CON SIGUIENTE MIDDLEWARE
-        // =============================================
-        
         next();
         
     } catch (error) {
@@ -126,15 +86,7 @@ const protect = async (req, res, next) => {
         // MANEJO DE ERRORES ESPECÍFICOS DE JWT
         // =============================================
         
-        console.log(`   ❌ Error en verificación: ${error.name}`);
-        
-        /**
-         * Diferentes tipos de errores JWT:
-         */
-        
-        // Error 1: Token malformado o firma inválida
         if (error.name === 'JsonWebTokenError') {
-            console.log('   ⚠️ Token inválido o malformado');
             return res.status(401).json({
                 success: false,
                 error: 'Token inválido',
@@ -143,9 +95,7 @@ const protect = async (req, res, next) => {
             });
         }
         
-        // Error 2: Token expirado
         if (error.name === 'TokenExpiredError') {
-            console.log('   ⏰ Token expirado');
             return res.status(401).json({
                 success: false,
                 error: 'Token expirado',
@@ -155,9 +105,7 @@ const protect = async (req, res, next) => {
             });
         }
         
-        // Error 3: Token usado antes de su fecha de inicio (raro)
         if (error.name === 'NotBeforeError') {
-            console.log('   ⏰ Token no válido aún');
             return res.status(401).json({
                 success: false,
                 error: 'Token no válido',
@@ -165,8 +113,7 @@ const protect = async (req, res, next) => {
             });
         }
         
-        // Error genérico
-        console.error('   💥 Error inesperado:', error.message);
+        console.error('❌ Error inesperado en middleware protect:', error.message);
         return res.status(401).json({
             success: false,
             error: 'Error de autenticación',
@@ -181,11 +128,7 @@ const protect = async (req, res, next) => {
 
 const authorize = (...roles) => {
     return (req, res, next) => {
-        console.log('🔐 Middleware authorize: Verificando permisos...');
-        
-        // PASO 1: VERIFICAR QUE EXISTE req.user
         if (!req.user) {
-            console.log('   ❌ No hay usuario autenticado (protect no ejecutado)');
             return res.status(401).json({
                 success: false,
                 error: 'No autenticado',
@@ -193,15 +136,7 @@ const authorize = (...roles) => {
             });
         }
         
-        console.log(`   👤 Usuario: ${req.user.email}`);
-        console.log(`   🎭 Rol actual: ${req.user.role}`);
-        console.log(`   📋 Roles permitidos: ${roles.join(', ')}`);
-        
-        // PASO 2: VERIFICAR SI EL ROL ESTÁ PERMITIDO
         if (!roles.includes(req.user.role)) {
-            console.log('   ❌ Rol insuficiente');
-            console.log(`   🚫 Se requiere: ${roles.join(' o ')}`);
-            console.log(`   👤 Usuario tiene: ${req.user.role}`);
             
             return res.status(403).json({
                 success: false,
@@ -211,10 +146,6 @@ const authorize = (...roles) => {
                 requiredRoles: roles
             });
         }
-        
-        // PASO 3: PERMISO CONCEDIDO
-        console.log('   ✅ Permiso concedido');
-        console.log(`   🎉 Usuario ${req.user.email} puede realizar esta acción`);
         
         next();
     };
@@ -228,8 +159,3 @@ module.exports = {
     protect,
     authorize
 };
-
-console.log('✅ Middleware de autenticación exportado');
-console.log('🔐 Funciones disponibles:');
-console.log('   • protect - Verificar token JWT y cargar usuario');
-console.log('   • authorize - Verificar roles de usuario');

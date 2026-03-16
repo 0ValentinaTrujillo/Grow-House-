@@ -6,10 +6,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Iniciar servidor
 const server = app.listen(PORT, () => {
-    console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-    console.log(`📍 URL: http://localhost:${PORT}`);
-    console.log(`🗂️  Ambiente: ${NODE_ENV}`);
-    console.log(`📅 Iniciado: ${new Date().toLocaleString()}`);
+    console.log(`  ✓ Servidor listo → http://localhost:${PORT}`);
 });
 
 // Manejo de errores no capturados
@@ -28,9 +25,7 @@ process.on('unhandledRejection', (err) => {
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-    console.log('🔴 SIGTERM recibido. Cerrando servidor...');
     server.close(() => {
-        console.log('✅ Servidor cerrado correctamente');
         process.exit(0);
     });
 });
