@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow House</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/output.css"> 
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        /* Animación de entrada suave */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* Efecto hover en tarjetas de pedidos */
+        .order-card {
+            transition: all 0.3s ease;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Animación del badge de estado */
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  
+        } 
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(100, 221, 96, 0.822);
+        }
+        .category-hover {
+            transition: all 0.4s ease;
+        }
+        .category-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(184, 253, 181, 0.63);
+        }
+        .product-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(184, 253, 181, 0.63);
+        }
+        .product-card:hover {
+            border-color: rgba(184, 253, 181, 0.63);
+            box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
+        }
+        .price-highlight {
+            color: #207939;
+            font-weight: 800;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
+        }
+
+        :root {
+            --color-principal: #207719; /* verde principal */
+            --color-hover: #207719;    /* verde más oscuro */
+        }
+
+        .texto-verde {
+            color: var(--color-principal);
+        }
+
+        .texto-verde:hover {
+            color: var(--color-hover);
+        }
+
+        .bg-verde {
+            background-color: var(--color-principal);
+        }
+
+        .bg-verde:hover {
+            background-color: var(--color-hover);
+        }
+
+        /* ── Submenús flotantes ── */
+        .floating-submenu {
+            display: none;
+            position: fixed;
+            min-width: 210px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
+            border: 1px solid #d1fae5;
+            z-index: 99999;
+            padding: 0.5rem 0;
+            animation: slideInLeft 0.15s ease-out;
+        }
+        .floating-submenu.visible {
+            display: block;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(8px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .has-submenu:hover,
+        .has-submenu.active {
+            background-color: #f0fdf4;
+        }
+        .has-submenu {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+<!-- Header/Navegación -->
+    <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
+        <nav class="navegation mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center text-2xl font-bold">
+                    <img src="assets/images/Green and White Plants Organic Logo.png" alt="Logo"
+                        class="w-12 h-12 rounded-full object-cover mr-4">
+                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html"
+                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Inicio
+                        <span
+                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="productos.html"
+                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Productos
+                        <span
+                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#categorias"
+                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Categorías
+                        <span
+                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="index.html#contacto"
+                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                        Contacto
+                        <span
+                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <!--Novedades (al lado de Contacto) -->
+                    <li class="relative list-none">
+                        <button id="btnNovedades"
+                            class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
+                            Novedades
+                            <span
+                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        </button>
+
+                        <!-- Ventana emergente Novedades -->
+                        <div id="popupNovedades"
+                            class="hidden absolute left-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
+                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
+                        </div>
+                    </li>
+                </div>
+                <!-- Acciones del usuario -->
+                <div class="flex items-center space-x-4">
+                    <!-- Mobile menu button -->
+                    <button class="md:hidden text-gray-700 hover:text-green-800 transition-colors duration-200"
+                        id="mobile-menu-button">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <!--Carrito-->
+                    <a href="carrito.html" class="relative flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200">
+                        </i>
+                        <span id="cart-counter"
+                            class="absolute -top-1 -right-2  bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center"
+                            style="display: none;">
+                            0
+                        </span>
+                    </a>
+                    <!-- 🔔 Notificaciones (al lado del Carrito) -->
+                    <li class="relative list-none ml-2">
+                        <button id="btnNotificaciones" class="hover:text-green-800 relative">
+                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
+                        </button>
+
+                        <!-- Ventana emergente Notificaciones -->
+                        <div id="popupNotificaciones"
+                            class="hidden absolute right-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
+                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
+                        </div>
+                    </li>
+                    <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
+                    <div id="user-menu-container" style="display: none; position: relative;">
+                        <button id="user-menu-button"
+                            class="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                            
+                            <div id="user-avatar-menu"
+                                class="w-8 h-8 bg-gradient-to-r from-green-800 to-green-700 rounded-full 
+                                    flex items-center justify-center text-white font-bold text-sm 
+                                    overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
+                                
+                                <img id="user-avatar-menu-image" src="" alt="Avatar"
+                                    class="w-full h-full object-cover hidden">
+                                
+                                <span id="user-initials">U</span>
+                            </div>
+                        </button>
+
+                        <!-- Dropdown Menu - POSICIONAMIENTO CORREGIDO v2.0 -->
+                        <div id="user-dropdown" class="hidden border border-gray-100"
+                            style="position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 16rem; background-color: white; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 0.5rem 0; z-index: 9999;">
+                            <!-- Info del usuario en el dropdown -->
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p id="dropdown-user-name" class="text-sm font-semibold text-gray-800">Nombre Usuario
+                                </p>
+                                <p id="dropdown-user-email" class="text-xs text-gray-500">email@ejemplo.com</p>
+                                <span id="dropdown-user-role"
+                                    class="inline-block mt-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                    Cliente
+                                </span>
+                            </div>
+
+                            <!-- ================= ADMIN ================= -->
+                            <div id="admin-options" style="display:none;">
+
+                                <a href="dashboard.html"
+                                    class="flex items-center px-4 py-3 hover:bg-gray-50 transition">
+                                    <span class="mr-3 text-lg">📊</span>
+                                    <span class="text-gray-700 text-sm font-medium">Dashboard</span>
+                                </a>
+
+                                <a href="perfil.html"
+                                    class="flex items-center px-4 py-3 hover:bg-gray-50 transition">
+                                    <span class="mr-3 text-lg">👤</span>
+                                    <span class="text-gray-700 text-sm font-medium">Perfil</span>
+                                </a>
+
+                                <div class="border-t border-gray-100"></div>
+                            </div>
+                            <!-- ================= CLIENTE ================= -->
+                            <div id="client-options" style="display:none;">
+
+                                <a href="perfil.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <span class="mr-3 text-lg">👤</span>
+                                    <span class="text-gray-700 text-sm font-medium">Perfil</span>
+                                </a>
+
+                                <div class="has-submenu flex items-center px-4 py-3 transition-colors" data-submenu="submenu-seguridad">
+                                    <span class="mr-3 text-lg">🔒</span>
+                                    <span class="text-gray-700 text-sm font-medium">Seguridad</span>
+                                    <i class="fas fa-chevron-left ml-auto text-gray-400 text-xs"></i>
+                                </div>
+
+                                <a href="favoritos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <span class="mr-3 text-lg">❤️</span>
+                                    <span class="text-gray-700 text-sm font-medium">Favoritos</span>
+                                </a>
+
+                                <a href="mis-pedidos.html" class="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
+                                    <span class="mr-3 text-lg">📦</span>
+                                    <span class="text-gray-700 text-sm font-medium">Mis Pedidos</span>
+                                </a>
+                            
+                                <div class="has-submenu flex items-center px-4 py-3 transition-colors" data-submenu="submenu-zuri">
+                                    <span class="mr-3 text-lg">🌵</span>
+                                    <span class="text-gray-700 text-sm font-medium">Zuri</span>
+                                    <i class="fas fa-chevron-left ml-auto text-gray-400 text-xs"></i>
+                                </div>
+
+                                <div class="border-t border-gray-100"></div>
+                            </div>
+
+                            <button id="logout-button"
+                                class="w-full flex items-center px-4 py-3 hover:bg-red-50 transition-colors text-left">
+                                <svg class="w-5 h-5 mr-3 text-red-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                <span class="text-red-600 text-sm font-medium">Cerrar Sesión</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+
+                        <!-- Iniciar Sesión -->
+                        <a href="login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
+                                rounded-full bg-white/60 backdrop-blur-sm
+                                hover:bg-gray-50 hover:border-green-900
+                                transition-all duration-300 shadow-sm hover:shadow-md">
+                            Iniciar Sesión
+                        </a>
+
+                        <!-- Registrarse -->
+                        <a href="register.html" class="px-6 py-2.5 font-semibold text-white 
+                                rounded-full bg-gradient-to-r from-green-800 to-green-700
+                                hover:shadow-lg hover:scale-105
+                                transition-all duration-300">
+                            Registrarse
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
+
+                    <a href="index.html"
+                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
+
+                    <a href="productos.html"
+                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
+
+                    <a href="index.html#categorias"
+                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Categorías</a>
+
+                    <a href="index.html#contacto"
+                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Contacto</a>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <!-- ========================================== -->
+    <main class="container mx-auto px-4 py-8">
+        
+        <!-- ========================================== -->
+        <!-- ENCABEZADO DE LA PÁGINA -->
+        <!-- ========================================== -->
+        <div class="mb-8 animate-fade-in">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">
+                Mis Pedidos
+            </h1>
+            <p class="text-gray-600">
+                Aquí puedes ver el historial de todos tus pedidos
+            </p>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TARJETAS DE ESTADÍSTICAS -->
+        <!-- ========================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 animate-fade-in">
+            
+            <!-- ========================================== -->
+            <!-- TARJETA 1: TOTAL DE PEDIDOS -->
+            <!-- ========================================== -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm opacity-90">Total Pedidos</p>
+                        <p id="total-orders" class="text-3xl font-bold">0</p>
+                    </div>
+                    <!-- Icono grande de fondo -->
+                    <i class="fas fa-shopping-bag text-4xl opacity-50"></i>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TARJETA 2: PEDIDOS PENDIENTES -->
+            <!-- ========================================== -->
+            <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm opacity-90">Pendientes</p>
+                        <p id="pending-orders" class="text-3xl font-bold">0</p>
+                    </div>
+                    <i class="fas fa-clock text-4xl opacity-50"></i>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TARJETA 3: PEDIDOS COMPLETADOS -->
+            <!-- ========================================== -->
+            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm opacity-90">Completados</p>
+                        <p id="completed-orders" class="text-3xl font-bold">0</p>
+                    </div>
+                    <i class="fas fa-check-circle text-4xl opacity-50"></i>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TARJETA 4: TOTAL GASTADO -->
+            <!-- ========================================== -->
+            <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm opacity-90">Total Gastado</p>
+                        <p id="total-spent" class="text-3xl font-bold">$0</p>
+                    </div>
+                    <i class="fas fa-dollar-sign text-4xl opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- LISTA DE PEDIDOS -->
+        <!-- ========================================== -->
+        <div id="orders-container" class="space-y-6">
+            <!-- Los pedidos se cargarán aquí dinámicamente con JavaScript -->
+            
+            <!-- ========================================== -->
+            <!-- LOADING STATE (mientras carga) -->
+            <!-- ========================================== -->
+            <div class="text-center py-12">
+                <div class="spinner inline-block mb-4"></div>
+                <p class="text-gray-600">Cargando pedidos...</p>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ESTADO VACÍO (si no hay pedidos) -->
+        <!-- ========================================== -->
+        <div id="empty-state" class="hidden text-center py-16">
+            <div class="max-w-md mx-auto">
+                <!-- Emoji grande -->
+                <div class="text-8xl mb-4">📦</div>
+                
+                <!-- Mensaje -->
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                    No tienes pedidos todavía
+                </h3>
+                <p class="text-gray-600 mb-6">
+                    ¡Comienza a comprar en nuestra tienda!
+                </p>
+                
+                <!-- Botón call-to-action -->
+                <a href="productos.html" class="inline-block bg-gradient-to-r from-green-800 to-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-500 transition-all duration-200 transform hover:scale-105">
+                    Ver Productos
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- FOOTER -->
+    <!-- ========================================== -->
+        <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-[#fbfafa] py-10 mt-2">
+            <div class="container mx-auto px-6">
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+                    <!-- Logo y descripción -->
+                    <div class="col-span-1 md:col-span-2">
+                        <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+
+                        <p class="text-gray-900 mb-6 leading-relaxed">
+                            Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                        </p>
+
+                        <!-- Redes sociales -->
+                        <div class="flex space-x-4 mt-5">
+
+                            <!-- FB -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-blue-500 to-blue-700 
+                                shadow-lg shadow-blue-900/30
+                                hover:scale-125 hover:shadow-blue-600/50
+                                transition-all duration-300">
+                                <i class="fab fa-facebook-f text-2xl text-white"></i>
+                            </a>
+
+                            <!-- IG -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500
+                                shadow-lg shadow-purple-900/30
+                                hover:scale-125 hover:shadow-pink-600/50
+                                transition-all duration-300">
+                                <i class="fab fa-instagram text-2xl text-white"></i>
+                            </a>
+
+                            <!-- WhatsApp -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
+                                bg-gradient-to-br from-green-400 to-green-600 
+                                shadow-lg shadow-green-900/30
+                                hover:scale-125 hover:shadow-green-500/50
+                                transition-all duration-300">
+                                <i class="fab fa-whatsapp text-2xl text-white"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                        <ul class="space-y-2">
+                            <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                            <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                            <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                        <ul class="space-y-2 text-gray-900">
+                            <li>📧 info@growhouse.com</li>
+                            <li>📱 +57 301 234 5678</li>
+                            <li>📍 Pital-Huila, Colombia</li>
+                            <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Línea final -->
+                <div class="border-t border-green-800 pt-2 text-center">
+                    <p class="text-gray-900">
+                        © 2024 Grow House. Todos los derechos reservados |
+                        <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
+                        <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+    <!-- Config - PRIMERO -->
+    <script src="scripts/config.js"></script>
+    <!-- Auth API - PRIMERO -->
+    <script src="scripts/auth-api.js"></script>
+
+    <!-- Profile Image Manager - ANTES del Navbar Avatar -->
+    <script src="scripts/profile-image.js"></script>
+
+    <!-- Navbar Avatar Manager -->
+    <script src="scripts/navbar-avatar.js"></script>
+
+    <!-- UI Manager - SEGUNDO (NUEVO) -->
+    <script src="scripts/ui-manager.js"></script>
+
+    <!-- Session Manager - TERCERO -->
+    <script src="scripts/session.js"></script>
+
+    <!-- Novedades y Notificaciones - CUARTO -->
+    <script src="scripts/novedades-notificaciones.js"></script>
+
+    <!-- Main -->
+    <script src="scripts/main.js"></script>
+<!-- ========================================== -->
+<!-- SCRIPT DE MIS PEDIDOS -->
+<!-- ========================================== -->
+<script>
+    console.log('📦 Inicializando página de pedidos...');
+
+    // ========================================
+    // 1. VERIFICACIÓN DE AUTENTICACIÓN
+    // ========================================
+    async function initializePage() {
+        try {
+            // ✅ Verificar si el usuario está autenticado
+            const isAuthenticated = authAPI.isAuthenticated();
+            
+            if (!isAuthenticated) {
+                console.warn('⚠️ Usuario no autenticado');
+                window.location.href = '../pages/login.html';
+                return;
+            }
+
+            // ✅ Obtener datos del usuario
+            const user = authAPI.getUser();
+            console.log('✅ Usuario autenticado:', user.email);
+
+            // ✅ Cargar los pedidos
+            await loadOrders();
+
+        } catch (error) {
+            console.error('❌ Error inicializando página:', error);
+            showErrorMessage('Error al cargar la página. Por favor, recarga.');
+        }
+    }
+
+    // ========================================
+    // 2. CARGAR PEDIDOS DEL BACKEND
+    // ========================================
+    async function loadOrders() {
+        try {
+            console.log('🔄 Haciendo request al backend...');
+            console.log('URL: http://localhost:5000/api/orders/my-orders');
+
+            // ✅ IMPORTANTE: Obtener el token correctamente
+            const token = authAPI.getToken();
+
+            if (!token) {
+                throw new Error('No se encontró token de autenticación');
+            }
+
+            // ✅ Hacer la petición al backend
+            const response = await fetch(window.GROW_HOUSE_API + '/orders/my-orders', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('📡 Response status:', response.status);
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            // ✅ Procesar los datos
+            const data = await response.json();
+            console.log('📦 Datos recibidos:', data);
+
+            // ✅ El backend puede devolver los pedidos de diferentes formas
+            const orders = data.data || data.orders || [];
+
+            // ✅ Renderizar los pedidos
+            renderOrders(orders);
+
+            // ✅ Actualizar las estadísticas
+            updateStatistics(orders);
+
+        } catch (error) {
+            console.error('❌ Error al cargar pedidos:', error);
+            showErrorMessage('No se pudieron cargar los pedidos. Por favor, intenta de nuevo.');
+        }
+    }
+
+    // ========================================
+    // 3. RENDERIZAR PEDIDOS EN EL DOM
+    // ========================================
+    function renderOrders(orders) {
+        const ordersContainer = document.getElementById('orders-container');
+        
+        if (!ordersContainer) {
+            console.error('❌ No se encontró el contenedor de pedidos');
+            return;
+        }
+
+        // ✅ Si no hay pedidos
+        if (orders.length === 0) {
+            ordersContainer.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="text-gray-400 mb-4">
+                        <svg class="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                        Aún no has realizado ningún pedido
+                    </h3>
+                    <p class="text-gray-500 mb-6">
+                        Explora nuestro catálogo y realiza tu primera compra
+                    </p>
+                    <a href="../pages/productos.html" 
+                       class="inline-block bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition">
+                        Ir a Productos
+                    </a>
+                </div>
+            `;
+            return;
+        }
+
+        // ✅ Renderizar cada pedido
+        ordersContainer.innerHTML = orders.map(order => createOrderCard(order)).join('');
+    }
+
+    // ========================================
+    // 4. CREAR TARJETA DE PEDIDO
+    // ========================================
+    function createOrderCard(order) {
+        // ✅ Formatear fecha
+        const orderDate = new Date(order.createdAt).toLocaleDateString('es-CO', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // ✅ Obtener color según el estado
+        const statusColors = {
+            'pending': 'bg-yellow-100 text-yellow-800',
+            'processing': 'bg-blue-100 text-blue-800',
+            'shipped': 'bg-purple-100 text-purple-800',
+            'delivered': 'bg-green-100 text-green-800',
+            'cancelled': 'bg-red-100 text-red-800'
+        };
+
+        const statusTexts = {
+            'pending': 'Pendiente',
+            'processing': 'Procesando',
+            'shipped': 'Enviado',
+            'delivered': 'Entregado',
+            'cancelled': 'Cancelado'
+        };
+
+        const statusColor = statusColors[order.status] || 'bg-gray-100 text-gray-800';
+        const statusText = statusTexts[order.status] || order.status;
+
+        // ✅ Formatear precio
+        const total = new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(order.totals?.total || 0);
+
+        return `
+            <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                <!-- Header del pedido -->
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-semibold text-lg text-gray-800">
+                            N° ${order.orderNumber || (order._id || order.id)?.slice(-6)}
+                        </h3>
+                        <p class="text-sm text-gray-500">${orderDate}</p>
+                    </div>
+                    <span class="${statusColor} px-3 py-1 rounded-full text-xs font-semibold">
+                        ${statusText}
+                    </span>
+                </div>
+
+                <!-- Productos -->
+                <div class="border-t border-b border-gray-200 py-4 mb-4">
+                    ${order.products.slice(0, 2).map(item => `
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center">
+                                <div class="w-12 h-12 bg-gray-100 rounded overflow-hidden flex items-center justify-center flex-shrink-0">
+                                    ${item.image
+                                        ? `<img src="${item.image}" alt="${item.name}" 
+                                            class="w-full h-full object-cover"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                        <svg class="w-6 h-6 text-gray-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                        </svg>`
+                                        : `<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                        </svg>`
+                                    }
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-800">${item.name}</p>
+                                <p class="text-xs text-gray-500">Cantidad: ${item.quantity}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${order.products.length > 2 ? `
+                        <p class="text-xs text-gray-500 mt-2">
+                            + ${order.products.length - 2} producto(s) más
+                        </p>
+                    ` : ''}
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-500">Total</p>
+                        <p class="text-lg font-bold text-gray-800">${total}</p>
+                    </div>
+                <button onclick="verPedido('${order._id || order.id}')"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm">
+                    Ver Detalles
+                </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // ========================================
+    // 5. ACTUALIZAR ESTADÍSTICAS
+    // ========================================
+    function updateStatistics(orders) {
+        // ✅ Calcular estadísticas
+        const totalOrders = orders.length;
+        const pendingOrders = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+        const completedOrders = orders.filter(o => o.status === 'delivered').length;
+        const totalSpent = orders.reduce((sum, order) => {
+            return sum + Number(order.totals?.total || 0);
+        }, 0);
+
+        // ✅ Actualizar en el DOM
+        const totalOrdersEl = document.getElementById('total-orders');
+        const pendingOrdersEl = document.getElementById('pending-orders');
+        const completedOrdersEl = document.getElementById('completed-orders');
+        const totalSpentEl = document.getElementById('total-spent');
+
+        if (totalOrdersEl) totalOrdersEl.textContent = totalOrders;
+        if (pendingOrdersEl) pendingOrdersEl.textContent = pendingOrders;
+        if (completedOrdersEl) completedOrdersEl.textContent = completedOrders;
+        
+        if (totalSpentEl) {
+            totalSpentEl.textContent = new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(totalSpent);
+        }
+
+        console.log('📊 Estadísticas actualizadas:', {
+            total: totalOrders,
+            pending: pendingOrders,
+            completed: completedOrders,
+            spent: totalSpent
+        });
+    }
+
+    // ========================================
+    // 6. VER DETALLES DE PEDIDO
+    // ========================================
+    function verPedido(orderId) {
+        window.location.href = `pedido-detalle.html?id=${orderId}`;
+    }
+    // ========================================
+    // 7. MOSTRAR MODAL DE DETALLES
+    // ========================================
+    function showOrderDetailsModal(order) {
+        // ✅ Crear modal dinámicamente
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            Pedido ${order.orderNumber || order._id.slice(-6)}
+                        </h2>
+                        <button onclick="this.closest('.fixed').remove()" 
+                                class="text-gray-500 hover:text-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Información del pedido -->
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-2">Estado</h3>
+                            <p class="text-gray-600">${order.status}</p>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-2">Productos</h3>
+                            <div class="space-y-2">
+                                ${order.products.map(item => `
+                                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                        <div>
+                                            <p class="font-medium">${item.name}</p>
+                                            <p class="text-sm text-gray-500">Cantidad: ${item.quantity}</p>
+                                        </div>
+                                        <p class="font-semibold">
+                                            ${new Intl.NumberFormat('es-CO', {
+                                                style: 'currency',
+                                                currency: 'COP',
+                                                minimumFractionDigits: 0
+                                            }).format(item.price * item.quantity)}
+                                        </p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-gray-700 mb-2">Dirección de Envío</h3>
+                            <p class="text-gray-600">
+                                ${order.shippingAddress.street}<br>
+                                ${order.shippingAddress.city}, ${order.shippingAddress.state}<br>
+                                ${order.shippingAddress.zipCode}, ${order.shippingAddress.country}
+                            </p>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center text-lg font-bold">
+                                <span>Total</span>
+                                <span class="text-blue-600">
+                                    ${new Intl.NumberFormat('es-CO', {
+                                        style: 'currency',
+                                        currency: 'COP',
+                                        minimumFractionDigits: 0
+                                    }).format(order.totals?.total || 0)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+    }
+
+    // ========================================
+    // 8. MOSTRAR MENSAJE DE ERROR
+    // ========================================
+    function showErrorMessage(message) {
+        const container = document.getElementById('orders-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <div class="text-red-500 mb-4">
+                        <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700">${message}</p>
+                    <button onclick="loadOrders()" 
+                            class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Reintentar
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // ========================================
+    // 9. INICIALIZACIÓN
+    // ========================================
+    // ✅ Esperar a que authAPI esté completamente cargado
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initializePage, 500);
+        });
+    } else {
+        setTimeout(initializePage, 500);
+    }
+
+    console.log('✅ Página de pedidos inicializada');
+</script>
+    <!-- Submenú Seguridad -->
+    <div id="submenu-seguridad" class="floating-submenu">
+        <div class="px-4 py-2 border-b border-gray-100">
+            <p class="text-gray-700 text-sm font-medium">Seguridad</p>
+        </div>
+        <a href="recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🔑</span>
+            <span class="text-gray-700 text-sm">Cambiar Contraseña</span>
+        </a>
+        <a href="privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🛡️</span>
+            <span class="text-gray-700 text-sm">Privacidad</span>
+        </a>
+    </div>
+
+    <!-- Submenú Zuri -->
+    <div id="submenu-zuri" class="floating-submenu">
+        <div class="px-4 py-2 border-b border-gray-100">
+            <p class="text-gray-700 text-sm font-medium">Zuri</p>
+        </div>
+        <a href="zuri-chat.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">📋</span>
+            <span class="text-gray-700 text-sm">Registrar plantas</span>
+        </a>
+        <a href="zuri-plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">🪴</span>
+            <span class="text-gray-700 text-sm">Mis plantas</span>
+        </a>
+        <a href="zuri-consejos.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
+            <span class="mr-3">💡</span>
+            <span class="text-gray-700 text-sm">Transformar espacios</span>
+        </a>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('user-menu-container');
+    let hideTimeout = null;
+
+    function hideAllSubmenus() {
+        document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
+        document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
+    }
+
+    function positionAndShow(triggerEl, submenuId) {
+        clearTimeout(hideTimeout);
+        hideAllSubmenus();
+        const submenu = document.getElementById(submenuId);
+        if (!submenu) return;
+
+        submenu.classList.add('visible');
+        triggerEl.classList.add('active');
+
+        const rect = triggerEl.getBoundingClientRect();
+        const smW  = submenu.offsetWidth;
+        const smH  = submenu.offsetHeight;
+        const winH = window.innerHeight;
+
+        let left = rect.left - smW - 6;
+        if (left < 6) left = rect.right + 6;
+
+        let top = rect.top;
+        if (top + smH > winH - 8) top = winH - smH - 8;
+        if (top < 8) top = 8;
+
+        submenu.style.left = left + 'px';
+        submenu.style.top  = top  + 'px';
+    }
+
+    document.querySelectorAll('.has-submenu').forEach(trigger => {
+        const submenuId = trigger.dataset.submenu;
+        const submenu   = document.getElementById(submenuId);
+
+        trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+        trigger.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
+            }, 100);
+        });
+    });
+
+    document.querySelectorAll('.floating-submenu').forEach(submenu => {
+        submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        submenu.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(hideAllSubmenus, 100);
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
+            hideAllSubmenus();
+        }
+    });
+});
+</script>
+</body>
+</html>

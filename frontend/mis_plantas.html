@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Plantas — Zuri</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --verde:       #207719;
+      --verde-claro: #46d560;
+      --verde-l:     #207719;
+      --verde-ñ:     #3ab325ee;
+      --gris-texto:  #6b7280;
+      --borde-verde: #a7f3d0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+      padding: 20px 20px 110px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-top: 8px;
+    }
+
+    .header h1 {
+      color: black;
+      font-size: 2.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header p { color: var(--gris-texto); font-size: 1rem; }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: black;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .planta-card {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .planta-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -8px rgba(100, 221, 96, 0.5);
+    }
+
+    .planta-thumb {
+      width: 76px; height: 76px;
+      border-radius: 14px;
+      background: white;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+    }
+
+    .planta-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .planta-info { flex: 1; overflow: hidden; padding-right: 50px; }
+
+    .planta-nombre {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #1a1a1a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+
+    .planta-cientifico {
+      font-style: italic;
+      color: #555;
+      font-size: 0.78rem;
+      margin-bottom: 6px;
+    }
+
+    .planta-desc {
+        color: var(--gris-texto);
+        font-size: 0.78rem;
+        line-height: 1.45;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 400px;
+    }
+
+    .badge-dificultad {
+      position: absolute;
+      top: 12px; right: 12px;
+
+      color: black;
+      padding: 4px 13px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .btn-borrar {
+      position: absolute;
+      bottom: 10px; right: 12px;
+      background: #dc2626e8;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      transition: all .2s;
+      padding: 7px 14px;
+      border-radius: 30px;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-borrar:hover { background: #dc2626e8; transform: scale(1.05); }
+
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      color: var(--gris-texto);
+    }
+
+    .empty-state .icono { font-size: 4rem; margin-bottom: 14px; }
+    .empty-state p { font-size: 0.95rem; line-height: 1.7; }
+
+    .footer {
+      text-align: center;
+      color: rgb(48, 48, 48);
+      padding: 18px 20px;
+      background: linear-gradient(135deg, var(--verde-l), var(--verde-ñ));
+      border-radius: 14px;
+      font-size: 0.88rem;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 28px; right: 24px;
+      width: 62px; height: 62px;
+      background: linear-gradient(135deg, var(--verde), var(--verde-claro));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(32,119,25,0.4);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s;
+      z-index: 99;
+    }
+
+    .fab:hover {
+      transform: scale(1.12) rotate(90deg);
+      box-shadow: 0 15px 35px rgba(32,119,25,0.5);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 108px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--verde);
+      color: white;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all .38s;
+      z-index: 9999;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #e5e7eb;
+      border-top-color: #207719;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── MODAL DETALLE ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 28px 28px 0 0;
+      width: 100%;
+      max-width: 680px;
+      max-height: 92vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .38s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    .modal-foto {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 28px 28px 0 0;
+      display: block;
+    }
+
+    .modal-foto-placeholder {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      border-radius: 28px 28px 0 0;
+    }
+
+    .modal-body { padding: 24px 24px 40px; }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .modal-nombre {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--verde);
+      margin-bottom: 4px;
+    }
+
+    .modal-cientifico {
+      font-style: italic;
+      color: var(--gris-texto);
+      font-size: 0.88rem;
+    }
+
+    .modal-close {
+      background: #f3f4f6;
+      border: none;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-left: 12px;
+      transition:.2s;
+    }
+
+    .modal-close:hover { background: #e5e7eb; }
+
+    .badge-modal {
+      display: inline-block;
+      color: black;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .datos-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .dato {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border: 1.5px solid var(--borde-verde);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .dato .label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--gris-texto);
+      margin-bottom: 3px;
+    }
+
+    .dato .valor {
+      font-weight: 700;
+      color: var(--verde);
+      font-size: 0.88rem;
+    }
+
+    .seccion {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border: 1.5px solid var(--borde-verde);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .seccion h3 {
+      color: var(--verde);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .seccion p { font-size: 0.85rem; color: #374151; line-height: 1.65; }
+
+    .cuidados-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .cuidado-item {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid var(--borde-verde);
+    }
+
+    .cuidado-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--gris-texto);
+      margin-bottom: 3px;
+    }
+
+    .cuidado-valor {
+      font-size: 0.82rem;
+      color: #1a1a1a;
+      font-weight: 500;
+    }
+
+    .seccion-rec {
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+      border: 1.5px solid var(--borde-verde);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .seccion-rec h3 { color: var(--verde); font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; }
+    .seccion-rec li { font-size: 0.85rem; color: #374151; line-height: 1.65; }
+    .seccion-rec ul { padding-left: 18px; }
+
+    .to-black {
+      color: black;
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .to-black:hover {
+      color: white;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border-radius: 30px;
+      color: black;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 8px 18px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: all .2s;
+      box-shadow: 0 2px 8px rgba(148, 148, 155, 0.473);
+    }
+
+    .btn-back:hover { background: #e5e7eb; transform: translateX(-1px); }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Mis Plantas</h1>
+    <p>Tu jardín digital personal Zuri</p>
+  </div>
+
+  <a href="index.html" class="btn-back">← Inicio</a>
+
+  <div class="card">
+    <div class="card-title">Plantas registradas</div>
+    <div id="lista"></div>
+  </div>
+
+  <div class="footer">
+    <strong>Tip:</strong> Toca el <strong>+</strong> para registrar una nueva planta con IA <a href="index.html" class="to-black">Inicio</a>
+  </div>
+
+  <a href="registro_plantas.html" class="fab" title="Agregar planta">＋</a>
+  <div class="toast" id="toast"></div>
+
+  <!-- MODAL DETALLE -->
+  <div class="modal-overlay" id="modal-overlay" onclick="cerrarModal(event)">
+    <div class="modal" id="modal">
+      <div id="modal-contenido"></div>
+    </div>
+  </div>
+
+<script src="scripts/config.js"></script>
+<script>
+  const API_BASE = window.GROW_HOUSE_API;
+  let plantasData = [];
+
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  async function borrar(id, e) {
+    e.stopPropagation();
+    if (!confirm('¿Eliminar esta planta?')) return;
+    const token = localStorage.getItem('growhouse-auth-token');
+    try {
+      const res = await fetch(`${API_BASE}/registro/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast('Planta eliminada');
+        cerrarModalDirecto();
+        cargarPlantas();
+      } else {
+        toast('❌ Error al eliminar');
+      }
+    } catch (err) {
+      toast('❌ Error de conexión');
+    }
+  }
+
+  function abrirDetalle(id) {
+    const p = plantasData.find(x => x._id === id);
+    if (!p) return;
+
+    const cuidados = p.cuidados || {};
+    const recs = Array.isArray(p.recomendaciones)
+      ? p.recomendaciones.map(r => `<li>${r}</li>`).join('')
+      : '';
+
+    document.getElementById('modal-contenido').innerHTML = `
+      ${p.imagen
+        ? `<img class="modal-foto" src="${p.imagen}" alt="${p.nombre_comun}">`
+        : `<div class="modal-foto-placeholder">🪴</div>`
+      }
+      <div class="modal-body">
+        <div class="modal-header">
+          <div>
+            <div class="modal-nombre">${p.nombre_comun}</div>
+            <div class="modal-cientifico">${p.nombre_cientifico || ''}</div>
+          </div>
+          <button class="modal-close" onclick="cerrarModalDirecto()">✕</button>
+        </div>
+
+        <span class="badge-modal">${p.nivel_dificultad || 'Sin clasificar'}</span>
+
+        <div class="datos-grid">
+          <div class="dato"><div class="label">Familia</div><div class="valor">${p.familia || '—'}</div></div>
+          <div class="dato"><div class="label">Tamaño esperado</div><div class="valor">${p.tamano_esperado || '—'}</div></div>
+          <div class="dato"><div class="label">Toxicidad</div><div class="valor">${p.toxicidad || '—'}</div></div>
+          <div class="dato"><div class="label">Propagación</div><div class="valor">${p.propagacion || '—'}</div></div>
+        </div>
+
+        <div class="seccion">
+          <h3>📋 Descripción</h3>
+          <p>${p.descripcion || '—'}</p>
+        </div>
+
+        ${Object.keys(cuidados).length ? `
+        <div class="seccion">
+          <h3>🌱 Cuidados</h3>
+          <div class="cuidados-grid">
+            ${cuidados.luz ? `<div class="cuidado-item"><div class="cuidado-label">☀️ Luz</div><div class="cuidado-valor">${cuidados.luz}</div></div>` : ''}
+            ${cuidados.riego ? `<div class="cuidado-item"><div class="cuidado-label">💧 Riego</div><div class="cuidado-valor">${cuidados.riego}</div></div>` : ''}
+            ${cuidados.temperatura ? `<div class="cuidado-item"><div class="cuidado-label">🌡️ Temperatura</div><div class="cuidado-valor">${cuidados.temperatura}</div></div>` : ''}
+            ${cuidados.humedad ? `<div class="cuidado-item"><div class="cuidado-label">💦 Humedad</div><div class="cuidado-valor">${cuidados.humedad}</div></div>` : ''}
+            ${cuidados.fertilizacion ? `<div class="cuidado-item"><div class="cuidado-label">🌿 Fertilización</div><div class="cuidado-valor">${cuidados.fertilizacion}</div></div>` : ''}
+            ${cuidados.poda ? `<div class="cuidado-item"><div class="cuidado-label">✂️ Poda</div><div class="cuidado-valor">${cuidados.poda}</div></div>` : ''}
+          </div>
+        </div>` : ''}
+
+        ${recs ? `
+        <div class="seccion-rec">
+          <h3>💡 Recomendaciones</h3>
+          <ul>${recs}</ul>
+        </div>` : ''}
+      </div>
+    `;
+
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function cerrarModal(e) {
+    if (e.target === document.getElementById('modal-overlay')) {
+      cerrarModalDirecto();
+    }
+  }
+
+  function cerrarModalDirecto() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  async function cargarPlantas() {
+    const token = localStorage.getItem('growhouse-auth-token');
+    const lista = document.getElementById('lista');
+
+    if (!token) {
+      lista.innerHTML = `<div class="empty-state"><div class="icono">🔒</div><p>Debes iniciar sesión para ver tus plantas.</p></div>`;
+      return;
+    }
+
+    lista.innerHTML = `<div class="empty-state"><div class="spinner"></div><p>Cargando tus plantas...</p></div>`;
+
+    try {
+      const res = await fetch(`${API_BASE}/registro`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+
+      if (!data.success || data.data.length === 0) {
+        lista.innerHTML = `<div class="empty-state"><div class="icono">🪴</div><p>Aún no tienes plantas registradas.<br>Toca el <strong>+</strong> para agregar tu primera planta.</p></div>`;
+        return;
+      }
+
+      plantasData = data.data;
+
+      lista.innerHTML = plantasData.map(p => `
+        <div class="planta-card" onclick="abrirDetalle('${p._id}')">
+          <div class="planta-thumb">
+            ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre_comun}">` : '🪴'}
+          </div>
+          <div class="planta-info">
+            <div class="planta-nombre">${p.nombre_comun}</div>
+            <div class="planta-cientifico">${p.nombre_cientifico || ''}</div>
+            <div class="planta-desc">${p.descripcion || ''}</div>
+          </div>
+          <span class="badge-dificultad">${p.nivel_dificultad || ''}</span>
+          <button class="btn-borrar" onclick="borrar('${p._id}', event)" title="Eliminar">Eliminar</button>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      lista.innerHTML = `<div class="empty-state"><div class="icono">❌</div><p>Error al cargar plantas.</p></div>`;
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') cerrarModalDirecto();
+  });
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('guardada')) {
+    history.replaceState({}, '', location.pathname);
+    toast('✅ Planta guardada correctamente');
+  }
+
+  cargarPlantas();
+</script>
+</body>
+</html>

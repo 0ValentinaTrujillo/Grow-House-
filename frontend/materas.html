@@ -1,69 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-        <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grow House</title>
+    <title>Grow House | Materas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/output.css">
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/output.css"> 
+    <link rel="stylesheet" href="styles/styles.css">  
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
-
         .gradient-bg {
             background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
         }
-
         .glass-effect {
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
         }
-
         .hover-lift {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         .hover-lift:hover {
             transform: translateY(-8px);
             box-shadow: 0 25px 50px -12px rgba(100, 221, 96, 0.822);
         }
-
         .category-hover {
             transition: all 0.4s ease;
         }
-
         .category-hover:hover {
             transform: translateY(-12px) scale(1.02);
             box-shadow: 0 30px 60px rgba(184, 253, 181, 0.63);
         }
-
         .product-card {
             background: linear-gradient(145deg, #ffffff, #f8fafc);
             border: 1px solid rgba(184, 253, 181, 0.63);
             font-family: 'Poppins', sans-serif;
         }
-
         .product-card:hover {
             border-color: rgba(184, 253, 181, 0.63);
             box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
         }
-
         .price-highlight {
             color: #207939;
             font-weight: 800;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #207719, #46d560);
             transition: all 0.3s ease;
         }
-
         .btn-primary:hover {
             background: linear-gradient(135deg, #207719, #46d560);
             transform: translateY(-2px);
@@ -71,10 +56,8 @@
         }
 
         :root {
-            --color-principal: #207719;
-            /* verde principal */
-            --color-hover: #207719;
-            /* verde más oscuro */
+            --color-principal: #207719; /* verde principal */
+            --color-hover: #207719;    /* verde más oscuro */
         }
 
         .texto-verde {
@@ -93,7 +76,34 @@
             background-color: var(--color-hover);
         }
 
-       /* ===============================
+        /* ── Submenús flotantes ── */
+        .floating-submenu {
+            display: none;
+            position: fixed;
+            min-width: 210px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
+            border: 1px solid #d1fae5;
+            z-index: 99999;
+            padding: 0.5rem 0;
+            animation: slideInLeft 0.15s ease-out;
+        }
+        .floating-submenu.visible {
+            display: block;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(8px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .has-submenu:hover,
+        .has-submenu.active {
+            background-color: #f0fdf4;
+        }
+        .has-submenu {
+            cursor: pointer;
+        }
+        /* ===============================
         BOTÓN CHAT (CACTUS) - RESPONSIVE
         ================================ */
         .chat-btn {
@@ -207,39 +217,10 @@
             height: 100%;
             border: none;
         }
-
-        /* ── Submenús flotantes ── */
-        .floating-submenu {
-            display: none;
-            position: fixed;
-            min-width: 210px;
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
-            border: 1px solid #d1fae5;
-            z-index: 99999;
-            padding: 0.5rem 0;
-            animation: slideInLeft 0.15s ease-out;
-        }
-        .floating-submenu.visible {
-            display: block;
-        }
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(8px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        .has-submenu:hover,
-        .has-submenu.active {
-            background-color: #f0fdf4;
-        }
-        .has-submenu {
-            cursor: pointer;
-        }
-
     </style>
 </head>
-
 <body class="bg-white font-sans antialiased">
+<!-- Header/Navegación -->
     <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
         <nav class="navegation mx-auto px-6 py-4">
@@ -316,7 +297,7 @@
                     <!-- 🔔 Notificaciones (al lado del Carrito) -->
                     <li class="relative list-none ml-2">
                         <button id="btnNotificaciones" class="hover:text-green-800 relative">
-                            <i class="fa-solid fa-bell text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200"></i>
+                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
                         </button>
 
                         <!-- Ventana emergente Notificaciones -->
@@ -342,7 +323,6 @@
                                 <span id="user-initials">U</span>
                             </div>
                         </button>
-
                         <!-- Dropdown Menu - POSICIONAMIENTO CORREGIDO v2.0 -->
                         <div id="user-dropdown" class="hidden border border-gray-100"
                             style="position: absolute; top: 100%; right: 0; margin-top: 0.5rem; width: 16rem; background-color: white; border-radius: 0.75rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); padding: 0.5rem 0; z-index: 9999;">
@@ -368,7 +348,7 @@
 
                                 <a href="perfil.html"
                                     class="flex items-center px-4 py-3 hover:bg-gray-50 transition">
-                                    <span class="mr-3 text-lg">👤</span>
+                                    <i class="fas fa-user mr-3 text-gray-600"></i>
                                     <span class="text-gray-700 text-sm font-medium">Perfil</span>
                                 </a>
 
@@ -460,222 +440,123 @@
             </div>
         </nav>
     </header>
-    <section id="container" class="relative py-10 md:py-10 flex items-center justify-center gradient-bg">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-20 left-10 w-32 h-32 bg-white rounded-full blur-xl"></div>
-            <div class="absolute bottom-20 right-20 w-48 h-48 bg-white rounded-full blur-2xl"></div>
-            <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-white rounded-full blur-lg"></div>
-        </div>
+    <!-- GRID DE PRODUCTOS -->
+    <section id="materas" class="container mx-auto px-6 py-16">
+        <!-- CONTENEDOR DEL TÍTULO + BUSCADOR -->
+        <div class="flex items-center justify-between mb-12 ml-20 pr-20">
 
-        <div class="container mx-auto px-6 text-center relative z-10">
-            <div class="max-w-15xl mx-auto">
-                <h1 class="text-10xl md:text-7xl font-bold mb-8 text-black leading-tight">
-                    Tecnologia al servicio de la
-                    <span
-                        class="inline-block bg-gradient-to-r from-yellow-300 via-yellow-300 to-yellow-400 bg-clip-text text-transparent animate-pulse">
-                        NATURALEZA
-                    </span>
-                </h1>
-                <p class="text-xl md:text-10xl mb-12 text-white/90 max-w-2xl mx-auto leading-relaxed">
-                    Descubre nuestra colección de productos para el cultivo y haz crecer tu pasión por la jardinería con
-                    tecnología de punta.
-                </p>
-            </div>
-    </section>
-    <!-- Sección de Categorías -->
-    <section id="categorias" class="py-16 bg-white">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-                Nuestras
-                <span class=" text-yellow-400">Categorías</span>
+            <!-- TÍTULO -->
+            <h2 class="text-4xl font-bold text-gray-900">
+                Materas
             </h2>
-            <p class="text-xl text-gray-900 max-w-10xl mx-auto leading-relaxed">
-                Explora nuestra cuidada selección de productos de alta calidad para el cultivo indoor, diseñados para
-                satisfacer todas tus necesidades de jardinería.
-            </p>
-            <div class="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 rounded-full"></div>
-        </div>
 
-        <ul class="cards-container">
+            <!-- BARRA DE BÚSQUEDA -->
+            <div class="flex items-center 
+                        bg-white border border-gray-500 
+                        rounded-full px-4 py-1.5
+                        w-[450px] md:w-[550px] lg:w-[650px]">
 
-            <li onclick="location.href='plantas.html'" style="cursor: pointer;">
-                <img src="https://cdn.agroempresario.com/images/posts/fb5c06964dc19ebc3052a82017083a0bff799d8451de76d2_840.jpg"
-                    alt="">
-                <div class="content">
-                    <span>
-                        <h2>Plantas</h2>
-                    </span>
-                </div>
-            </li>
+                <input 
+                    type="text" 
+                    placeholder="¡Busca aqui!"
+                    class="w-full bg-transparent focus:outline-none text-gray-700 text-sm"
+                >
 
-            <li onclick="location.href='materas.html'" style="cursor: pointer;">
-                <img src="https://alsolarvivero.com/cdn/shop/files/Imagen3_e2782426-21f6-4a14-9765-b24ebc363a94.jpg?v=1697228248&width=416"
-                    alt="">
-                <div class="content">
-                    <span>
-                        <h2>Materas</h2>
-                    </span>
-                </div>
-            </li>
-
-            <li onclick="location.href='decoraciones.html'" style="cursor: pointer;">
-                <img src="https://m.media-amazon.com/images/I/81bESfVXHbS._AC_UF894,1000_QL80_.jpg"
-                    alt="">
-                <div class="content">
-                    <span>
-                        <h2>Decoraciones</h2>
-                    </span>
-                </div>
-            </li>
-
-            <li onclick="location.href='implementos.html'" style="cursor: pointer;">
-                <img src="https://www.verdeesvida.es/files/novelty/13072023121658_Epoca%20MMV.jpg" alt="">
-                <div class="content">
-                    <span>
-                        <h2>Implementos</h2>
-                    </span>
-                </div>
-            </li>
-        </ul>
-    </section>
-    <!-- Sección Productos Destacados -->
-    <section id="productos" class="py-16 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-8">
-                <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-                    Productos
-                    <span class="text-yellow-400">Destacados</span>
-                </h2>
-                <p class="text-xl text-gray-900 max-w-10xl mx-auto leading-relaxed">
-                    Descubre nuestros productos más populares y recomendados para el cultivo indoor, seleccionados
-                    especialmente para ti.
-                </p>
-                <div class="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 rounded-full"></div>
+                <i class="fas fa-search text-gray-500 text-lg"></i>
             </div>
-            <div id="featured-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-                <div class="col-span-full flex flex-col items-center justify-center py-16">
-                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
-                    <p class="text-gray-600 text-lg">Cargando productos destacados...</p>
-                </div>
+        </div>
+        <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            <div class="col-span-full flex flex-col items-center justify-center py-16">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+                <p class="text-gray-600">Cargando materas...</p>
             </div>
+        </div>
+
+        <!-- Paginación dinámica -->
+        <div class="mt-20 flex justify-center" id="pagination-container"></div>        
     </section>
+        <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
+            <div class="container mx-auto px-6">
 
-    <!-- Sección Productos Recomendados Para Ti -->
-    <section id="productosrecomendadosparati" class="py-16 bg-white" style="display:none;">
-    <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
 
-        <!-- Encabezado igual al de Productos Destacados -->
-        <div class="text-center mb-8">
-        <h2 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Productos Recomendados
-            <span class="text-yellow-400">Para ti</span>
-        </h2>
-        <p class="text-xl text-gray-900 max-w-10xl mx-auto leading-relaxed">
-            Basado en tus preferencias, seleccionamos las plantas perfectas para tu espacio y estilo de vida.
-        </p>
-        <div class="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 rounded-full"></div>
-        </div>
+                    <!-- Logo y descripción -->
+                    <div class="col-span-1 md:col-span-2">
+                        <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
 
-        <!-- Pills de filtros activos (se ocultan si no hay encuesta) -->
-        <div id="recom-filtros-activos" class="flex flex-wrap justify-center gap-2 mb-8" style="display:none!important"></div>
+                        <p class="text-gray-900 mb-6 leading-relaxed">
+                            Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                        </p>
 
-        <!-- Grid dinámico — mismo id-pattern que featured-grid -->
-        <div id="recom-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                        <!-- Redes sociales -->
+                        <div class="flex space-x-4 mt-5">
 
-        <!-- Estado inicial: el usuario aún no hizo la encuesta -->
-        <div id="recom-estado-inicial" class="col-span-full flex flex-col items-center justify-center py-16 gap-4" style="font-family: 'Poppins', sans-serif;">
-            <p class="text-gray-500 text-lg text-center">
-            Aún no has completado la encuesta.<br>
-            ¡Descubre qué planta es perfecta para ti!
-            </p>
-            <a href="recomendaciones.html"
-            class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-normal
-                    px-6 py-3 rounded-xl transition-all duration-300 hover:-translate-y-1
-                    hover:shadow-lg hover:shadow-white text-sm">
-            Hacer la encuesta
-            </a>
-        </div>
-
-        </div>
-    </div>
-    </section>
-
-
-    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-                <!-- Logo y descripción -->
-                <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
-                    <p class="text-gray-900 mb-6 leading-relaxed">
-                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y
-                        naturaleza.
-                    </p>
-                    <!-- Redes sociales -->
-                    <div class="flex space-x-4 mt-5">
-                        <!-- FB -->
-                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                            <!-- FB -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
                                 bg-gradient-to-br from-blue-500 to-blue-700 
                                 shadow-lg shadow-blue-900/30
                                 hover:scale-125 hover:shadow-blue-600/50
                                 transition-all duration-300">
-                            <i class="fab fa-facebook-f text-2xl text-white"></i>
-                        </a>
+                                <i class="fab fa-facebook-f text-2xl text-white"></i>
+                            </a>
 
-                        <!-- IG -->
-                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                            <!-- IG -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
                                 bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500
                                 shadow-lg shadow-purple-900/30
                                 hover:scale-125 hover:shadow-pink-600/50
                                 transition-all duration-300">
-                            <i class="fab fa-instagram text-2xl text-white"></i>
-                        </a>
+                                <i class="fab fa-instagram text-2xl text-white"></i>
+                            </a>
 
-                        <!-- WhatsApp -->
-                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full 
+                            <!-- WhatsApp -->
+                            <a href="#" 
+                                class="w-14 h-14 flex items-center justify-center rounded-full 
                                 bg-gradient-to-br from-green-400 to-green-600 
                                 shadow-lg shadow-green-900/30
                                 hover:scale-125 hover:shadow-green-500/50
                                 transition-all duration-300">
-                            <i class="fab fa-whatsapp text-2xl text-white"></i>
-                        </a>
+                                <i class="fab fa-whatsapp text-2xl text-white"></i>
+                            </a>
+
+                        </div>
+                    </div>
+
+                    <!-- Enlaces rápidos -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                        <ul class="space-y-2">
+                            <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                            <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                            <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                        <ul class="space-y-2 text-gray-900">
+                            <li>📧 info@growhouse.com</li>
+                            <li>📱 +57 301 234 5678</li>
+                            <li>📍 Pital-Huila, Colombia</li>
+                            <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Enlaces rápidos -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
-                    <ul class="space-y-2">
-                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
-                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contacto -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
-                    <ul class="space-y-2 text-gray-900">
-                        <li>📧 info@growhouse.com</li>
-                        <li>📱 +57 301 234 5678</li>
-                        <li>📍 Pital-Huila, Colombia</li>
-                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
-                    </ul>
+                <!-- Línea final -->
+                <div class="border-t border-green-800 pt-2 text-center">
+                    <p class="text-gray-900">
+                        © 2024 Grow House. Todos los derechos reservados |
+                        <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
+                        <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+                    </p>
                 </div>
             </div>
 
-            <!-- Línea final -->
-            <div class="border-t border-green-800 pt-2 text-center">
-                <p class="text-gray-900">
-                    © 2024 Grow House. Todos los derechos reservados |
-                    <a href="#" class="hover:text-green-700 transition">Política de Privacidad</a> |
-                    <a href="#" class="hover:text-green-700 transition">Términos de Servicio</a>
-                </p>
-            </div>
-        </div>
-
-        <!-- Botón flotante del chatbot -->
+            <!-- Botón flotante del chatbot -->
         <button id="chat-toggle" class="chat-btn">
             <img
                 src="assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
@@ -692,44 +573,40 @@
             </div>
         </div>
 
-    </footer>
-    <!-- Config - PRIMERO -->
-    <script src="scripts/config.js"></script>
-    <!-- Auth API - PRIMERO -->
-    <script src="scripts/auth-api.js"></script>
+        </footer>
+<!-- Config - PRIMERO -->
+<script src="scripts/config.js"></script>
+<!-- Auth API - PRIMERO -->
+<script src="scripts/auth-api.js"></script>
 
-    <!-- Profile Image Manager - ANTES del Navbar Avatar -->
-    <script src="scripts/profile-image.js"></script>
+<!-- Profile Image Manager - Para gestión de imágenes de perfil -->
+<script src="scripts/profile-image.js"></script>
 
-    <!-- Navbar Avatar Manager -->
-    <script src="scripts/navbar-avatar.js"></script>
+<!-- Navbar Avatar Manager - Para mostrar avatar en navbar -->
+<script src="scripts/navbar-avatar.js"></script>
 
-    <!-- UI Manager - SEGUNDO (NUEVO) -->
-    <script src="scripts/ui-manager.js"></script>
+<!-- UI Manager - SEGUNDO (NUEVO) -->
+<script src="scripts/ui-manager.js"></script>
 
-    <!-- Session Manager - TERCERO -->
-    <script src="scripts/session.js"></script>
+<!-- Session Manager - TERCERO -->
+<script src="scripts/session.js"></script>
 
-    <!-- Novedades y Notificaciones Manager -->
-    <script src="scripts/novedades-notificaciones.js"></script>
-    <script src="scripts/plantas-notificaciones.js"></script>
+<!-- Novedades y Notificaciones Manager -->
+<script src="scripts/novedades-notificaciones.js"></script>
+<script src="scripts/plantas-notificaciones.js"></script>
 
-    <!-- Carrito y otros scripts - DESPUÉS -->
-    <script src="scripts/carrito.js"></script>
-    <!--API productos-->
-    <script src="scripts/api.js"></script>
-    <script src="scripts/productos-api.js"></script>
-    <script src="scripts/Rating.js"></script>
+<!-- Carrito y otros scripts - DESPUÉS -->
+<script src="scripts/carrito.js"></script>
+<script src="scripts/stars.js"></script>
+<script src="scripts/productos-api.js"></script>
+<script src="scripts/Rating.js"></script>
+<script src="scripts/main.js"></script>
 
-    <script src="scripts/main.js"></script>
+<!--chatbot-->
+<script src="scripts/chatbot.js"></script>
+<script src="scripts/chat-ui.js"></script>
 
-    <!--chatbot-->
-    <script src="scripts/chatbot.js"></script>
-    <script src="scripts/chat-ui.js"></script>
-
-    <script src="scripts/recomendaciones.js"> </script>
-
-        <!-- Submenú Seguridad -->
+    <!-- Submenú Seguridad -->
     <div id="submenu-seguridad" class="floating-submenu">
         <div class="px-4 py-2 border-b border-gray-100">
             <p class="text-gray-700 text-sm font-medium">Seguridad</p>
@@ -763,238 +640,337 @@
         </a>
     </div>
 
-    <!-- Script adicional para animaciones -->
-  <!-- Animación contador carrito + Novedades/Notificaciones -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const container = document.getElementById('user-menu-container');
-        let hideTimeout = null;
+<script>
+// =============================================
+// CONFIGURACIÓN DE ESTA PÁGINA
+// =============================================
+const CATEGORY = 'materas'; // 🔧 Cambiar según la página
+const LIMIT = 12;
+let currentPage = 1;
+let totalPages = 1;
+let searchQuery = '';      
+let searchTimeout = null;
 
-        function hideAllSubmenus() {
-            document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
-            document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
-        }
+// =============================================
+// PALABRAS CLAVE DE OTRAS CATEGORÍAS
+// =============================================
+const KEYWORDS_OTRAS_CATEGORIAS = [
+    // Macetas
+    'maceta', 'macetas', 'tiesto', 'tiestos', 'jardinera', 'jardineras', 'pot', 'pots',
+    // Fertilizantes
+    'fertilizante', 'fertilizantes', 'abono', 'abonos', 'nutriente', 'nutrientes',
+    'sustrato', 'sustratos', 'compost',
+    // Herramientas
+    'herramienta', 'herramientas', 'pala', 'palin', 'tijera', 'tijeras',
+    'rastrillo', 'regadera', 'manguera', 'guante', 'guantes',
+    // Iluminación
+    'luz', 'luces', 'lampara', 'lamparas', 'led', 'foco', 'focos', 'iluminacion',
+    'bombilla', 'bombillas', 'reflector',
+    // Semillas
+    'semilla', 'semillas', 'bulbo', 'bulbos',
+    // Agrega aquí más palabras clave de tus otras categorías 🔧
+];
 
-        function positionAndShow(triggerEl, submenuId) {
-            clearTimeout(hideTimeout);
-            hideAllSubmenus();
-            const submenu = document.getElementById(submenuId);
-            if (!submenu) return;
+// =============================================
+// CARGAR PRODUCTOS POR CATEGORÍA
+// =============================================
+async function cargarCategoria(page = 1) {
+    const grid = document.getElementById('category-grid');
+    currentPage = page;
 
-            submenu.classList.add('visible');
-            triggerEl.classList.add('active');
+    grid.innerHTML = `
+        <div class="col-span-full flex flex-col items-center justify-center py-16">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+            <p class="text-gray-600">Cargando productos...</p>
+        </div>`;
 
-            const rect = triggerEl.getBoundingClientRect();
-            const smW  = submenu.offsetWidth;
-            const smH  = submenu.offsetHeight;
-            const winH = window.innerHeight;
+    try {
+        const searchParam = searchQuery.trim() ? `&search=${encodeURIComponent(searchQuery.trim())}` : '';
+        const res = await fetch(
+            `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&status=active&limit=${LIMIT}&page=${page}${searchParam}`
+        );
+        if (!res.ok) throw new Error(`Error ${res.status}`);
 
-            let left = rect.left - smW - 6;
-            if (left < 6) left = rect.right + 6;
+        const json = await res.json();
+        const productos = json.data || [];
+        totalPages = json.pagination?.totalPages || 1;
 
-            let top = rect.top;
-            if (top + smH > winH - 8) top = winH - smH - 8;
-            if (top < 8) top = 8;
-
-            submenu.style.left = left + 'px';
-            submenu.style.top  = top  + 'px';
-        }
-
-        document.querySelectorAll('.has-submenu').forEach(trigger => {
-            const submenuId = trigger.dataset.submenu;
-            const submenu   = document.getElementById(submenuId);
-
-            trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
-            trigger.addEventListener('mouseleave', () => {
-                hideTimeout = setTimeout(() => {
-                    if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
-                }, 100);
-            });
-        });
-
-        document.querySelectorAll('.floating-submenu').forEach(submenu => {
-            submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-            submenu.addEventListener('mouseleave', () => {
-                hideTimeout = setTimeout(hideAllSubmenus, 100);
-            });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
-                hideAllSubmenus();
-            }
-        });
-    });
-    </script>
-
-    <!-- Productos Destacados -->
-    <script>
-    async function cargarProductosDestacados() {
-        const grid = document.getElementById('featured-grid');
-        try {
-            const response = await fetch(window.GROW_HOUSE_API + '/products?featured=true&status=active&limit=4');
-            if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
-            const json     = await response.json();
-            const productos = json.data || [];
-            if (!productos.length) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-16">
-                        <p class="text-gray-500 text-lg">No hay productos destacados por el momento.</p>
-                    </div>`;
-                return;
-            }
-            grid.innerHTML = '';
-            productos.forEach(producto => {
-                const card = createProductCard(producto);
-                grid.appendChild(card);
-            });
-        } catch (error) {
-            console.error('❌ Error cargando destacados:', error);
+        if (!productos.length) {
             grid.innerHTML = `
                 <div class="col-span-full text-center py-16">
-                    <p class="text-gray-400 text-lg">Error al cargar productos destacados.</p>
-                    <button onclick="cargarProductosDestacados()"
-                        class="mt-4 bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
-                        Reintentar
-                    </button>
+                    <p class="text-gray-500 text-lg">No hay productos en esta categoría por el momento.</p>
                 </div>`;
-        }
-    }
-    document.addEventListener('DOMContentLoaded', cargarProductosDestacados);
-    </script>
-
-    <!-- ✅ Recomendaciones Para Ti — script único -->
-    <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const API     = window.GROW_HOUSE_API;
-        const seccion = document.getElementById('productosrecomendadosparati');
-
-        function getToken() {
-            return localStorage.getItem('growhouse-auth-token') || null;
-        }
-
-        function authHeaders() {
-            const h = { 'Content-Type': 'application/json' };
-            if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
-            return h;
-        }
-
-        // Sin sesión → ocultar sección
-        if (!getToken()) {
-            if (seccion) seccion.style.display = 'none';
+            document.getElementById('pagination-container').innerHTML = '';
             return;
         }
 
-        if (seccion) seccion.style.display = 'block';
-        setGrid(`
-            <div class="col-span-full flex flex-col items-center justify-center py-16">
-                <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
-                <p class="text-gray-600 text-lg">Cargando tus plantas ideales…</p>
-            </div>`);
+        grid.innerHTML = '';
+        productos.forEach(p => {
+            const card = createProductCard(p);
+            grid.appendChild(card);
+        });
 
-        try {
-            // 1️⃣ Verificar si completó la encuesta
-            const estadoRes = await fetch(`${API}/recomendaciones/estado`, {
-                headers: authHeaders(),
-            });
+        renderPagination();
 
-            if (!estadoRes.ok) { mostrarInvitacion(); return; }
+    } catch (error) {
+        console.error('❌ Error cargando categoría:', error);
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-16">
+                <p class="text-gray-500 text-lg mb-4">Error al cargar productos.</p>
+                <button onclick="cargarCategoria()" 
+                    class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
+                    Reintentar
+                </button>
+            </div>`;
+    }
+}
 
-            const estado = await estadoRes.json();
+// =============================================
+// BÚSQUEDA CON VALIDACIÓN DE CATEGORÍA
+// =============================================
+async function buscarConValidacion() {
+    const query = searchQuery.trim();
 
-            if (!estado.completada) { mostrarInvitacion(); return; }
-
-            // 2️⃣ Traer recomendaciones guardadas
-            const recomRes = await fetch(`${API}/recomendaciones`, {
-                method:  'POST',
-                headers: authHeaders(),
-                body:    JSON.stringify(estado.preferencias),
-            });
-
-            if (!recomRes.ok) { mostrarInvitacion(); return; }
-
-            const data = await recomRes.json();
-            renderGrid(data.recomendaciones);
-
-        } catch (e) {
-            console.error('❌ Error recomendaciones:', e);
-            mostrarInvitacion();
-        }
-
-        function mostrarInvitacion() {
-            setGrid(`
-                <div class="col-span-full flex flex-col items-center justify-center py-16 gap-4"
-                    style="font-family:'Poppins',sans-serif;">
-                    <p class="text-gray-500 text-lg text-center">
-                        Aún no has completado la encuesta.<br>
-                        ¡Descubre qué planta es perfecta para ti!
-                    </p>
-                    <a href="recomendaciones.html"
-                    class="mt-2 inline-flex items-center gap-2 bg-green-700 hover:bg-green-800
-                            text-white font-normal px-6 py-3 rounded-xl transition-all duration-300
-                            hover:-translate-y-1 hover:shadow-lg text-sm">
-                        Hacer la encuesta
-                    </a>
-                </div>`);
-        }
-
-        function renderGrid(plantas) {
-            if (!plantas?.length) { mostrarInvitacion(); return; }
-            const grid = document.getElementById('recom-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-            plantas.forEach((planta, i) => {
-                if (typeof createProductCard !== 'function') return;
-                const card = createProductCard(planta);
-                card.style.opacity    = '0';
-                card.style.transform  = 'translateY(18px)';
-                card.style.transition = `opacity 0.4s ease ${i * 0.08}s, transform 0.4s ease ${i * 0.08}s`;
-                grid.appendChild(card);
-                requestAnimationFrame(() => requestAnimationFrame(() => {
-                    card.style.opacity   = '1';
-                    card.style.transform = 'translateY(0)';
-                }));
-            });
-        }
-
-        function setGrid(html) {
-            const el = document.getElementById('recom-grid');
-            if (el) el.innerHTML = html;
-        }
-    });
-    </script>
-
-    <!-- Chat flotante -->
-    <script>
-    function ajustarBotonMobile() {
-        const chatBtn  = document.getElementById('chat-toggle');
-        const isMobile = window.innerWidth < 640;
-        if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
-            chatBtn.style.bottom = 'calc(85vh + 10px)';
-        } else {
-            chatBtn.style.bottom = '';
-        }
+    if (!query) {
+        cargarCategoria(1);
+        return;
     }
 
-    document.getElementById('chat-toggle').addEventListener('click', function () {
-        setTimeout(ajustarBotonMobile, 50);
+    const grid = document.getElementById('category-grid');
+
+    grid.innerHTML = `
+        <div class="col-span-full flex flex-col items-center justify-center py-16">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+            <p class="text-gray-600">Buscando...</p>
+        </div>`;
+
+    try {
+        // 1️⃣ Buscar dentro de ESTA categoría
+        const resCat = await fetch(
+            `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&status=active&limit=${LIMIT}&page=1&search=${encodeURIComponent(query)}`
+        );
+        const jsonCat = await resCat.json();
+        const enEstaCategoria = jsonCat.data || [];
+
+        // ✅ Encontró resultados → renderizar normal
+        if (enEstaCategoria.length > 0) {
+            totalPages = jsonCat.pagination?.totalPages || 1;
+            grid.innerHTML = '';
+            enEstaCategoria.forEach(p => grid.appendChild(createProductCard(p)));
+            renderPagination();
+            return;
+        }
+
+        // 2️⃣ No encontró nada → revisar si el término es de otra categoría
+        const queryLower = query.toLowerCase();
+        const esOtraCategoria = KEYWORDS_OTRAS_CATEGORIAS.some(kw =>
+            queryLower.includes(kw) || kw.includes(queryLower)
+        );
+
+        if (esOtraCategoria) {
+            // 🚫 El término pertenece a otra categoría
+            grid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-16">
+                    <p class="text-gray-700 text-lg font-medium">Este producto no pertenece a esta categoría</p>
+                    <p class="text-gray-500 text-sm mt-2">Intenta buscarlo en la sección correcta</p>
+                    <button onclick="limpiarBusqueda()" 
+                        class="mt-6 bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition">
+                        Ver todas las materas
+                    </button>
+                </div>`;
+        } else {
+            // 🔍 No existe en ningún lado → mensaje original
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <p class="text-gray-500 text-lg">No se encuentra el producto.</p>
+                </div>`;
+        }
+
+        document.getElementById('pagination-container').innerHTML = '';
+
+    } catch (error) {
+        console.error('❌ Error en búsqueda:', error);
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-16">
+                <p class="text-gray-500 text-lg mb-4">Error al buscar productos.</p>
+                <button onclick="limpiarBusqueda()" 
+                    class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
+                    Reintentar
+                </button>
+            </div>`;
+    }
+}
+
+function limpiarBusqueda() {
+    searchQuery = '';
+    document.getElementById('search-input').value = '';
+    cargarCategoria(1);
+}
+
+// =============================================
+// PAGINACIÓN
+// =============================================
+function renderPagination() {
+    const container = document.getElementById('pagination-container');
+    if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+    let html = `<nav class="flex space-x-2">`;
+
+    html += `<button onclick="cargarCategoria(${currentPage - 1})"
+        ${currentPage === 1 ? 'disabled' : ''}
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
+        Anterior
+    </button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button onclick="cargarCategoria(${i})"
+            class="px-4 py-2 rounded-lg ${i === currentPage
+                ? 'bg-green-800 text-white'
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+            ${i}
+        </button>`;
+    }
+
+    html += `<button onclick="cargarCategoria(${currentPage + 1})"
+        ${currentPage === totalPages ? 'disabled' : ''}
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
+        Siguiente
+    </button>`;
+
+    html += `</nav>`;
+    container.innerHTML = html;
+}
+
+// =============================================
+// INICIALIZAR
+// =============================================
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCategoria();
+
+    const input = document.getElementById('search-input');
+
+    input.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchQuery = input.value;
+        searchTimeout = setTimeout(() => buscarConValidacion(), 400);
     });
 
-    document.addEventListener('click', function (e) {
-        const chatPanel = document.getElementById('emergency-screen');
-        const chatBtn   = document.getElementById('chat-toggle');
-        if (
-            chatPanel.classList.contains('active') &&
-            !chatPanel.contains(e.target) &&
-            !chatBtn.contains(e.target)
-        ) {
-            chatPanel.classList.remove('active');
-            chatBtn.classList.remove('blur');
-            chatBtn.style.bottom = '';
-            chatBtn.style.right  = '';
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            clearTimeout(searchTimeout);
+            searchQuery = input.value;
+            buscarConValidacion();
         }
     });
-    </script>
-</body>
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('user-menu-container');
+    let hideTimeout = null;
 
+    function hideAllSubmenus() {
+        document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
+        document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
+    }
+
+    function positionAndShow(triggerEl, submenuId) {
+        clearTimeout(hideTimeout);
+        hideAllSubmenus();
+        const submenu = document.getElementById(submenuId);
+        if (!submenu) return;
+
+        submenu.classList.add('visible');
+        triggerEl.classList.add('active');
+
+        const rect = triggerEl.getBoundingClientRect();
+        const smW  = submenu.offsetWidth;
+        const smH  = submenu.offsetHeight;
+        const winH = window.innerHeight;
+
+        let left = rect.left - smW - 6;
+        if (left < 6) left = rect.right + 6;
+
+        let top = rect.top;
+        if (top + smH > winH - 8) top = winH - smH - 8;
+        if (top < 8) top = 8;
+
+        submenu.style.left = left + 'px';
+        submenu.style.top  = top  + 'px';
+    }
+
+    document.querySelectorAll('.has-submenu').forEach(trigger => {
+        const submenuId = trigger.dataset.submenu;
+        const submenu   = document.getElementById(submenuId);
+
+        trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+        trigger.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(() => {
+                if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
+            }, 100);
+        });
+    });
+
+    document.querySelectorAll('.floating-submenu').forEach(submenu => {
+        submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        submenu.addEventListener('mouseleave', () => {
+            hideTimeout = setTimeout(hideAllSubmenus, 100);
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
+            hideAllSubmenus();
+        }
+    });
+});
+</script>
+<script>
+    // Cerrar chat al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const chatPanel = document.getElementById('emergency-screen');
+            const chatBtn = document.getElementById('chat-toggle');
+
+            if (
+                chatPanel.classList.contains('active') &&
+                !chatPanel.contains(e.target) &&
+                !chatBtn.contains(e.target)
+            ) {
+                chatPanel.classList.remove('active');
+                chatBtn.classList.remove('blur');
+                chatBtn.style.bottom = '';   // ✅ Resetea la posición al original del CSS
+                chatBtn.style.right = '';    // ✅ Por si acaso también resetea right
+            }
+        });
+        // Ajustar posición del botón en móvil cuando el chat está abierto
+        function ajustarBotonMobile() {
+            const chatBtn = document.getElementById('chat-toggle');
+            const isMobile = window.innerWidth < 640;
+            
+            if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
+                chatBtn.style.bottom = 'calc(85vh + 10px)';
+            } else {
+                chatBtn.style.bottom = '';
+            }
+        }
+
+        document.getElementById('chat-toggle').addEventListener('click', function() {
+            setTimeout(ajustarBotonMobile, 50);
+        });
+
+        document.addEventListener('click', function(e) {
+            const chatPanel = document.getElementById('emergency-screen');
+            const chatBtn = document.getElementById('chat-toggle');
+
+            if (
+                chatPanel.classList.contains('active') &&
+                !chatPanel.contains(e.target) &&
+                !chatBtn.contains(e.target)
+            ) {
+                chatPanel.classList.remove('active');
+                chatBtn.classList.remove('blur');
+            }
+        });
+</script>
+</body>
 </html>

@@ -1,4 +1,0 @@
- /*Directivas principales de tailwindCSS*/
- @tailwind base; /*Reset CSS + estilos base*/
- @tailwind components;/*Componentes reutilizables*/
- @tailwind utilities;/*Clases utilitarias (text-xl,bg-blue-500, etc.)*/

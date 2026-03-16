@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Dashboard | Pedidos - Grow House</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="scripts/config.js"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Sidebar -->
+  <div class="fixed inset-y-0 left-0 w-64 text-white z-50
+    bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f]">
+    <div class="flex items-center gap-3 p-6">
+      <img src="assets/images/Logo-blanco-removebg-preview.png" alt="Logo" class="h-10 w-auto">
+      <div>
+        <h1 class="font-bold text-lg">Grow House</h1>
+        <p class="text-sm">Panel Administrador</p>
+      </div>
+    </div>
+        <nav class="mt-6">
+            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-chart-bar"></i> Estadisticas
+            </a>
+            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Productos</span>
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-bag-shopping"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Cupones</span>
+            </a>
+            <a href="admin-marketing.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-envelope w-4"></i>
+                <span>Marketing</span>
+            </a>
+        </nav>
+    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+      <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm block text-center mb-2">
+        <i class="fas fa-home mr-2"></i> Volver al inicio
+      </a>
+      <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm">
+        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="ml-64 p-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800">Gestión de Pedidos</h2>
+        <p class="text-gray-600">Administra y filtra los pedidos de tus clientes</p>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white p-6 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+          <input type="text" id="searchInput" placeholder="Número de pedido o email"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+          <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+            <option value="">Todos</option>
+            <option value="pending">Pendiente</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button onclick="loadOrders()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+            <i class="fas fa-search mr-2"></i> Buscar
+          </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">Total Pedidos</p>
+            <h3 class="text-2xl font-bold text-gray-800" id="totalOrders">0</h3>
+          </div>
+          <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center">
+            <i class="fas fa-bag-shopping text-xl text-blue-600"></i>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">Pendientes</p>
+            <h3 class="text-2xl font-bold text-yellow-600" id="pendingOrders">0</h3>
+          </div>
+          <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
+            <i class="fas fa-clock text-xl text-yellow-600"></i>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">Enviados</p>
+            <h3 class="text-2xl font-bold text-green-600" id="shippedOrders">0</h3>
+          </div>
+          <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center">
+            <i class="fas fa-truck text-xl text-green-600"></i>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-500 text-sm">Cancelados</p>
+            <h3 class="text-2xl font-bold text-red-600" id="cancelledOrders">0</h3>
+          </div>
+          <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center">
+            <i class="fas fa-times-circle text-xl text-red-600"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">id_Pedido</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cliente</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Correo</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTable" class="bg-white divide-y divide-gray-200">
+            <tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
+        <div class="text-sm text-gray-700">
+          Mostrando página <span id="currentPage">1</span> de <span id="totalPages">20</span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="previousPage()" id="prevBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+            Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+          </span>
+          <button onclick="nextPage()" id="nextBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Detalles del pedido-->
+  <div id="orderModal" style="display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,0.45);" onclick="if(event.target===this)closeModal()">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+    <div style="display:flex;align-items:center;justify-content:between;padding:20px 24px;border-bottom:1px solid #f3f4f6;position:sticky;top:0;background:#fff;border-radius:16px 16px 0 0;">
+      <div style="flex:1;">
+        <h3 style="font-size:1.1rem;font-weight:700;color:#1f2937;">Detalle del Pedido</h3>
+        <p style="font-size:0.85rem;color:#9ca3af;" id="modalOrderNumber">—</p>
+      </div>
+      <button onclick="closeModal()" style="color:#9ca3af;font-size:1.2rem;cursor:pointer;background:none;border:none;padding:4px 8px;">✕</button>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:20px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:#f9fafb;border-radius:12px;padding:16px;">
+          <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:8px;">Cliente</p>
+          <p style="font-weight:600;color:#1f2937;" id="modalClientName">—</p>
+          <p style="font-size:0.85rem;color:#6b7280;" id="modalClientEmail">—</p>
+          <p style="font-size:0.85rem;color:#6b7280;margin-top:4px;" id="modalClientPhone"></p>
+        </div>
+        <div style="background:#f9fafb;border-radius:12px;padding:16px;">
+          <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:8px;">Estado</p>
+          <p style="font-weight:600;color:#1f2937;" id="modalStatus">—</p>
+          <p style="font-size:0.75rem;color:#9ca3af;margin-top:6px;">Fecha del pedido: <span style="color:#4b5563;" id="modalDate">—</span></p>
+          <p style="font-size:0.75rem;color:#9ca3af;"> Metodo de pago: <span style="color:#4b5563;" id="modalPayment">—</span></p>
+        </div>
+      </div>
+      <div style="background:#f9fafb;border-radius:12px;padding:16px;">
+        <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:8px;">Dirección de Envío</p>
+        <p style="font-size:0.875rem;color:#374151;" id="modalAddress">—</p>
+      </div>
+      <div>
+        <p style="font-size:0.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;margin-bottom:12px;">Productos</p>
+        <div id="modalProducts" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+      <div style="background:#f0fdf4;border-radius:12px;padding:16px;">
+        <p style="font-size:0.7rem;font-weight:700;color:#161618;text-transform:uppercase;margin-bottom:12px;">Resumen</p>
+        <div style="display:flex;justify-content:space-between;font-size:0.875rem;color:#4b5563;margin-bottom:6px;"><span>Subtotal</span><span id="modalSubtotal">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.875rem;color:#4b5563;margin-bottom:6px;"><span>IVA 19%</span><span id="modalTax">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.875rem;color:#4b5563;margin-bottom:6px;"><span>Envío</span><span id="modalShipping">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.875rem;color:#4b5563;margin-bottom:6px;"><span>Descuento</span><span id="modalDiscount">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;color:#1f2937;border-top:1px solid #bbf7d0;padding-top:10px;margin-top:4px;"><span>Total</span><span id="modalTotal">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Actualizar Estado-->
+<div id="statusModal" style="display:none;position:fixed;inset:0;z-index:60;align-items:center;
+  justify-content:center;padding:16px;background:rgba(0,0,0,0.45);"
+  onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:380px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.25);overflow:hidden;">
+    
+    <!-- Header -->
+    <div style="padding:20px 24px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h3 style="font-size:1rem;font-weight:700;color:#1f2937;">Cambiar Estado</h3>
+        <p style="font-size:0.82rem;color:#9ca3af;margin-top:2px;" id="statusModalTitle">—</p>
+      </div>
+      <button onclick="document.getElementById('statusModal').style.display='none'"
+        style="background:none;border:none;cursor:pointer;color:#9ca3af;font-size:1.2rem;">✕</button>
+    </div>
+
+    <!-- Opciones -->
+    <div style="padding:20px;display:flex;flex-direction:column;gap:10px;" id="statusModalOptions">
+    </div>
+
+  </div>
+</div>
+
+  <script>
+    const API_URL = window.GROW_HOUSE_API + '/orders';
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentOrderId = null;
+
+    function getToken() {
+      return localStorage.getItem('growhouse-auth-token'); // ajusta la key si usas otra
+    }
+
+    async function loadOrders(page = 1) {
+      currentPage = page;
+      const search = document.getElementById('searchInput').value;
+      const status = document.getElementById('statusFilter').value;
+      const token = getToken();
+
+      if (!token) {
+        alert('Debes iniciar sesión como administrador');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams({ page, search, status, limit: 10 });
+        const res = await fetch(`${API_URL}?${params.toString()}`, {
+          headers: {
+            'Authorization': `Bearer ${token}` // ✅ token incluido
+          }
+        });
+
+        const data = await res.json();
+        const tbody = document.getElementById('ordersTable');
+        tbody.innerHTML = '';
+
+        if (data.success && data.data.length > 0) {
+          ordersCache = data.data;
+          data.data.forEach((order, index) => {
+            const cancelado = order.status === 'cancelled' || order.status === 'returned';
+            tbody.innerHTML += `
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm font-mono text-gray-700">${order.orderNumber || order._id}</td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-800">${order.isPhysicalSale ? (order.shippingAddress?.firstName || '') + ' ' + (order.shippingAddress?.lastName || '') : (order.user?.firstName || '') + ' ' + (order.user?.lastName || '')}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">${order.isPhysicalSale ? (order.shippingAddress?.email || 'Venta física') : (order.user?.email || 'N/A')}</td>
+                <td class="px-6 py-4 text-sm font-semibold text-gray-800">$${order.totals?.total.toLocaleString('es-CO')}</td>
+                <td class="px-6 py-4">${statusBadge(order.status, order.isPhysicalSale)}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">${new Date(order.createdAt).toLocaleDateString('es-CO')}</td>
+                <td class="px-6 py-4 flex items-center gap-2">
+                  <button onclick="viewOrder(${index})"
+                    class="inline-flex items-center gap-1 bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                    <i class="fas fa-eye"></i> Ver
+                  </button>
+                  ${!cancelado && !order.isPhysicalSale ? `
+                  <button onclick="cambiarEstado(${index})"
+                      class="inline-flex items-center gap-1 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+                      <i class="fas fa-edit"></i> Estado
+                  </button>` : ''}
+                </td>
+              </tr>
+            `;
+          });
+
+          // ✅ Actualizar paginación y stats ahora están fuera del forEach
+          if (data.pagination) updatePagination(data.pagination);
+          updateStats(data.data);
+
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay pedidos</td></tr>';
+        }
+
+      } catch (err) {
+        console.error('Error cargando pedidos:', err);
+      }
+    }
+
+    function cambiarEstado(index) {
+      const order = ordersCache[index];
+      const transiciones = {
+        'pending':    ['confirmed', 'cancelled'],
+        'confirmed':  ['processing', 'cancelled'],
+        'processing': ['shipped', 'cancelled'],
+        'shipped':    ['delivered', 'returned'],
+        'delivered':  ['returned'],
+      };
+      const traduccion = {
+        confirmed:  { label: 'Confirmado',       color: '#1e40af', bg: '#dbeafe' },
+        processing: { label: 'En Preparación',   color: '#6d28d9', bg: '#ede9fe' },
+        shipped:    { label: 'Enviado',          color: '#065f46', bg: '#d1fae5' },
+        delivered:  { label: order?.isPhysicalSale ? 'Entregado en punto físico' : 'Entregado', cls: 'background:#d1fae5;color:#065f46;' },
+        cancelled:  { label: 'Cancelado',        color: '#991b1b', bg: '#fee2e2' },
+        returned:   { label: 'Devuelto',         color: '#9d174d', bg: '#fce7f3' },
+      };
+
+      const opciones = transiciones[order.status] || [];
+      if (opciones.length === 0) return;
+
+      // Construir botones de opciones
+      const botonesHTML = opciones.map(s => {
+        const t = traduccion[s];
+        return `
+          <button onclick="confirmarCambioEstado('${order.id}', '${s}')"
+            style="padding:12px 20px;border-radius:10px;border:none;cursor:pointer;
+                  background:${t.bg};color:${t.color};font-weight:600;font-size:0.9rem;
+                  width:100%;text-align:left;transition:opacity 0.2s;"
+            onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+            ${t.label}
+          </button>`;
+      }).join('');
+
+      // Inyectar modal de cambio de estado
+      document.getElementById('statusModalTitle').textContent  = `Pedido ${order.orderNumber || ''}`;
+      document.getElementById('statusModalOptions').innerHTML  = botonesHTML;
+      document.getElementById('statusModal').style.display     = 'flex';
+    }
+
+    async function confirmarCambioEstado(orderId, newStatus) {
+      const token = getToken();
+      try {
+        const res = await fetch(`${API_URL}/${orderId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        document.getElementById('statusModal').style.display = 'none';
+        if (data.success) { loadOrders(currentPage); }
+        else { alert('❌ Error: ' + data.message); }
+      } catch (err) {
+        alert('Error de conexión');
+      }
+    }
+
+    function updatePagination(pagination) {
+      totalPages = pagination.pages || 1;
+      document.querySelectorAll('#currentPage').forEach(el => el.textContent = pagination.page);
+      document.querySelectorAll('#totalPages').forEach(el => el.textContent = totalPages);
+      document.getElementById('prevBtn').disabled = pagination.page === 1;
+      document.getElementById('nextBtn').disabled = pagination.page === totalPages;
+    }
+
+    function updateStats(orders) {
+      document.getElementById('totalOrders').textContent = orders.length;
+      document.getElementById('pendingOrders').textContent = orders.filter(o => o.status === 'pending').length;
+      document.getElementById('shippedOrders').textContent = orders.filter(o => o.status === 'shipped').length;
+      document.getElementById('cancelledOrders').textContent = orders.filter(o => o.status === 'cancelled').length;
+    }
+
+    function statusBadge(status, isPhysical) {
+        const deliveredLabel = isPhysical ? 'Entregado en punto físico' : 'Entregado';
+        const map = {
+            pending:    { label: 'Pendiente',      cls: 'background:#fef9c3;color:#92700a;' },
+            confirmed:  { label: 'Confirmado',     cls: 'background:#dbeafe;color:#1e40af;' },
+            processing: { label: 'En Preparación', cls: 'background:#ede9fe;color:#6d28d9;' },
+            shipped:    { label: 'Enviado',        cls: 'background:#d1fae5;color:#065f46;' },
+            delivered:  { label: deliveredLabel,   cls: 'background:#d1fae5;color:#065f46;' },
+            cancelled:  { label: 'Cancelado',      cls: 'background:#fee2e2;color:#991b1b;' },
+            returned:   { label: 'Devuelto',       cls: 'background:#fce7f3;color:#9d174d;' },
+        };
+        const s = map[status] || { label: status, cls: '' };
+        return `<span style="display:inline-block;padding:5px 16px;border-radius:999px;font-size:0.82rem;font-weight:600;${s.cls}">${s.label}</span>`;
+    }
+
+    function viewOrder(index) {
+        const order = ordersCache[index];
+        currentOrderId = order.id;
+
+        document.getElementById('modalOrderNumber').textContent = order.orderNumber || order._id;
+
+        // ── Cliente: si es venta física toma shippingAddress, si no el usuario ──
+        if (order.isPhysicalSale) {
+            const addr = order.shippingAddress;
+            document.getElementById('modalClientName').textContent  = `${addr?.firstName || ''} ${addr?.lastName || ''}`.trim() || 'N/A';
+            document.getElementById('modalClientEmail').textContent = addr?.email ? 'Correo: ' + addr.email : 'Venta física';
+            document.getElementById('modalClientPhone').textContent = addr?.phone ? 'Teléfono: ' + addr.phone : '';
+        } else {
+            document.getElementById('modalClientName').textContent  = `${order.user?.firstName || ''} ${order.user?.lastName || ''}`.trim() || 'N/A';
+            document.getElementById('modalClientEmail').textContent = order.user?.email ? 'Correo: ' + order.user.email : 'N/A';
+            document.getElementById('modalClientPhone').textContent = order.shippingAddress?.phone ? 'Teléfono: ' + order.shippingAddress.phone : '';
+        }
+
+        // ── Estado ──
+        const sMap = {
+            pending:    'Pendiente',
+            confirmed:  'Confirmado',
+            processing: 'En Preparación',
+            shipped:    'Enviado',
+            delivered:  order.isPhysicalSale ? 'Entregado en punto físico' : 'Entregado',
+            cancelled:  'Cancelado',
+            returned:   'Devuelto'
+        };
+        document.getElementById('modalStatus').textContent  = sMap[order.status] || order.status;
+        document.getElementById('modalDate').textContent    = new Date(order.createdAt).toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+        document.getElementById('modalPayment').textContent = order.paymentMethod?.replace(/_/g, ' ') || 'N/A';
+
+        // ── Dirección ──
+        const addr = order.shippingAddress;
+        document.getElementById('modalAddress').textContent = addr
+            ? `${addr.street}, ${addr.city}, ${addr.state}, ${addr.country || 'Colombia'}`
+            : 'No especificada';
+
+        // ── Productos ──
+        const prodContainer = document.getElementById('modalProducts');
+        prodContainer.innerHTML = '';
+        (order.products || []).forEach(item => {
+            const pName = item.name || item.product?.name || 'Producto';
+            const pImg  = item.image || item.product?.mainImage || '';
+            const sub   = (item.price || 0) * (item.quantity || 1);
+            prodContainer.innerHTML += `
+                <div style="display:flex;align-items:center;gap:12px;background:#f9fafb;border-radius:12px;padding:12px;">
+                    ${pImg
+                        ? `<img src="${pImg}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;">`
+                        : `<div style="width:56px;height:56px;background:#d1fae5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#065f46;font-size:1.2rem;">🌱</div>`
+                    }
+                    <div style="flex:1;">
+                        <p style="font-weight:600;font-size:0.9rem;color:#1f2937;">${pName}</p>
+                        <p style="font-size:0.78rem;color:#9ca3af;">$${(item.price||0).toLocaleString('es-CO')} × ${item.quantity} unidad${item.quantity > 1 ? 'es' : ''}</p>
+                    </div>
+                    <p style="font-weight:700;font-size:0.9rem;color:#1f2937;white-space:nowrap;">$${sub.toLocaleString('es-CO')}</p>
+                </div>`;
+        });
+
+        // ── Totales ──
+        const t = order.totals || {};
+        document.getElementById('modalSubtotal').textContent = '$' + (t.subtotal || 0).toLocaleString('es-CO');
+        document.getElementById('modalTax').textContent      = '$' + (t.tax      || 0).toLocaleString('es-CO');
+        document.getElementById('modalShipping').textContent = '$' + (t.shipping || 0).toLocaleString('es-CO');
+        document.getElementById('modalDiscount').textContent = t.discount ? '-$' + t.discount.toLocaleString('es-CO') : '$0';
+        document.getElementById('modalTotal').textContent    = '$' + (t.total    || 0).toLocaleString('es-CO');
+
+        document.getElementById('orderModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('orderModal').style.display = 'none';
+      document.body.style.overflow = '';
+      currentOrderId = null;
+    }
+
+    async function applyStatusChange() {
+      const newStatus = document.getElementById('modalNewStatus').value;
+      if (!newStatus) { alert('Selecciona un estado'); return; }
+      const token = getToken();
+      const res  = await fetch(`${API_URL}/${currentOrderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const data = await res.json();
+      if (data.success) { alert('✅ Estado actualizado'); closeModal(); loadOrders(currentPage); }
+      else { alert('❌ Error: ' + data.message); }
+    }
+
+    async function updateStatus(id) {
+      const newStatus = prompt('Estado (pending, confirmed, processing, shipped, delivered, cancelled):');
+      if (!newStatus) return;
+
+      const token = getToken();
+      const res = await fetch(`${API_URL}/${id}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // ✅ token incluido
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      const data = await res.json();
+      if (data.success) { alert('Estado actualizado'); loadOrders(currentPage); }
+      else { alert('Error: ' + data.message); }
+    }
+
+    function previousPage() { if (currentPage > 1) loadOrders(currentPage - 1); }
+    function nextPage() { if (currentPage < totalPages) loadOrders(currentPage + 1); }
+    function logout() { localStorage.removeItem('token'); window.location.href = 'login.html'; }
+
+    loadOrders();
+  </script>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - TechStore Pro</title>
+    <meta name="description" content="Finaliza tu compra de forma segura">
+    
+    <!-- TailwindCSS -->
+    <link href="styles/output.css" rel="stylesheet">
+    <link rel="icon" href="data:,">
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <!-- HEADER SIMPLIFICADO PARA CHECKOUT -->
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center text-2xl font-bold">
+                    <img src="assets/images/Green and White Plants Organic Logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover mr-4">
+                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                </div>
+                <!-- Indicador Checkout Seguro -->
+                <div class="text-sm text-gray-500 flex items-center">
+                    <svg class="w-4 h-4 mr-1 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    Checkout Seguro
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARRA DE PROGRESO -->
+    <div class="bg-white border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-center space-x-8">
+                <!-- Paso 1 -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-green-800 text-white flex items-center justify-center text-sm font-bold step-indicator" data-step="1">
+                        1
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-gray-900">Información</span>
+                </div>
+                
+                <!-- Línea de progreso 1 -->
+                <div class="flex-1 h-0.5 bg-gray-200">
+                    <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-1"></div>
+                </div>
+                
+                <!-- Paso 2 -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="2">
+                        2
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Envío</span>
+                </div>
+                
+                <!-- Línea de progreso 2 -->
+                <div class="flex-1 h-0.5 bg-gray-200">
+                    <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-2"></div>
+                </div>
+                
+                <!-- Paso 3 -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="3">
+                        3
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Pago</span>
+                </div>
+                
+                <!-- Línea de progreso 3 -->
+                <div class="flex-1 h-0.5 bg-gray-200">
+                    <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-3"></div>
+                </div>
+                
+                <!-- Paso 4 -->
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="4">
+                        ✓
+                    </div>
+                    <span class="ml-2 text-sm font-medium text-gray-500">Confirmación</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- FORMULARIOS DE CHECKOUT (Lado Izquierdo) -->
+            <div class="lg:col-span-2">
+                
+                <!-- PASO 1: INFORMACIÓN PERSONAL -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8 checkout-step" id="step-1">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Información Personal</h2>
+                    
+                    <form id="personal-info-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Nombre -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
+                                <input 
+                                    type="text" 
+                                    required 
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                    placeholder="Tu nombre"
+                                    name="firstName"
+                                >
+                            </div>
+                            
+                            <!-- Apellido -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Apellido *</label>
+                                <input 
+                                    type="text" 
+                                    required 
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                    placeholder="Tu apellido"
+                                    name="lastName"
+                                >
+                            </div>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input 
+                                type="email" 
+                                required 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                placeholder="tu@email.com"
+                                name="email"
+                            >
+                        </div>
+                        
+                        <!-- Teléfono -->
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono *</label>
+                            <input 
+                                type="tel" 
+                                required 
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                placeholder="+57 300 123 4567"
+                                name="phone"
+                            >
+                        </div>
+
+                        <!-- Crear cuenta -->
+                        <div class="mt-6 flex items-center">
+                            <input 
+                                type="checkbox" 
+                                id="create-account" 
+                                class="w-4 h-4 text-green-700 bg-gray-100 border-gray-300 rounded focus:ring-green-800"
+                                name="createAccount"
+                            >
+                            <label for="create-account" class="ml-2 text-sm text-gray-700">Crear cuenta para futuras compras</label>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- PASO 2: DIRECCIÓN DE ENVÍO - Reemplaza el div id="step-2" completo -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8 checkout-step hidden" id="step-2">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">Dirección de Envío</h2>
+                    <p class="text-gray-500 text-sm mb-6">Entregamos únicamente en Pital, Huila</p>
+
+                    <form id="shipping-form">
+
+                        <!-- Dirección -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección *</label>
+                            <input
+                                type="text"
+                                required
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                placeholder="Ej: Calle 5 # 3-20, Barrio Centro"
+                                name="address"
+                            >
+                        </div>
+
+                        <!-- Complemento -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Complemento (Opcional)</label>
+                            <input
+                                type="text"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-green-500 transition-colors duration-200"
+                                placeholder="Apartamento, casa, referencia adicional..."
+                                name="addressComplement"
+                            >
+                        </div>
+
+                        <!-- OPCIONES DE ENVÍO -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-4">Método de Envío</label>
+                            <div class="space-y-3">
+
+                                <!-- Envío Estándar -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                    <input type="radio" name="shipping" value="standard" class="text-green-700" checked>
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex justify-between">
+                                            <span class="font-medium">Envío Estándar</span>
+                                            <span class="font-bold text-green-600">Gratis</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500">5-7 días hábiles</p>
+                                    </div>
+                                </label>
+
+                                <!-- Envío Express -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                    <input type="radio" name="shipping" value="express" class="text-green-700">
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex justify-between">
+                                            <span class="font-medium">Envío Express</span>
+                                            <span class="font-bold">$25.000</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500">2-3 días hábiles</p>
+                                    </div>
+                                </label>
+
+                                <!-- Envío Inmediato -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                    <input type="radio" name="shipping" value="overnight" class="text-green-700">
+                                    <div class="ml-3 flex-1">
+                                        <div class="flex justify-between">
+                                            <span class="font-medium">Envío Inmediato</span>
+                                            <span class="font-bold">$50.000</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500">24-48 horas</p>
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                
+                <!-- PASO 3: MÉTODO DE PAGO -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8 checkout-step hidden" id="step-3">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Método de Pago</h2>
+                    
+                    <form id="payment-form">
+                        <!-- Selección de Método de Pago -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-4">Selecciona tu método de pago</label>
+                            <div class="space-y-3">
+                                <!-- Tarjeta de Crédito -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 payment-option">
+                                    <input type="radio" name="paymentMethod" value="card" class="text-blue-600" checked>
+                                    <div class="ml-3 flex items-center">
+                                        <span class="font-medium">Tarjeta de Crédito/Débito</span>
+                                        <div class="ml-4 flex space-x-2">
+                                            <span class="text-lg">💳</span>
+                                            <span class="text-lg">💳</span>
+                                            <span class="text-lg">💳</span>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <!-- PayPal -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 payment-option">
+                                    <input type="radio" name="paymentMethod" value="paypal" class="text-blue-600">
+                                    <div class="ml-3 flex items-center">
+                                        <span class="font-medium">PayPal</span>
+                                        <span class="ml-4 text-lg">🅿️</span>
+                                    </div>
+                                </label>
+                                
+                                <!-- Transferencia Bancaria -->
+                                <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200 payment-option">
+                                    <input type="radio" name="paymentMethod" value="transfer" class="text-blue-600">
+                                    <div class="ml-3">
+                                        <span class="font-medium">Transferencia Bancaria</span>
+                                        <p class="text-sm text-gray-500">Se enviará información bancaria por email</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- FORMULARIO DE TARJETA (Visible por defecto) -->
+                        <div id="card-details" class="payment-details">
+                            <!-- Número de Tarjeta -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Número de Tarjeta *</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="1234 5678 9012 3456"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                    id="card-number"
+                                >
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <!-- Fecha de Vencimiento -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Vencimiento *</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="MM/YY"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                        id="card-expiry"
+                                    >
+                                </div>
+                                <!-- CVC -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CVC *</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="123"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                        id="card-cvc"
+                                    >
+                                </div>
+                            </div>
+                            
+                            <!-- Nombre en la Tarjeta -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre en la Tarjeta *</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="JUAN PÉREZ"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                    id="card-name"
+                                >
+                            </div>
+
+                            <!-- Guardar Tarjeta -->
+                            <div class="flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    id="save-card" 
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                >
+                                <label for="save-card" class="ml-2 text-sm text-gray-700">Guardar tarjeta para futuras compras</label>
+                            </div>
+                        </div>
+
+                        <!-- PAYPAL (Oculto por defecto) -->
+                        <div id="paypal-details" class="payment-details hidden">
+                            <div class="text-center py-8">
+                                <div class="mb-4">
+                                    <span class="text-6xl">🅿️</span>
+                                </div>
+                                <p class="text-gray-600 mb-4">Serás redirigido a PayPal para completar tu pago de forma segura.</p>
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <p class="text-sm text-blue-800">✓ Pago 100% seguro con PayPal</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TRANSFERENCIA BANCARIA (Oculto por defecto) -->
+                        <div id="transfer-details" class="payment-details hidden">
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <h4 class="font-medium text-yellow-800 mb-2">Instrucciones de Transferencia</h4>
+                                <p class="text-sm text-yellow-700 mb-2">Te enviaremos los datos bancarios a tu email para completar la transferencia.</p>
+                                <p class="text-sm text-yellow-700">⚠️ Tu pedido se procesará una vez confirmemos el pago.</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- PASO 4: CONFIRMACIÓN -->
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8 checkout-step hidden" id="step-4">
+                    <div class="text-center">
+                        <div class="mb-6">
+                            <!-- Ícono de éxito -->
+                            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-2">¡Pedido Confirmado!</h2>
+                            <p class="text-gray-600 mb-6">Gracias por tu compra. Te hemos enviado un email con todos los detalles.</p>
+                        </div>
+                        
+                        <!-- Información del Pedido -->
+                        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                            <h3 class="font-semibold text-gray-900 mb-4">Resumen del Pedido</h3>
+                            <div class="text-left space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Número de pedido:</span>
+                                    <span class="font-medium" id="order-number">#TS-2025-001234</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Fecha:</span>
+                                    <span class="font-medium" id="order-date">1 de Septiembre, 2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Estado:</span>
+                                    <span class="font-medium text-green-600">Confirmado</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botones Finales -->
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="index.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Seguir Comprando
+                            </a>
+                            <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition duration-300">
+                                Ver Detalles del Pedido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- BOTONES DE NAVEGACIÓN -->
+                <div class="flex justify-between">
+                    <button 
+                        class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300 hidden" 
+                        id="prev-step-btn"
+                    >
+                        ← Anterior
+                    </button>
+                    <div></div>
+                    <button 
+                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300" 
+                        id="next-step-btn"
+                    >
+                        Continuar →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- SIDEBAR: RESUMEN DE PEDIDO (Lado Derecho) -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6">Resumen del Pedido</h3>
+                    
+                    <!-- PRODUCTOS DEL CARRITO -->
+                    <div class="space-y-4 mb-6" id="checkout-cart-items">
+                        
+                        <!-- Producto Ejemplo 1 -->
+                        <div class="flex items-center space-x-3 border-b border-gray-200 pb-4">
+                            <div class="bg-gray-100 rounded-lg p-3">
+                                <span class="text-2xl">💻</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900">MacBook Pro 16"</h4>
+                                <p class="text-sm text-gray-500">Cantidad: 1</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-900">$6.200.000</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Producto Ejemplo 2 -->
+                        <div class="flex items-center space-x-3 border-b border-gray-200 pb-4">
+                            <div class="bg-gray-100 rounded-lg p-3">
+                                <span class="text-2xl">📱</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900">iPhone 15 Pro</h4>
+                                <p class="text-sm text-gray-500">Cantidad: 1</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-900">$4.800.000</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- TOTALES DEL PEDIDO -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="space-y-2">
+                            <!-- Subtotal -->
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Subtotal</span>
+                                <span class="font-medium" id="subtotal">$11.000.000</span>
+                            </div>
+                            <!-- Envío -->
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">Envío</span>
+                                <span class="font-medium text-green-600" id="shipping-cost">Gratis</span>
+                            </div>
+                            <!-- Impuestos -->
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-600">IVA (19%)</span>
+                                <span class="font-medium" id="taxes">$2.090.000</span>
+                            </div>
+                            <!-- Total -->
+                            <div class="border-t border-gray-200 pt-2 mt-2">
+                                <div class="flex justify-between">
+                                    <span class="text-lg font-bold text-gray-900">Total</span>
+                                    <span class="text-lg font-bold text-blue-600" id="total">$13.090.000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- INFORMACIÓN DE SEGURIDAD -->
+                    <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            <span class="text-sm text-green-700 font-medium">Compra 100% Segura</span>
+                        </div>
+                        <p class="text-xs text-green-600 mt-1">Información encriptada con SSL</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="scripts/main.js"></script>
+    <script src="scripts/carrito.js"></script>
+    <script src="scripts/checkout.js"></script>
+</body>
+</html>

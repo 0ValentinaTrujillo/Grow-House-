@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Dashboard | Cupones - Grow House</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="scripts/config.js"></script>
+</head>
+<body class="bg-gray-50">
+
+<!-- Sidebar-->
+<div class="fixed inset-y-0 left-0 w-64 text-white z-50
+bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f]">
+
+    <div class="flex items-center gap-3 p-6">
+        <img src="assets/images/Logo-blanco-removebg-preview.png" class="h-10 w-auto">
+        <div class="flex flex-col leading-tight">
+            <h1 class="text-white font-bold text-lg">Grow House</h1>
+            <p class="text-white text-sm">Panel Administrador</p>
+        </div>
+    </div>
+
+        <nav class="mt-6">
+            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-chart-bar"></i> Estadisticas
+            </a>
+            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Productos</span>
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-bag-shopping"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Cupones</span>
+            </a>
+            <a href="admin-marketing.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-envelope w-4"></i>
+                <span>Marketing</span>
+            </a>
+        </nav>
+
+    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+        <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
+            <i class="fas fa-home mr-2"></i>
+            Volver al inicio
+        </a>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Cerrar Sesión
+        </button>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="ml-64 p-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800">Gestión de Cupones</h2>
+            <p class="text-gray-600">Administra descuentos y promociones</p>
+        </div>
+        <button onclick="openCreateModal()" 
+                class="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-plus"></i>Nuevo Cupón
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+
+        <!-- Total Cupones -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Total Cupones</p>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalCoupons">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                <i class="fas fa-ticket-alt text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Activos -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Activos</p>
+                <h3 class="text-2xl font-bold text-green-600" id="activeCoupons">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-green-100 text-green-600">
+                <i class="fas fa-check-circle text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Expirados -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Expirados</p>
+                <h3 class="text-2xl font-bold text-red-600" id="expiredCoupons">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-red-100 text-red-600">
+                <i class="fas fa-clock text-lg"></i>
+            </div>
+        </div>
+
+        <!-- Total Uso -->
+        <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center">
+            <div>
+                <p class="text-gray-500 text-sm">Total Usados</p>
+                <h3 class="text-2xl font-bold text-blue-600" id="totalUsage">0</h3>
+            </div>
+            <div class="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <i class="fas fa-chart-line text-lg"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descuento</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Uso</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categorías</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expira</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="couponsTable" class="divide-y divide-gray-200">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
+
+            <div class="text-sm text-gray-700"> Mostrando página <span id="currentPage">1</span> de <span id="totalPages">20</span>
+        </div>
+
+            <div class="flex gap-2">
+
+                <button id="prevPage"
+                    class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 
+                        disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                    <span class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                        Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+                    </span>
+                <button id="nextPage"
+                    class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-100 
+                        disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="couponModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+
+    <div class="p-6 border-b">
+        <div class="flex justify-between items-center">
+            <h3 class="text-xl font-bold" id="modalTitle">Nuevo Cupón</h3>
+            <button onclick="closeModal()" class="text-gray-500">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <form id="couponForm" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <input type="hidden" id="couponId">
+
+        <div class="md:col-span-2">
+            <label class="text-sm font-medium">Código *</label>
+            <input type="text" id="code" required class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <div class="md:col-span-2">
+            <label class="text-sm font-medium">Descripción *</label>
+            <input type="text" id="description" required class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">Tipo *</label>
+            <select id="discountType" required class="w-full border px-4 py-2 rounded-lg">
+                <option value="percentage">Porcentaje</option>
+                <option value="fixed">Monto Fijo</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">Valor *</label>
+            <input type="number" id="discountValue" required class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">Fecha Inicio *</label>
+            <input type="date" id="startDate" required class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-sm font-medium">Fecha Expiración *</label>
+            <input type="date" id="expiryDate" required class="w-full border px-4 py-2 rounded-lg">
+        </div>
+
+        <!-- Límite de usos -->
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            Límite de usos (opcional)
+        </label>
+        <input type="number" id="couponUsageLimit" min="0" value="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+        </div>
+
+        <!-- Categorías aplicables -->
+        <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            Categoría aplicable *
+        </label>
+
+        <select id="couponCategory" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+            <option value="">Seleccionar...</option>
+            <option value="plantas">Plantas</option>
+            <option value="materas">Materas</option>
+            <option value="decoraciones">Decoraciones</option>
+            <option value="implementos">Implementos</option>
+            <option value="all">Todas las categorías</option>
+        </select>
+        </div>
+
+        <div class="md:col-span-2 flex gap-4 mt-4">
+            <button type="button" onclick="closeModal()" class="flex-1 border px-4 py-2 rounded-lg">
+                Cancelar
+            </button>
+            <button type="submit" class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg">
+                Guardar Cupón
+            </button>
+        </div>
+    </form>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="scripts/admin-auth.js"></script>
+<script>
+const API_URL = window.GROW_HOUSE_API + '/admin/coupons';
+
+function formatDateYMD(dateString) {
+    const d = new Date(dateString);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+// ===============================
+// MODAL: ABRIR / CERRAR
+// ===============================
+function openCreateModal() {
+    document.getElementById("couponModal").classList.remove("hidden");
+    document.getElementById("modalTitle").innerText = "Nuevo Cupón";
+
+    document.getElementById("couponId").value = "";
+    code.value = "";
+    description.value = "";
+    discountType.value = "percentage";
+    discountValue.value = "";
+    startDate.value = "";
+    expiryDate.value = "";
+    couponUsageLimit.value = "";
+    couponCategory.value = "";
+}
+
+function closeModal() {
+    document.getElementById("couponModal").classList.add("hidden");
+}
+
+// ===============================
+// CARGAR CUPONES
+// ===============================
+async function loadCoupons(page = 1) {
+    try {
+
+        currentPage = page;
+
+        const res = await axios.get(API_URL, {
+            params: {
+                page: currentPage,
+                limit: 10
+            }
+        });
+
+        const coupons = res.data.data;
+        const pagination = res.data.pagination;
+
+        totalPages = pagination.totalPages;
+
+        // ===== STATS =====
+        const totalCoupons = pagination.totalDocs || coupons.length;
+        const activeCoupons = coupons.filter(c => c.status === "active").length;
+        const expiredCoupons = coupons.filter(c => c.status === "expired").length;
+        const totalUsage = coupons.reduce((sum, c) => sum + (c.usageCount || 0), 0);
+
+        document.getElementById("totalCoupons").innerText = totalCoupons;
+        document.getElementById("activeCoupons").innerText = activeCoupons;
+        document.getElementById("expiredCoupons").innerText = expiredCoupons;
+        document.getElementById("totalUsage").innerText = totalUsage;
+
+        // ===== TABLA =====
+        document.getElementById("couponsTable").innerHTML = coupons.map(c => `
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-left text-gray-900">${c.code}</td>
+                <td class="px-6 py-4 text-left text-gray-900">${c.formattedDiscount}</td>
+                <td class="px-6 py-4 text-left text-gray-700">
+                    ${c.usageLimit ? `${c.usageCount} / ${c.usageLimit}` : `${c.usageCount} / ∞`}
+                </td>
+                <td class="px-6 py-4 text-left text-gray-700">
+                    ${formatCategories(c.applicableCategories)}
+                </td>
+                <td class="px-6 py-4 text-left text-gray-700">
+                    ${formatDateYMD(c.expiryDate)}
+                </td>
+                <td class="px-6 py-4 text-left">
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(c.status)}">
+                        ${c.status}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-left">
+                    <button onclick="openEditModal('${c.id}')" class="text-blue-600 mr-2">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button onclick="deleteCoupon('${c.id}')" class="text-red-600">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join("");
+
+        updatePagination();
+
+    } catch (error) {
+        console.error("❌ Error cargando cupones:", error.response?.data || error);
+    }
+}
+
+// ===============================
+// EDITAR CUPÓN
+// ===============================
+async function openEditModal(id) {
+    try {
+        const res = await axios.get(`${API_URL}/${id}`);
+        const coupon = res.data.data;
+
+        document.getElementById("modalTitle").innerText = "Editar Cupón";
+
+        document.getElementById("couponId").value = coupon.id || coupon._id;
+        document.getElementById("code").value = coupon.code;
+        document.getElementById("description").value = coupon.description;
+        document.getElementById("discountType").value = coupon.discountType;
+        document.getElementById("discountValue").value = coupon.discountValue;
+        document.getElementById("startDate").value = formatDateYMD(coupon.startDate);
+        document.getElementById("expiryDate").value = formatDateYMD(coupon.expiryDate);
+        document.getElementById("couponUsageLimit").value = coupon.usageLimit ?? "";
+
+        if (!coupon.applicableCategories || coupon.applicableCategories.length === 0) {
+            document.getElementById("couponCategory").value = "all";
+        } else {
+            document.getElementById("couponCategory").value = coupon.applicableCategories[0];
+        }
+
+        document.getElementById("couponModal").classList.remove("hidden");
+
+    } catch (error) {
+        console.error("❌ Error cargando cupón:", error.response?.data || error);
+        alert("No se pudo cargar el cupón para editar");
+    }
+}
+
+// ===============================
+// CREAR o ACTUALIZAR CUPÓN
+// ===============================
+document.getElementById("couponForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const start = new Date(startDate.value);
+    const expiry = new Date(expiryDate.value);
+
+    if (expiry <= start) {
+        alert("❌ La fecha de expiración debe ser posterior a la fecha de inicio");
+        return;
+    }
+
+    try {
+        const couponId = document.getElementById("couponId").value;
+
+        const data = {
+            code: code.value.trim().toUpperCase(),
+            description: description.value,
+            discountType: discountType.value,
+            discountValue: parseInt(discountValue.value),
+            startDate: new Date(startDate.value + "T00:00:00Z"),
+            expiryDate: new Date(expiryDate.value + "T23:59:59Z"),
+            usageLimit: couponUsageLimit.value ? parseInt(couponUsageLimit.value) : undefined,
+            applicableCategories: couponCategory.value === "all"
+                ? []
+                : [couponCategory.value]
+        };
+
+        if (couponId) {
+            await axios.put(`${API_URL}/${couponId}`, data);
+        } else {
+            await axios.post(API_URL, data);
+        }
+
+        closeModal();
+        await loadCoupons();
+
+    } catch (error) {
+        console.error("❌ Error guardando cupón:", error.response?.data || error);
+        alert(error.response?.data?.message || "Error al guardar cupón");
+    }
+});
+
+// ===============================
+// ELIMINAR CUPÓN
+// ===============================
+async function deleteCoupon(id) {
+    if (!confirm("¿Eliminar cupón?")) return;
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+        await loadCoupons();
+    } catch (error) {
+        console.error("❌ Error eliminando cupón:", error.response?.data || error);
+        alert("Error al eliminar cupón");
+    }
+}
+
+// ===============================
+// Helpers
+// ===============================
+function formatCategories(categories) {
+    if (!categories || categories.length === 0) return "Todas";
+    return categories.join(", ");
+}
+
+function getStatusColor(status) {
+    if (status === 'active') return "bg-green-100 text-green-800";
+    if (status === 'expired') return "bg-red-100 text-red-800";
+    return "bg-gray-100 text-gray-800";
+}
+
+let currentPage = 1;
+let currentSearch = '';
+let currentStatus = '';
+let currentSort = '-createdAt';
+let totalPages = 1;
+
+function updatePagination(pagination) {
+    totalPages = pagination.pages;
+    document.getElementById('currentPage').textContent = pagination.page;
+    document.getElementById('totalPages').textContent = totalPages;
+    document.getElementById('totalCount').textContent = pagination.total;
+    document.getElementById('showingFrom').textContent = ((pagination.page - 1) * 20) + 1;
+    document.getElementById('showingTo').textContent = Math.min(pagination.page * 20, pagination.total);
+
+    document.getElementById('prevBtn').disabled = pagination.page === 1;
+    document.getElementById('nextBtn').disabled = pagination.page === totalPages;
+}
+
+document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+        loadCoupons(currentPage - 1);
+    }
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+        loadCoupons(currentPage + 1);
+    }
+});
+
+// ===============================
+// INIT
+// ===============================
+document.addEventListener("DOMContentLoaded", async () => {
+    const isAuthorized = await adminAuth.protectAdminRoute();
+    if (!isAuthorized) return;
+    await loadCoupons();
+});
+</script>
+</body>
+</html>

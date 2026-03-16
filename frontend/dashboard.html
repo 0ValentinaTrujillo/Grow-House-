@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin - Grow House</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body class="bg-gray-50">
+
+<!-- ================= SIDEBAR ================= -->
+<div class="fixed inset-y-0 left-0 w-64 text-white z-50 bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f]">
+    <div class="flex items-center gap-3 p-6">
+        <img src="assets/images/Logo-blanco-removebg-preview.png" class="h-10 w-auto">
+        <div>
+            <h1 class="font-bold text-lg">Grow House</h1>
+            <p class="text-sm">Panel Administrador</p>
+        </div>
+    </div>
+
+        <nav class="mt-6">
+            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-chart-bar"></i> Estadisticas
+            </a>
+            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Productos</span>
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-bag-shopping"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Cupones</span>
+            </a>
+            <a href="admin-marketing.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-envelope w-4"></i>
+                <span>Marketing</span>
+            </a>
+        </nav>
+
+    <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+        <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
+            <i class="fas fa-home mr-2"></i>
+            Volver al inicio
+        </a>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Cerrar Sesión
+        </button>
+    </div>
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="ml-64 p-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-8">
+        <div>
+        <h2 class="text-3xl font-bold text-gray-800">Estadisticas Generales</h2>
+            <p class="text-gray-500 mt-1">Resumen general de tu negocio</p>
+        </div>
+        <button id="btnRegisterSale" onclick="openSaleModal()"
+            class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-xl shadow-lg transition-all hover:shadow-green-200 hover:scale-105 active:scale-95">
+            <i class="fas fa-plus"></i>
+            <span>Registrar Venta</span>
+        </button>
+    </div>
+
+    <!-- ================= STATS CARDS ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+        <!-- Ventas Hoy -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas Hoy</p>
+                    <h3 id="salesToday" class="text-2xl font-bold text-gray-800">$0</h3>
+                </div>
+                <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-calendar-day text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Mes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas del Mes</p>
+                    <h3 id="salesMonth" class="text-2xl font-bold text-green-600">$0</h3>
+                </div>
+                <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-calendar-alt text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventas Año -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Ventas del Año</p>
+                    <h3 id="salesYear" class="text-2xl font-bold text-purple-600">$0</h3>
+                </div>
+                <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas Stock -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Alertas de Stock</p>
+                    <h3 id="lowStock" class="text-2xl font-bold text-red-600">0</h3>
+                </div>
+                <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= SEGUNDA FILA ================= -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+        <!-- Total Clientes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Clientes</p>
+                    <h3 id="totalCustomers" class="text-2xl font-bold text-gray-800">0</h3>
+                </div>
+                <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-users text-yellow-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Productos -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Productos</p>
+                    <h3 id="totalProducts" class="text-2xl font-bold text-gray-800">0</h3>
+                </div>
+                <div class="bg-indigo-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-box text-indigo-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedidos Pendientes -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-gray-500 text-sm">Pedidos Pendientes</p>
+                    <h3 id="pendingOrders" class="text-2xl font-bold text-orange-600">0</h3>
+                </div>
+                <div class="bg-orange-100 w-12 h-12 rounded-full flex items-center justify-center">
+                    <i class="fas fa-clock text-orange-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- tables -->
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Últimas Ventas -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-2 border-b">
+                <h3 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ventas Recientes</h3>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Cliente</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Total</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="recentSalesTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Productos con Bajo Stock -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-2 border-b">
+                <h3 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Productos con Bajo Stock</h3>
+            </div>
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Producto</th>
+                        <th class="px-6 py-3 text-left text-xs text-gray-500 uppercase">Stock</th>
+                    </tr>
+                </thead>
+                <tbody id="lowStockTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL REGISTRAR VENTA FÍSICA
+     ===================================================== -->
+<div id="saleModal" class="fixed inset-0 z-[100] flex items-center justify-center hidden" style="background:rgba(0,0,0,0.5);backdrop-filter:blur(4px)">
+    <div id="modalBox" class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden flex flex-col" style="max-height:92vh">
+
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-[#03651f] to-[#057a2b] px-8 py-5 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h3 class="text-white font-bold text-xl">Registrar Venta</h3>
+                    <p class="text-green-200 text-sm">Venta realizada en la tienda</p>
+                </div>
+            </div>
+            <!-- Step indicators -->
+            <button onclick="closeSaleModal()" class="text-white/70 hover:text-white transition">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body — scrollable -->
+        <div class="overflow-y-auto flex-1 px-8 py-6">
+
+            <!-- ── PASO 1: Datos del cliente ── -->
+            <div id="step1">
+                <p class="text-xs font-semibold text-green-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-green-700 text-xs font-bold">1.</span>
+                    Datos del Cliente
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Nombre *</label>
+                        <input id="cFirstName" type="text" placeholder="Ej: María"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Apellido *</label>
+                        <input id="cLastName" type="text" placeholder="Ej: García"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Email</label>
+                        <input id="cEmail" type="email" placeholder="correo@ejemplo.com"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono</label>
+                        <input id="cPhone" type="text" placeholder="3123456789"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Dirección</label>
+                        <input id="cAddress" type="text" placeholder="Calle 10 # 5-20, Pital"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-dashed border-gray-200 my-6"></div>
+
+            <!-- ── PASO 2: Productos ── -->
+            <div id="step2">
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-xs font-semibold text-green-700 uppercase tracking-widest flex items-center gap-2">
+                        <span class="text-green-700 text-xs font-bold">2.</span>
+                        Productos
+                    </p>
+                    <button onclick="addProductRow()"
+                        class="flex items-center gap-1.5 text-xs font-semibold text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition">
+                        <i class="fas fa-plus"></i> Agregar producto
+                    </button>
+                </div>
+
+                <!-- Header -->
+                <div class="grid grid-cols-12 gap-2 mb-2 px-1">
+                    <span class="col-span-5 text-xs text-gray-400 font-medium">Producto</span>
+                    <span class="col-span-2 text-xs text-gray-400 font-medium text-center">Cantidad</span>
+                    <span class="col-span-3 text-xs text-gray-400 font-medium text-right">Precio unit.</span>
+                    <span class="col-span-2 text-xs text-gray-400 font-medium text-right">Subtotal</span>
+                </div>
+
+                <div id="productsContainer" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                    <!-- product rows injected here -->
+                </div>
+
+                <!-- Totals -->
+                <div class="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>Subtotal</span>
+                        <span id="modalSubtotal">$0</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-500 mb-1">
+                        <span>IVA (19%)</span>
+                        <span id="modalTax">$0</span>
+                    </div>
+                    <div class="border-t border-gray-200 pt-2 flex justify-between font-bold text-gray-800">
+                        <span>Total</span>
+                        <span id="modalTotal" class="text-green-700 text-lg">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-dashed border-gray-200 my-6"></div>
+
+            <!-- ── PASO 3: Método de pago y fecha ── -->
+            <div id="step3">
+                <p class="text-xs font-semibold text-green-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <span class="text-green-700 text-xs font-bold">3.</span>
+                    Pago y Fecha
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Método de pago *</label>
+                        <select id="paymentMethod"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition bg-white">
+                            <option value="cash_on_delivery">Efectivo</option>
+                            <option value="credit_card">Tarjeta de crédito</option>
+                            <option value="debit_card">Tarjeta débito</option>
+                            <option value="nequi">Nequi</option>
+                            <option value="bank_transfer">Transferencia bancaria</option>
+                            <option value="pse">PSE</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Fecha de venta *</label>
+                        <input id="saleDate" type="datetime-local"
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Notas internas (opcional)</label>
+                        <textarea id="saleNotes" rows="2" placeholder="Ej: cliente frecuente, pagó con billete de $50.000..."
+                            class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent transition resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-8 py-5 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-shrink-0">
+            <button onclick="closeSaleModal()" class="text-gray-500 hover:text-gray-700 text-sm font-medium transition">
+                <i class="fas fa-times mr-1"></i> Cancelar
+            </button>
+            <div class="flex gap-3">
+                <button onclick="submitSale(true)" id="btnSaveInvoice"
+                    class="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-md">
+                    <i class="fas fa-file-pdf"></i> Guardar y generar factura
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     SCRIPTS
+     ===================================================== -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="scripts/config.js"></script>
+<script src="scripts/admin-auth.js"></script>
+
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTES
+// ─────────────────────────────────────────────
+const API_BASE = window.GROW_HOUSE_API;
+const BUSINESS = {
+    name:    'Grow House',
+    nit:     '900.123.456-7',
+    address: 'Pital, Huila, Colombia',
+    phone:   '321 401 4230',
+    email:   'growhouse011@gmail.com'
+};
+
+const PAYMENT_LABELS = {
+    cash_on_delivery: 'Efectivo',
+    credit_card:      'Tarjeta de crédito',
+    debit_card:       'Tarjeta débito',
+    nequi:            'Nequi',
+    bank_transfer:    'Transferencia bancaria',
+    pse:              'PSE'
+};
+
+function fmt(n) {
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n || 0);
+}
+function fmtDate(d) {
+    return new Date(d).toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+// ─────────────────────────────────────────────
+// DASHBOARD STATS
+// ─────────────────────────────────────────────
+async function loadDashboard() {
+    try {
+        const token = localStorage.getItem('growhouse-auth-token');
+        const response = await axios.get(`${API_BASE}/admin/dashboard`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = response.data.data;
+
+        document.getElementById('salesToday').textContent     = fmt(data.salesToday);
+        document.getElementById('salesMonth').textContent     = fmt(data.salesMonth);
+        document.getElementById('salesYear').textContent      = fmt(data.salesYear);
+        document.getElementById('lowStock').textContent       = data.lowStockCount;
+        document.getElementById('totalCustomers').textContent = data.totalCustomers;
+        document.getElementById('totalProducts').textContent  = data.totalProducts;
+        document.getElementById('pendingOrders').textContent  = data.pendingOrders;
+
+        renderRecentSales(data.recentSales || []);
+        renderLowStock(data.lowStockProducts || []);
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+    }
+}
+
+function renderRecentSales(sales) {
+    document.getElementById('recentSalesTable').innerHTML = sales.map(s => `
+        <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-3 text-sm text-gray-700">${s.customerName}</td>
+            <td class="px-6 py-3 text-sm font-semibold text-green-600">${fmt(s.total)}</td>
+            <td class="px-6 py-3 text-sm text-gray-400">${new Date(s.createdAt).toLocaleDateString('es-CO')}</td>
+        </tr>
+    `).join('') || '<tr><td colspan="3" class="px-6 py-6 text-center text-gray-400 text-sm">Sin ventas recientes</td></tr>';
+}
+
+function renderLowStock(products) {
+    document.getElementById('lowStockTable').innerHTML = products.map(p => `
+        <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-3 text-sm text-gray-700">${p.name}</td>
+            <td class="px-6 py-3"><span class="bg-red-100 text-red-600 font-bold text-sm px-2 py-0.5 rounded-lg">${p.quantity}</span></td>
+        </tr>
+    `).join('') || '<tr><td colspan="2" class="px-6 py-6 text-center text-gray-400 text-sm">Sin alertas de stock</td></tr>';
+}
+
+// ─────────────────────────────────────────────
+// MODAL VENTA FÍSICA
+// ─────────────────────────────────────────────
+let productRowCount = 0;
+let availableProducts = [];
+
+async function openSaleModal() {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('saleDate').value = now.toISOString().slice(0, 16);
+
+    ['cFirstName','cLastName','cEmail','cPhone','cAddress','saleNotes'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('productsContainer').innerHTML = '';
+    productRowCount = 0;
+    updateTotals();
+
+    const modal = document.getElementById('saleModal');
+    modal.classList.remove('hidden');
+
+    // Primero cargar productos, luego agregar la fila
+    await loadProducts();
+    addProductRow();
+}
+
+function closeSaleModal() {
+    document.getElementById('saleModal').classList.add('hidden');
+}
+
+document.getElementById('saleModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSaleModal();
+});
+
+async function loadProducts() {
+    try {
+        const token = localStorage.getItem('growhouse-auth-token');
+        const res = await axios.get(`${API_BASE}/admin/products?limit=200&status=active`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        availableProducts = res.data.data || [];
+        console.log('Primer producto:', availableProducts[0]);
+    } catch (e) {
+        console.warn('No se pudo cargar productos:', e.message);
+    }
+}
+
+function addProductRow() {
+    productRowCount++;
+    const id        = productRowCount;
+    const container = document.getElementById('productsContainer');
+
+    const row       = document.createElement('div');
+    row.className   = 'product-row grid grid-cols-12 gap-2 items-center bg-white border border-gray-100 rounded-xl p-2';
+    row.id          = `prow-${id}`;
+    row.innerHTML   = `
+        <select class="col-span-5 product-select px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 transition"
+            onchange="onProductSelect(${id})">
+            <option value=""> Seleccionar </option>
+            ${availableProducts.map(p => `<option value="${p.id || p._id}" data-price="${p.price}" data-image="${p.mainImage || ''}">${p.name}</option>`).join('')}
+        </select>
+        <input type="number" id="qty-${id}" min="1" value="1"
+            class="col-span-2 text-center px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 transition"
+            oninput="updateTotals()">
+        <input type="number" id="price-${id}" min="0" placeholder="0"
+            class="col-span-3 text-right px-2 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-700 transition"
+            oninput="updateTotals()">
+        <div class="col-span-2 flex items-center justify-between">
+            <span id="sub-${id}" class="text-xs font-semibold text-gray-600">$0</span>
+            <button onclick="removeProductRow(${id})" class="text-gray-300 hover:text-red-400 transition ml-1">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+        </div>
+    `;
+    container.appendChild(row);
+}
+
+function onProductSelect(id) {
+    const sel   = document.querySelector(`#prow-${id} .product-select`);
+    const opt   = sel.options[sel.selectedIndex];
+    const price = opt.dataset.price || 0;
+    document.getElementById(`price-${id}`).value = price;
+    updateTotals();
+}
+
+function removeProductRow(id) {
+    const row = document.getElementById(`prow-${id}`);
+    if (row) {
+        row.style.opacity    = '0';
+        row.style.transition = 'opacity 0.15s ease';
+        setTimeout(() => { row.remove(); updateTotals(); }, 150);
+    }
+}
+
+function getProductRows() {
+    const rows = [];
+    document.querySelectorAll('[id^="prow-"]').forEach(row => {
+        const rowId = row.id.replace('prow-', '');
+        const sel   = row.querySelector('.product-select');
+        const qty   = parseFloat(document.getElementById(`qty-${rowId}`)?.value) || 0;
+        const price = parseFloat(document.getElementById(`price-${rowId}`)?.value) || 0;
+        if (sel && sel.value && qty > 0 && price > 0) {
+            const opt = sel.options[sel.selectedIndex];
+            rows.push({
+                productId: sel.value,
+                name:      opt.text,
+                quantity:  qty,
+                price:     price,
+                image:     opt.dataset.image || ''
+            });
+        }
+        if (document.getElementById(`sub-${rowId}`)) {
+            document.getElementById(`sub-${rowId}`).textContent = fmt(qty * price);
+        }
+    });
+    return rows;
+}
+
+function updateTotals() {
+    const rows     = getProductRows();
+    const subtotal = rows.reduce((s, r) => s + r.price * r.quantity, 0);
+    const tax      = Math.round(subtotal * 0.19);
+    const total    = subtotal + tax;
+
+    document.getElementById('modalSubtotal').textContent = fmt(subtotal);
+    document.getElementById('modalTax').textContent      = fmt(tax);
+    document.getElementById('modalTotal').textContent    = fmt(total);
+}
+
+// ─────────────────────────────────────────────
+// SUBMIT VENTA
+// ─────────────────────────────────────────────
+async function submitSale(generateInvoice) {
+    const firstName = document.getElementById('cFirstName').value.trim();
+    const lastName  = document.getElementById('cLastName').value.trim();
+    const products  = getProductRows();
+
+    if (!firstName || !lastName) {
+        showToast('Por favor ingresa el nombre y apellido del cliente', 'error');
+        return;
+    }
+    if (products.length === 0) {
+        showToast('Agrega al menos un producto con precio y cantidad', 'error');
+        return;
+    }
+
+    const btn  = document.getElementById('btnSaveInvoice');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...';
+    btn.disabled  = true;
+
+    try {
+        const token    = localStorage.getItem('growhouse-auth-token');
+        const saleDate = document.getElementById('saleDate').value;
+        const method   = document.getElementById('paymentMethod').value;
+        const notes    = document.getElementById('saleNotes').value.trim();
+        const email    = document.getElementById('cEmail').value.trim();
+        const phone    = document.getElementById('cPhone').value.trim();
+        const address  = document.getElementById('cAddress').value.trim();
+
+        const subtotal = products.reduce((s, r) => s + r.price * r.quantity, 0);
+        const tax      = Math.round(subtotal * 0.19);
+        const total    = subtotal + tax;
+
+        const payload = {
+            isPhysicalSale: true,
+            customer: { firstName, lastName, email, phone, address },
+            products: products.map(p => ({
+                product:  p.productId,
+                name:     p.name,
+                quantity: p.quantity,
+                price:    p.price,
+                image:    p.image
+            })),
+            totals:         { subtotal, tax, taxRate: 0.19, shipping: 0, discount: 0, total },
+            paymentMethod:  method,
+            paymentStatus:  'paid',
+            shippingMethod: 'pickup',
+            orderDate:      saleDate ? new Date(saleDate).toISOString() : new Date().toISOString(),
+            status:         'delivered',
+            shippingAddress: {
+                firstName, lastName,
+                street:  address || 'Tienda física',
+                city:    'Pital',
+                state:   'Huila',
+                country: 'Colombia',
+                phone:   phone || '0000000000',
+                email:   email || 'sinregistro@growhouse.com'
+            },
+            notes: { internalNotes: notes || 'Venta física en tienda' }
+        };
+
+        console.log('Payload completo:', JSON.stringify(payload, null, 2));
+
+        const res        = await axios.post(`${API_BASE}/admin/orders/physical`, payload, {
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+        });
+        const savedOrder = res.data.data;
+
+        showToast('¡Venta física registrada!', 'success');
+        closeSaleModal();
+        loadDashboard();
+
+        if (generateInvoice) {
+            await generatePhysicalInvoice(savedOrder, { firstName, lastName, email, phone, address });
+        }
+
+    } catch (err) {
+        console.error('Error:', err);
+        const msg = err.response?.data?.message || err.message || 'Error desconocido';
+        showToast('Error: ' + msg, 'error');
+    } finally {
+        btn.innerHTML = orig;
+        btn.disabled  = false;
+    }
+}
+
+// ─────────────────────────────────────────────
+// GENERAR FACTURA PDF
+// ─────────────────────────────────────────────
+async function generatePhysicalInvoice(order, customer) {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+        const W   = doc.internal.pageSize.getWidth();
+        const H   = doc.internal.pageSize.getHeight();
+        const CX  = 14;
+        const CW  = W - 28;
+        let y     = 14;
+
+        const num   = order.orderNumber || ('FS-' + Date.now().toString().slice(-8));
+        const prods = order.products    || [];
+        const t     = order.totals      || {};
+
+        const GREEN_D = [21, 128, 61];
+        const GREEN_M = [34, 139, 74];
+        const GREEN_L = [240, 253, 244];
+        const GREEN_B = [187, 247, 208];
+        const SLATE   = [15, 23, 42];
+        const DARK    = [30, 41, 59];
+        const GRAY    = [100, 116, 139];
+        const LGRAY   = [148, 163, 184];
+        const BORDER  = [226, 232, 240];
+        const ROWALT  = [248, 250, 248];
+        const WHITE   = [255, 255, 255];
+
+        doc.setFillColor(...WHITE);
+        doc.rect(0, 0, W, H, 'F');
+
+        doc.setTextColor(...GREEN_M); doc.setFontSize(16); doc.setFont('helvetica', 'bold');
+        doc.text('Grow House', CX + 5, y + 7);
+        doc.setTextColor(...GRAY); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+        doc.text('VIVERO & CULTIVO INDOOR', CX + 5, y + 13);
+
+        const badge = 'VENTA EN TIENDA';
+        const bw    = doc.getTextWidth(badge) + 10;
+        doc.setFillColor(...GREEN_L); doc.setDrawColor(...GREEN_B);
+        doc.roundedRect(W - CX - bw, y + 1, bw, 7, 2, 2, 'FD');
+        doc.setTextColor(...GREEN_M); doc.setFontSize(6.5); doc.setFont('helvetica', 'bold');
+        doc.text(badge, W - CX - bw / 2, y + 5.8, { align: 'center' });
+
+        doc.setTextColor(...SLATE); doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+        doc.text('FACTURA', W - CX, y + 7, { align: 'right' });
+        doc.setTextColor(...LGRAY); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+        doc.text('NIT: ' + BUSINESS.nit, W - CX, y + 13, { align: 'right' });
+
+        y += 19;
+        doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
+        doc.line(CX, y, W - CX, y);
+
+        y += 8;
+        doc.setTextColor(...SLATE); doc.setFontSize(12); doc.setFont('helvetica', 'bold');
+        doc.text('N° ' + num, CX, y);
+        doc.setTextColor(...LGRAY); doc.setFontSize(7.5); doc.setFont('helvetica', 'normal');
+        doc.text('Emitido el ' + fmtDate(order.orderDate || new Date()), CX, y + 6);
+
+        y += 14;
+        const cardH = 48;
+        const cardW = (CW - 6) / 2;
+
+        // Card cliente
+        doc.setFillColor(...WHITE); doc.setDrawColor(...GREEN_B); doc.setLineWidth(0.4);
+        doc.roundedRect(CX, y, cardW, cardH, 3, 3, 'FD');
+        doc.setFillColor(...GREEN_M);
+        doc.roundedRect(CX, y, cardW, 8, 3, 3, 'F');
+        doc.rect(CX, y + 5, cardW, 3, 'F');
+        doc.setTextColor(...WHITE); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+        doc.text('CLIENTE', CX + 5, y + 5.5);
+
+        const clientRows = [
+            { label: 'Nombre:',    value: (customer.firstName + ' ' + customer.lastName).trim() },
+            { label: 'Dirección:', value: customer.address || 'Tienda física' },
+            { label: 'Email:',     value: customer.email   || '—' },
+            { label: 'Teléfono:',  value: customer.phone   || '—' },
+        ];
+        let cy = y + 16;
+        clientRows.forEach(r => {
+            doc.setTextColor(...DARK); doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+            doc.text(r.label, CX + 5, cy);
+            doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY);
+            doc.text(r.value, CX + 5 + doc.getTextWidth(r.label) + 1.5, cy);
+            cy += 6;
+        });
+
+        // Card pago
+        const cx2 = CX + cardW + 6;
+        doc.setFillColor(...WHITE); doc.setDrawColor(...GREEN_B);
+        doc.roundedRect(cx2, y, cardW, cardH, 3, 3, 'FD');
+        doc.setFillColor(...GREEN_M);
+        doc.roundedRect(cx2, y, cardW, 8, 3, 3, 'F');
+        doc.rect(cx2, y + 5, cardW, 3, 'F');
+        doc.setTextColor(...WHITE); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+        doc.text('PAGO & CANAL', cx2 + 5, y + 5.5);
+
+        let py = y + 16;
+        doc.setTextColor(...DARK); doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+        doc.text('Método de pago:', cx2 + 5, py); py += 6;
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY); doc.setFontSize(8);
+        doc.text(PAYMENT_LABELS[order.paymentMethod] || '—', cx2 + 5, py); py += 9;
+        doc.setTextColor(...DARK); doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+        doc.text('Canal de venta:', cx2 + 5, py); py += 6;
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(...GRAY); doc.setFontSize(8);
+        doc.text('Tienda física', cx2 + 5, py);
+
+        // Tabla productos
+        y += cardH + 10;
+        doc.setFillColor(...GREEN_M);
+        doc.roundedRect(CX, y, CW, 9, 3, 3, 'F');
+        doc.setTextColor(...WHITE); doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+        doc.text('PRODUCTO',  CX + 5,      y + 6);
+        doc.text('CANT.',     CX + 110,    y + 6, { align: 'center' });
+        doc.text('PRECIO',    CX + 138,    y + 6, { align: 'center' });
+        doc.text('SUBTOTAL',  CX + CW - 3, y + 6, { align: 'right' });
+        y += 9;
+
+        let alt = false;
+        prods.forEach(item => {
+            const name = item.name || 'Producto';
+            const q    = item.quantity || 1;
+            const p    = item.price    || 0;
+            const rh   = 10;
+            if (alt) { doc.setFillColor(...ROWALT); doc.rect(CX, y, CW, rh, 'F'); }
+            const dn = name.length > 42 ? name.slice(0, 42) + '...' : name;
+            doc.setTextColor(...DARK); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+            doc.text(dn, CX + 5, y + 6.5);
+            doc.setTextColor(...GRAY); doc.setFontSize(8);
+            doc.text(String(q), CX + 110, y + 6.5, { align: 'center' });
+            doc.text(fmt(p),    CX + 138, y + 6.5, { align: 'center' });
+            doc.setTextColor(...SLATE); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+            doc.text(fmt(p * q), CX + CW - 3, y + 6.5, { align: 'right' });
+            doc.setDrawColor(...BORDER); doc.setLineWidth(0.2);
+            doc.line(CX, y + rh, CX + CW, y + rh);
+            y += rh; alt = !alt;
+        });
+
+        // Totales
+        y += 8;
+        const TW = 82;
+        const TX = CX + CW - TW;
+        doc.setFillColor(...WHITE); doc.setDrawColor(...BORDER); doc.setLineWidth(0.4);
+        doc.roundedRect(TX, y, TW, 48, 3, 3, 'FD');
+        doc.setFillColor(...GREEN_M);
+        doc.roundedRect(TX, y, 3, 48, 2, 2, 'F');
+        doc.rect(TX + 1, y, 2, 48, 'F');
+
+        let ty = y + 11;
+        const totRow = (label, value, highlight = false) => {
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...GRAY);
+            doc.text(label, TX + 8, ty);
+            doc.setTextColor(highlight ? GREEN_M[0] : DARK[0], highlight ? GREEN_M[1] : DARK[1], highlight ? GREEN_M[2] : DARK[2]);
+            doc.setFont('helvetica', highlight ? 'bold' : 'normal');
+            doc.text(value, TX + TW - 5, ty, { align: 'right' });
+            ty += 9;
+        };
+        totRow('Subtotal',  fmt(t.subtotal));
+        totRow('Envío',     'Gratis', true);
+        totRow('IVA (19%)', fmt(t.tax));
+        if (t.discount > 0) totRow('Descuento', '-' + fmt(t.discount), true);
+
+        const totalY = y + 48 - 11;
+        doc.setFillColor(...GREEN_D);
+        doc.roundedRect(TX, totalY, TW, 11, 3, 3, 'F');
+        doc.rect(TX, totalY, TW, 5, 'F');
+        doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+        doc.text('TOTAL', TX + 8, totalY + 7);
+        doc.setFontSize(11);
+        doc.text(fmt(t.total), TX + TW - 5, totalY + 7, { align: 'right' });
+
+        // Footer
+        doc.setFillColor(248, 250, 248);
+        doc.rect(0, H - 14, W, 14, 'F');
+        doc.setDrawColor(...BORDER); doc.setLineWidth(0.3);
+        doc.line(0, H - 14, W, H - 14);
+        doc.setTextColor(...LGRAY); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+        doc.text(`Gracias por tu compra en Grow House!  ${BUSINESS.email}  Tel: ${BUSINESS.phone}  ${BUSINESS.address}`, W / 2, H - 6, { align: 'center' });
+
+        doc.save('Factura-GrowHouse-' + num + '.pdf');
+        showToast('¡Factura descargada!', 'success');
+
+    } catch (err) {
+        console.error('Error generando factura:', err);
+        showToast('Venta guardada, pero hubo un error al generar la factura', 'warning');
+    }
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+    const colors = { success: 'bg-green-600', error: 'bg-red-500', warning: 'bg-yellow-500' };
+    const icons  = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
+    const toast  = document.createElement('div');
+    toast.className  = `fixed bottom-6 right-6 z-[200] flex items-center gap-3 ${colors[type]} text-white px-5 py-3.5 rounded-xl shadow-xl text-sm font-medium`;
+    toast.innerHTML  = `<i class="fas ${icons[type]}"></i> ${msg}`;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ─────────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────────
+function logout() {
+    localStorage.removeItem('growhouse-auth-token');
+    window.location.href = 'login.html';
+}
+
+const token = localStorage.getItem('growhouse-auth-token');
+if (!token) { alert('Sesión expirada'); window.location.href = 'login.html'; }
+
+loadDashboard();
+</script>
+</body>
+</html>

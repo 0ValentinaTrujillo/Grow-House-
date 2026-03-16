@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Encuentra tu Planta Perfecta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      :root { --color-principal: #207719; }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-image: url("assets/images/fondo-paginacion.jpg");
+        background-repeat: no-repeat;
+        background-size:cover;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .main-card {
+        max-width: 1200px;
+        margin: 50px auto 30px;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 20px 60px rgba(27, 25, 119, 0.15);
+        padding: 40px;
+      }
+
+      .section-title {
+        color: black;
+        font-family: 'Poppins', sans-serif;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 90px;
+      }
+
+      .question-group { margin-bottom: 30px; }
+
+      .question-label {
+        font-size: 1.1rem;
+        color: #3f4247;
+        font-weight: 400;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      /* ── Grid ── */
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+      }
+
+      /* ── Tarjeta: imagen clickeable + texto suelto abajo ── */
+      .option-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        padding: 0;
+        position: relative;
+      }
+
+      /* La imagen ES el botón */
+      .option-img-wrap {
+        width: 100%;
+        height: 120px;
+        overflow: hidden;
+        border-radius: 14px;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      .option-card:hover .option-img-wrap {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(65, 71, 64, 0.3);
+      }
+
+      .option-card.selected .option-img-wrap {
+        border-color: var(--color-principal);
+        box-shadow: 0 0 0 4px rgba(31, 119, 25, 0.63);
+      }
+
+      .option-img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+      }
+
+      .option-card:hover .option-img { transform: scale(1.08); }
+      .option-card.selected .option-img { filter: brightness(0.75) saturate(1.2); }
+
+      /* Chulito encima de la imagen al seleccionar */
+      .option-img-wrap::after {
+        content: "✓";
+        position: absolute;
+        top: 8px; right: 8px; left: auto;
+        transform: scale(0);
+        background: var(--color-principal);
+        color: white;
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        opacity: 0;
+        transition: all 0.2s ease;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .option-card.selected .option-img-wrap::after {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      /* Texto simple debajo, sin caja ni fondo */
+      .option-label-wrap {
+        width: 100%;
+        text-align: center;
+        background: transparent;
+        border: none;
+        padding: 0;
+      }
+
+      .option-card .label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .option-card.selected .label { color: var(--color-principal); }
+
+      /* ── Input ── */
+      .text-input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: border-color 0.3s;
+      }
+      .text-input:focus { outline: none; border-color: var(--color-principal); }
+
+      /* ── Botón principal ── */
+      .btn-recommend {
+        font-family: "Poppins", sans-serif;
+        width: 100%;
+        padding:12px 20px;
+        background: linear-gradient(100deg, #004b21, #006823);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 1.3rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 30px;
+      }
+
+      .btn-recommend:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(15, 78, 15, 0.158)
+      }
+      .btn-recommend:disabled { background: #ffffff; cursor: not-allowed; }
+
+      /* ── Loading ── */
+      .loading { display: none; text-align: center; padding: 40px; }
+      .spinner {
+        width: 60px; height: 60px;
+        border: 6px solid #d1fae5;
+        border-top-color: var(--color-principal);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ── Resultados ── */
+      .results-container { display: none; }
+      .results-container.active { display: block; }
+
+      .plant-card {
+        background: linear-gradient(135deg, #ffffff, #f0fdf4);
+        border: 3px solid rgba(184,253,181,0.63);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+      }
+      .plant-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(32,119,25,0.3);
+      }
+      .plant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+      }
+      .plant-name h3 { color: var(--color-principal); font-size: 1.8rem; }
+      .match-badge {
+        background: linear-gradient(135deg, #207719, #46d560);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .btn-reset {
+        background: linear-gradient(135deg, #207719, #46d560);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 20px auto 0;
+        display: block;
+        transition: all 0.3s ease;
+      }
+      .btn-reset:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(4,111,26,0.4);
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Formulario -->
+    <div class="main-card" id="questionnaire">
+      <h1 class="section-title text-3xl font-bold "> Encuentra tu planta ideal</h1>
+
+      <!-- 1. UBICACIÓN -->
+      <div class="question-group">
+        <label class="question-label">1. ¿Dónde la quieres colocar?</label>
+        <div class="options-grid">
+
+          <div class="option-card" onclick="selectOption('ubicacion','interior',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://interioristica.com/wp-content/uploads/2023/08/diseno-de-interiores-casas-pequenas.jpg"
+                alt="Interior" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Interior</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('ubicacion','exterior',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://images.homify.com/v1440669098/p/photo/image/636317/IMG_0115_copy.jpg"
+                alt="Exterior" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Exterior</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('ubicacion','balcon',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://decoratrix.estaticos.com.es/img/fotos_post/128186/qIjAGdMczm5Qw317i7Rw58mlAMDfNLPD13wRgsT1Trs2yKuFN9a9uXNtuvGW.jpg"
+                alt="Balcón" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Balcón</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. TIPO -->
+      <div class="question-group">
+        <label class="question-label">2. ¿Qué tipo de planta buscas?</label>
+        <div class="options-grid">
+
+          <div class="option-card" onclick="selectOption('tipo','medicinal',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT91zC1SMvf7PcVm9MfjGJYWuRkOEmyVlHU2A&s"
+                alt="Medicinal" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Medicinal</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('tipo','aromática',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://editorialtelevisa.brightspotcdn.com/dims4/default/678bf9e/2147483647/strip/false/crop/1200x672+0+0/resize/1200x672!/quality/90/?url=https%3A%2F%2Fk2-prod-editorial-televisa.s3.us-east-1.amazonaws.com%2Fbrightspot%2Ff0%2F99%2Fdf7b6a964db8ae6e89308e3ce7c6%2Fhuerto-hierbas-aromaticas.jpg"
+                alt="Aromática" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Aromática</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('tipo','decorativa',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://content.elmueble.com/medio/2023/01/30/35-plantas-de-interior-resistentes_00000000_85b501da_230130171349_900x900.jpg"
+                alt="Decorativa" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Decorativa</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3. PRESUPUESTO -->
+      <div class="question-group">
+        <label class="question-label">3. ¿Cuál es tu presupuesto máximo?</label>
+        <input type="number" class="text-input" id="precio-max" placeholder="Ej: 20000" />
+      </div>
+
+      <!-- 4. PREFERENCIA -->
+      <div class="question-group">
+        <label class="question-label">4. ¿Qué te interesa más?</label>
+        <div class="options-grid">
+
+          <div class="option-card" onclick="selectOption('preferencia','populares',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://images.unsplash.com/photo-1703673002948-f0ae180c4cc8?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Más vendidas" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Más vendidas</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('preferencia','destacadas',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://www.cactussuculovers.cl/wp-content/uploads/2023/07/WhatsApp-Image-2024-04-11-at-23.40.49.jpeg"
+                alt="Destacadas" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Destacadas</span></div>
+          </div>
+
+          <div class="option-card" onclick="selectOption('preferencia','mejor_valoradas',this)">
+            <div class="option-img-wrap">
+              <img class="option-img"
+                src="https://images.unsplash.com/photo-1680677463262-4e2b0ffc7f93?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Mejor valoradas" />
+            </div>
+            <div class="option-label-wrap"><span class="label">Mejor valoradas</span></div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="btn-recommend" onclick="obtenerRecomendaciones()" href="index.html#productosrecomendadosparati">
+         Ver Recomendaciones
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p style="color:#207719;font-weight:600;">Buscando tus plantas ideales…</p>
+    </div>
+
+    <!-- Resultados -->
+    <div id="results" class="results-container"></div>
+
+    <!-- =============================================
+  REEMPLAZA el <script> de tu encuesta.html con este.
+  Adaptado a tu controller: usa "recomendaciones" en la respuesta.
+============================================= -->
+<script src="scripts/config.js"></script>
+<script>
+  const preferencias = { ubicacion: "", tipo: "", presupuesto: 0, preferencia: "" };
+
+  function getToken() {
+    return localStorage.getItem('growhouse-auth-token') || null;
+  }
+
+  function authHeaders() {
+    const h = { 'Content-Type': 'application/json' };
+    if (getToken()) h['Authorization'] = `Bearer ${getToken()}`;
+    return h;
+  }
+
+  // ── Verificar acceso al cargar ──
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = getToken();
+
+    // Sin sesión → login
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    try {
+      const res = await fetch(window.GROW_HOUSE_API + '/recomendaciones/estado', {
+        headers: authHeaders(),
+      });
+
+      if (!res.ok) return; // error de red → mostrar encuesta
+
+      const estado = await res.json();
+
+      // Ya completó → bloquear y mostrar mensaje
+      if (estado.completada) {
+        mostrarYaCompletada(estado.fechaRespuesta);
+      }
+      // No completó → mostrar encuesta normalmente
+
+    } catch (e) {
+      console.warn('No se pudo verificar estado:', e);
+    }
+  });
+
+  function mostrarYaCompletada(fecha) {
+    const fechaStr = fecha
+      ? new Date(fecha).toLocaleDateString('es-CO', {
+          year: 'numeric', month: 'long', day: 'numeric',
+        })
+      : '';
+
+    document.getElementById('questionnaire').innerHTML = `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:4rem;margin-bottom:16px">🌿</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-size:1.8rem;font-weight:700;
+                   color:#207719;margin-bottom:12px">
+          ¡Ya tienes tus recomendaciones!
+        </h2>
+        <p style="font-family:'Poppins',sans-serif;color:#6b7280;margin-bottom:8px">
+          Completaste la encuesta el <strong>${fechaStr}</strong>.
+        </p>
+        <p style="font-family:'Poppins',sans-serif;color:#6b7280;
+                  font-size:0.95rem;margin-bottom:32px">
+          Tus plantas personalizadas ya están listas en la tienda.
+        </p>
+        <a href="index.html#productosrecomendadosparati"
+           style="display:inline-block;background:linear-gradient(135deg,#004b21,#207719);
+                  color:white;padding:14px 28px;border-radius:14px;
+                  font-family:'Poppins',sans-serif;font-weight:600;
+                  font-size:1rem;text-decoration:none">
+          Ver mis plantas →
+        </a>
+      </div>
+    `;
+  }
+
+  function selectOption(categoria, valor, elemento) {
+    preferencias[categoria] = valor;
+    elemento.parentElement.querySelectorAll('.option-card')
+      .forEach(opt => opt.classList.remove('selected'));
+    elemento.classList.add('selected');
+  }
+
+  async function obtenerRecomendaciones() {
+    preferencias.presupuesto = document.getElementById('precio-max').value;
+
+    if (!preferencias.ubicacion || !preferencias.tipo) {
+      alert('Por favor responde las preguntas obligatorias (ubicación y tipo).');
+      return;
+    }
+
+    document.getElementById('questionnaire').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+
+    try {
+      const res = await fetch(window.GROW_HOUSE_API + '/recomendaciones', {
+        method:  'POST',
+        headers: authHeaders(),
+        body:    JSON.stringify(preferencias),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert('Error: ' + err.message);
+        document.getElementById('questionnaire').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+        return;
+      }
+
+      const data = await res.json();
+
+      sessionStorage.setItem('plantaRecomendaciones', JSON.stringify({
+        plantas: data.recomendaciones,
+        filtros: data.preferencias || preferencias,
+      }));
+
+      window.location.href = 'index.html#productosrecomendadosparati';
+
+    } catch (e) {
+      console.error(e);
+      alert('Error conectando con el servidor.');
+      document.getElementById('questionnaire').style.display = 'block';
+      document.getElementById('loading').style.display = 'none';
+    }
+  }
+</script>
+  </body>
+</html>

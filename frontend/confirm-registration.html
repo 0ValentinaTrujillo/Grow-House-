@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow House | Confirmar Registro</title>
+    <link rel="icon" href="ruta/a/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/output.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <style>
+        body{
+            font-family: 'Poppins', sans-serif;
+            background-image: url("assets/images/fondo-paginacion.jpg");
+            background-repeat: no-repeat;
+            background-size:cover;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="glass-effect rounded-lg shadow-xl p-8">
+            <div class="text-center">
+                <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">¡Registro Confirmado!</h2>
+                <p class="text-gray-600 mb-6">Tu cuenta ha sido activada exitosamente.</p>
+                <button id="redirect-btn" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer">
+                    Ir a Inicio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/config.js"></script>
+    <script src="scripts/auth-api.js"></script>
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const token = urlParams.get('token');
+        const h2 = document.querySelector('h2');
+        const p = document.querySelector('p');
+        const icon = document.querySelector('i');
+        const btn = document.getElementById('redirect-btn');
+
+        if (email && token) {
+            // Confirmar el registro automáticamente
+            console.log('📧 Confirmando registro para:', email);
+            
+            fetch(`${window.GROW_HOUSE_API}/auth/confirm-registration?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`)
+                .then(response => response.json())
+                .then(result => {
+                    console.log('✅ Respuesta del servidor:', result);
+                    
+                    if (result.success) {
+                        // Login automático
+                        if (window.authAPI && result.token && result.user) {
+                            console.log('🔐 Haciendo login automático...');
+                            authAPI.saveAuthData(result.token, result.user);
+                            
+                            // Actualizar interfaz
+                            h2.textContent = '¡Bienvenido!';
+                            p.textContent = 'Tu cuenta ha sido activada. Redirigiendo al inicio...';
+                            icon.className = 'fas fa-smile text-green-500 text-6xl mb-4';
+                            btn.style.display = 'none';
+                            
+                            // Redirigir al index después de 2 segundos
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 2000);
+                        } else {
+                            // Si no hay token, mostrar mensaje
+                            h2.textContent = '¡Registro Confirmado!';
+                            p.textContent = 'Tu cuenta ha sido activada. Ve a iniciar sesión.';
+                            btn.textContent = 'Ir a Login';
+                            btn.onclick = () => window.location.href = 'login.html';
+                        }
+                    } else {
+                        // Error
+                        h2.textContent = 'Error en la Confirmación';
+                        p.textContent = result.error || 'Hubo un problema confirmando tu registro.';
+                        icon.className = 'fas fa-times-circle text-red-500 text-6xl mb-4';
+                        btn.textContent = 'Intentar de Nuevo';
+                        btn.onclick = () => window.location.href = 'register.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error:', error);
+                    h2.textContent = 'Error en la Confirmación';
+                    p.textContent = 'Hubo un problema confirmando tu registro. Verifica tu conexión.';
+                    icon.className = 'fas fa-times-circle text-red-500 text-6xl mb-4';
+                    btn.textContent = 'Intentar de Nuevo';
+                    btn.onclick = () => window.location.href = 'register.html';
+                });
+        } else {
+            h2.textContent = 'Enlace Inválido';
+            p.textContent = 'El enlace de confirmación no es válido.';
+            icon.className = 'fas fa-exclamation-triangle text-yellow-500 text-6xl mb-4';
+            btn.textContent = 'Volver a Registro';
+            btn.onclick = () => window.location.href = 'register.html';
+        }
+    </script>
+</body>
+</html>

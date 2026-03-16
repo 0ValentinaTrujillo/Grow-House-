@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transforma tu espacio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-principal: #207719;
+            --color-hover: #207719;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: black;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.2rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-grid.single-col {
+            grid-template-columns: 1fr;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .main-grid.single-col {
+                max-width: 100%;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
+            padding: 30px;
+        }
+
+        /* Card de resultados oculta por defecto */
+        #results-card {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #results-card.animating {
+            display: block;
+        }
+
+        #results-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: black;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #207719, #46d560);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #207719, #46d560);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-analyze {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.1rem;
+            margin-top: 15px;
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #preview-container {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        #preview-container img, #camera-preview {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--color-principal);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner-green {
+            border-color: rgba(32, 119, 25, 0.2);
+            border-top-color: var(--color-principal);
+        }
+
+        .info-box {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-box-blue {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            border: 2px solid rgba(184, 253, 181, 0.63);
+        }
+
+        .info-box-blue h3 {
+            color: var(--color-principal);
+            margin-bottom: 10px;
+        }
+
+        .planta-card {
+            background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(184, 253, 181, 0.63);
+            margin-bottom: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .planta-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(100, 221, 96, 0.822);
+        }
+
+        .planta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .planta-title {
+            color: var(--color-principal);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .planta-number {
+            background: var(--color-principal);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .planta-detail {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .planta-detail strong {
+            color: var(--color-principal);
+        }
+
+        .combinaciones-box {
+            background: linear-gradient(135deg, #fae8ff, #f3e8ff);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #d8b4fe;
+            margin: 15px 0;
+        }
+
+        .combinaciones-box h3 {
+            color: #7c3aed;
+            margin-bottom: 10px;
+        }
+
+        #camera-preview {
+            display: none;
+        }
+
+        .camera-controls {
+            position: relative;
+        }
+
+        .capture-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: var(--color-principal);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            color: rgb(48, 48, 48);
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #207719, #3ab325ee);
+            border-radius: 12px;
+        }
+
+        .results-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .results-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .results-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .results-container::-webkit-scrollbar-thumb {
+            background: var(--color-principal);
+            border-radius: 4px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .generated-image-container {
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(32, 119, 25, 0.15);
+        }
+
+        .generated-image-container img {
+            width: 100%;
+            display: block;
+        }
+
+        .generated-image-label {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            padding: 10px;
+            text-align: center;
+            color: var(--color-principal);
+            font-weight: bold;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .big-spinner {
+            width: 60px;
+            height: 60px;
+            border-width: 5px;
+            margin: 0 auto 20px auto;
+        }
+
+        .to-black {
+      color: black;
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .to-black:hover {
+      color: white;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Transforma tu espacio</h1>
+            <p>Dale vida a tu hogar con plantas perfectas para cada esquina.</p>
+        </div>
+
+        <div class="main-grid single-col" id="main-grid">
+            <!-- Panel Izquierdo: Captura -->
+            <div class="card">
+                <h2 class="card-title">Captura tu Espacio</h2>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="iniciarCamara()">
+                        Usar Cámara
+                    </button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+                        Cargar Foto
+                    </button>
+                </div>
+
+                <input type="file" id="file-input" accept="image/*" onchange="cargarImagen(event)">
+
+                <div id="camera-container" style="display: none;" class="camera-controls">
+                    <video id="camera-preview" autoplay playsinline></video>
+                    <button class="btn btn-primary capture-btn" onclick="tomarFoto()">
+                        Tomar Foto
+                    </button>
+                </div>
+
+                <div id="preview-container"></div>
+
+                <button id="analyze-btn" class="btn btn-primary btn-analyze" onclick="analizarImagen()" disabled>
+                    Decorar con Plantas
+                </button>
+            </div>
+
+            <!-- Panel Derecho: Resultados — oculto hasta que se analiza -->
+            <div class="card" id="results-card">
+                <h2 class="card-title">Propuesta de Decoración</h2>
+                <div id="results-container"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>Tip:</strong> Toma fotos desde diferentes ángulos para obtener mejores recomendaciones <a href="index.html" class="to-black">Inicio</a>
+        </div>
+    </div>
+
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script src="scripts/config.js"></script>
+    <script>
+        let imagenActual = null;
+        let stream = null;
+
+        function mostrarResultadosCard() {
+            const grid = document.getElementById('main-grid');
+            const card = document.getElementById('results-card');
+
+            grid.classList.remove('single-col');
+
+            card.classList.add('animating');
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    card.classList.add('visible');
+                });
+            });
+        }
+
+        async function iniciarCamara() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                
+                const video = document.getElementById('camera-preview');
+                const cameraContainer = document.getElementById('camera-container');
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                cameraContainer.style.display = 'block';
+                
+                document.getElementById('preview-container').innerHTML = '';
+            } catch (error) {
+                alert('No se pudo acceder a la cámara. Intenta cargar una imagen.');
+                console.error('Error:', error);
+            }
+        }
+
+        function tomarFoto() {
+            const video = document.getElementById('camera-preview');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+            
+            imagenActual = canvas.toDataURL('image/jpeg');
+            
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            
+            document.getElementById('camera-container').style.display = 'none';
+            mostrarPreview(imagenActual);
+        }
+
+        function cargarImagen(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagenActual = e.target.result;
+                    mostrarPreview(imagenActual);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function mostrarPreview(imagenSrc) {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = `
+                <div style="position: relative; margin-top: 20px;">
+                    <img src="${imagenSrc}" alt="Vista previa">
+                    <div class="badge">✓ Foto Lista</div>
+                </div>
+            `;
+            document.getElementById('analyze-btn').disabled = false;
+        }
+
+        async function analizarImagen() {
+            if (!imagenActual) return;
+            
+            const btn = document.getElementById('analyze-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Analizando espacio...';
+
+            // Revelar la card de resultados con estado de carga
+            mostrarResultadosCard();
+
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = `
+                <div class="loading-state">
+                    <div class="spinner big-spinner spinner-green"></div>
+                    <p style="font-size: 1.1rem; color: #374151; font-weight: 600;">Analizando tu espacio...</p>
+                    <p style="font-size: 0.9rem; color: #6b7280; margin-top: 8px;">Generando visualización con IA (20-30 segundos)</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(window.GROW_HOUSE_API + "/espacios/analizar", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        image: imagenActual
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Error al analizar la imagen');
+                }
+                
+                mostrarResultados(data.data);
+                
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="loading-state">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">❌</div>
+                        <p style="color: #dc2626; font-weight: 600;">Error al analizar la imagen</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px; color: #6b7280;">${error.message}</p>
+                    </div>
+                `;
+                console.error('Error completo:', error);
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = 'Decorar con Plantas';
+        }
+
+        function mostrarResultados(r) {
+            const container = document.getElementById('results-container');
+            
+            let html = '';
+            
+            if (r.imagen_generada) {
+                html += `
+                    <div class="generated-image-container">
+                        <img src="${r.imagen_generada}" alt="Visualización del espacio decorado">
+                        <div class="generated-image-label">
+                            Así se vería tu espacio con las plantas sugeridas
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="info-box info-box-blue">
+                    <h3>Análisis del Espacio</h3>
+                    <p>${r.descripcion_espacio}</p>
+                </div>
+            `;
+            
+            html += `
+                <h3 style="margin: 20px 0 15px 0; color: var(--color-principal); font-size: 1.2rem;">
+                    🪴 Plantas Recomendadas
+                </h3>
+            `;
+            
+            r.plantas_sugeridas.forEach((p, i) => {
+                html += `
+                    <div class="planta-card">
+                        <div class="planta-header">
+                            <div>
+                                <div class="planta-title">${p.nombre_cientifico_y_comun || p.nombre_comun || 'Planta recomendada'}</div>
+                            </div>
+                            <span class="planta-number">#${i + 1}</span>
+                        </div>
+                        <div class="planta-detail">
+                            <strong>Ubicación:</strong> ${p.numero_y_ubicacion || p.ubicacion || 'Por definir'}
+                        </div>
+                        <div class="planta-detail">
+                            <strong>Descripción:</strong> ${p.descripcion_planta || p.descripcion || ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (r.recomendaciones) {
+                html += `
+                    <div class="combinaciones-box">
+                        <h3>Recomendaciones Adicionales</h3>
+                        <p>${r.recomendaciones}</p>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

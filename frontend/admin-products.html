@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Dashboard | Productos - Grow House</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="scripts/config.js"></script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Sidebar -->
+    <div class="fixed inset-y-0 left-0 w-64 text-white z-50
+    bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f] 
+    [transform:translateZ(0)] [backface-visibility:hidden]">
+        <div class="flex items-center gap-3 p-6 antialiased">
+            <img src="assets/images/Logo-blanco-removebg-preview.png" alt="Logo"
+               class="h-10 w-auto">
+            <div href=index.html class="flex flex-col leading-tight">
+                <h1 class="text-white font-bold text-lg">
+                    Grow House
+                </h1>
+                <p class="text-white text-sm">
+                    Panel Administrador
+                </p>
+            </div>
+        </div>
+
+        <nav class="mt-6">
+            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-chart-bar"></i> Estadisticas
+            </a>
+            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Productos</span>
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-bag-shopping"></i>
+                <span>Pedidos</span>
+            </a>
+            <a href="admin-customers.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </a>
+            <a href="admin-coupons.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Cupones</span>
+            </a>
+            <a href="admin-marketing.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
+                <i class="fas fa-envelope w-4"></i>
+                <span>Marketing</span>
+            </a>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
+            <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
+                <i class="fas fa-home mr-2"></i>
+                Volver al inicio
+            </a>
+            <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-800">Gestión de Productos</h2>
+                <p class="text-gray-600">Administra tu catálogo de plantas y productos</p>
+            </div>
+            <button onclick="openCreateModal()" class="bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-xl shadow-lg transition-all hover:shadow-green-200 hover:scale-105 active:scale-95">
+            <i class="fas fa-plus"></i>
+                Nuevo Producto
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                    <input type="text" id="searchInput" placeholder="Nombre, marca..." 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                    <select id="categoryFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+                        <option value="">Todas</option>
+                        <option value="plantas">Plantas</option>
+                        <option value="materas">Materas</option>
+                        <option value="decoraciones">Decoraciones</option>
+                        <option value="implementos">Implementos</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                    <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
+                        <option value="">Todos</option>
+                        <option value="active">Activo</option>
+                        <option value="inactive">Inactivo</option>
+                        <option value="discontinued">Descontinuado</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="loadProducts()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-search mr-2"></i>
+                        Buscar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Total Productos</p>
+                        <h3 class="text-2xl font-bold text-gray-800" id="totalProducts">0</h3>
+                    </div>
+                    <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <i class="fas fa-box text-xl text-blue-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Activos</p>
+                        <h3 class="text-2xl font-bold text-green-600" id="activeProducts">0</h3>
+                    </div>
+                    <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-xl text-green-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Stock Bajo</p>
+                        <h3 class="text-2xl font-bold text-yellow-600" id="lowStockProducts">0</h3>
+                    </div>
+                    <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-xl text-yellow-600"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm">Sin Stock</p>
+                        <h3 class="text-2xl font-bold text-red-600" id="outOfStockProducts">0</h3>
+                    </div>
+                    <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times-circle text-xl text-red-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoría</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ventas</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
+                <div class="text-sm text-gray-700">
+                    Mostrando pagina<span id="showingFrom">1</span> de <span id="showingTo">20</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="previousPage()" id="prevBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                        Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+                    </span>
+                    <button onclick="nextPage()" id="nextBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Product Modal -->
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Nuevo Producto</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <form id="productForm" class="p-6">
+                <input type="hidden" id="productId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Nombre -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto *</label>
+                        <input type="text" id="productName" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Categoría -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
+                        <select id="productCategory" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                            <option value="">Seleccionar...</option>
+                            <option value="plantas">Plantas</option>
+                            <option value="materas">Materas</option>
+                            <option value="decoraciones">Decoraciones</option>
+                            <option value="implementos">Implementos</option>
+                        </select>
+                    </div>
+
+                    <!-- Marca -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
+                        <input type="text" id="productBrand"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Precio -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
+                        <input type="number" id="productPrice" required min="0" step="0.01"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Precio Original -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio Original</label>
+                        <input type="number" id="productOriginalPrice" min="0" step="0.01"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Cantidad Inicial -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cantidad Inicial *</label>
+                        <input type="number" id="productQuantity" required min="0" value="0"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Alerta de Stock Bajo -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alerta Stock Bajo</label>
+                        <input type="number" id="productLowStockAlert" min="0" value="10"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
+                        <textarea id="productDescription" required rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
+                    </div>
+
+                    <!-- URL de Imagen -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen Principal *</label>
+                        <input type="url" id="productMainImage" required
+                               placeholder="https://images.unsplash.com/..."
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                        <p class="text-xs text-gray-500 mt-1">Usa URLs de Unsplash, Imgur o similares</p>
+                    </div>
+
+                    <!-- Estado -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                        <select id="productStatus"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                            <option value="active">Activo</option>
+                            <option value="inactive">Inactivo</option>
+                            <option value="discontinued">Descontinuado</option>
+                            <option value="coming-soon">Próximamente</option>
+                        </select>
+                    </div>
+
+                    <!-- Destacado -->
+                    <div class="flex flex-col items-center justify-start mt-8">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="productFeatured" class="w-5 h-5 accent-[#207719]">
+                            <span class="ml-2 text-sm font-medium text-gray-700">
+                                Producto Destacado
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Etiquetas (separadas por comas)</label>
+                        <input type="text" id="productTags" placeholder="interior, fácil cuidado, popular"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+
+                <div class="flex gap-4 mt-6">
+                    <button type="button" onclick="closeModal()" 
+                            class="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+                        <i class="fas fa-save mr-2"></i>
+                        Guardar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- 1. Axios (ya lo tienes en <head>) -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- 2. Admin Auth -->
+<script src="scripts/admin-auth.js"></script>
+
+    <script>
+        const API_URL = window.GROW_HOUSE_API + '/admin/products';
+        let currentPage = 1;
+        let totalPages = 1;
+        let currentEditingId = null;
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        async function loadProducts(page = 1) {
+            try {
+                currentPage = page;
+                const search = document.getElementById('searchInput').value;
+                const category = document.getElementById('categoryFilter').value;
+                const status = document.getElementById('statusFilter').value;
+
+                let url = `${API_URL}?page=${page}&limit=20`;
+                if (search) url += `&search=${search}`;
+                if (category) url += `&category=${category}`;
+                if (status) url += `&status=${status}`;
+
+
+                const response = await axios.get(url);
+                const { data, pagination } = response.data;
+
+                displayProducts(data);
+                updatePagination(pagination);
+                updateStats(data);
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                if (error.response?.status === 401) {
+                    adminAuth.redirectToLogin('Tu sesión ha expirado');
+                } else {
+                    alert('Error al cargar productos');
+                }
+            }
+        }
+
+        function displayProducts(products) {
+            const tbody = document.getElementById('productsTableBody');
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No se encontraron productos</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map(product => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${product.mainImage}" alt="${product.name}" 
+                                 class="w-12 h-12 object-cover rounded-lg">
+                            <div>
+                                <div class="font-medium text-gray-900">${product.name}</div>
+                                <div class="text-sm text-gray-500">${product.brand || 'Sin marca'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(product.category)}">
+                            ${getCategoryName(product.category)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-gray-900">${formatCurrency(product.price)}</div>
+                        ${product.originalPrice ? `<div class="text-sm text-gray-500 line-through">${formatCurrency(product.originalPrice)}</div>` : ''}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium ${getStockColor(product.quantity, product.lowStockAlert)}">${product.quantity}</span>
+                            ${product.quantity <= product.lowStockAlert ? '<i class="fas fa-exclamation-triangle text-yellow-500"></i>' : ''}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(product.status)}">
+                            ${getStatusText(product.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-900">${product.salesCount || 0}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <button onclick="editProduct('${product.id}')" 
+                                    class="text-blue-600 hover:text-blue-800" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="toggleFeatured('${product.id}', ${product.featured})" 
+                                    class="text-yellow-600 hover:text-yellow-800" title="Destacar">
+                                <i class="${product.featured ? 'fas' : 'far'} fa-star"></i>
+                            </button>
+
+                            <button onclick="deleteProduct('${product.id}')" 
+                                    class="text-red-600 hover:text-red-800" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updatePagination(pagination) {
+            totalPages = pagination.pages;
+            document.getElementById('currentPage').textContent = pagination.page;
+            document.getElementById('totalPages').textContent = totalPages;
+            //document.getElementById('totalCount').textContent = pagination.total;
+            document.getElementById('showingFrom').textContent = ((pagination.page - 1) * 20) + 1;
+            document.getElementById('showingTo').textContent = Math.min(pagination.page * 20, pagination.total);
+
+            document.getElementById('prevBtn').disabled = pagination.page === 1;
+            document.getElementById('nextBtn').disabled = pagination.page === totalPages;
+        }
+
+        function updateStats(products) {
+            const active = products.filter(p => p.status === 'active').length;
+            const lowStock = products.filter(p => p.quantity <= p.lowStockAlert).length;
+            const outOfStock = products.filter(p => p.quantity === 0).length;
+
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('activeProducts').textContent = active;
+            document.getElementById('lowStockProducts').textContent = lowStock;
+            document.getElementById('outOfStockProducts').textContent = outOfStock;
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                'plantas': 'bg-green-100 text-green-800',
+                'materas': 'bg-orange-100 text-orange-800',
+                'decoraciones': 'bg-purple-100 text-purple-800',
+                'implementos': 'bg-blue-100 text-blue-800'
+            };
+            return colors[category] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'plantas': 'Plantas',
+                'materas': 'Materas',
+                'decoraciones': 'Decoraciones',
+                'implementos': 'Implementos'
+            };
+            return names[category] || category;
+        }
+
+        function getStockColor(quantity, alert) {
+            if (quantity === 0) return 'text-red-600';
+            if (quantity <= alert) return 'text-yellow-600';
+            return 'text-green-600';
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'active': 'bg-green-100 text-green-800',
+                'inactive': 'bg-gray-100 text-gray-800',
+                'discontinued': 'bg-red-100 text-red-800',
+                'coming-soon': 'bg-blue-100 text-blue-800'
+            };
+            return colors[status] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'active': 'Activo',
+                'inactive': 'Inactivo',
+                'discontinued': 'Descontinuado',
+                'coming-soon': 'Próximamente'
+            };
+            return texts[status] || status;
+        }
+
+        function openCreateModal() {
+            currentEditingId = null;
+            document.getElementById('modalTitle').textContent = 'Nuevo Producto';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        async function editProduct(id) {
+            try {
+                const response = await axios.get(`${API_URL}/${id}`);
+                const product = response.data.data;
+
+                currentEditingId = id;
+                document.getElementById('modalTitle').textContent = 'Editar Producto';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productBrand').value = product.brand || '';
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productOriginalPrice').value = product.originalPrice || '';
+                document.getElementById('productQuantity').value = product.quantity;
+                document.getElementById('productLowStockAlert').value = product.lowStockAlert;
+                document.getElementById('productDescription').value = product.description;
+                document.getElementById('productMainImage').value = product.mainImage;
+                document.getElementById('productStatus').value = product.status;
+                document.getElementById('productFeatured').checked = product.featured;
+                document.getElementById('productTags').value = (product.tags || []).join(', ');
+
+                document.getElementById('productModal').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading product:', error);
+                alert('Error al cargar producto');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.add('hidden');
+            currentEditingId = null;
+        }
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const productData = {
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                brand: document.getElementById('productBrand').value || null,
+                price: parseFloat(document.getElementById('productPrice').value),
+                originalPrice: document.getElementById('productOriginalPrice').value ? parseFloat(document.getElementById('productOriginalPrice').value) : null,
+                quantity: parseInt(document.getElementById('productQuantity').value),
+                lowStockAlert: parseInt(document.getElementById('productLowStockAlert').value),
+                description: document.getElementById('productDescription').value,
+                mainImage: document.getElementById('productMainImage').value,
+                status: document.getElementById('productStatus').value,
+                featured: document.getElementById('productFeatured').checked,
+                tags: document.getElementById('productTags').value.split(',').map(t => t.trim()).filter(t => t)
+            };
+
+            try {
+                if (currentEditingId) {
+                    await axios.put(`${API_URL}/${currentEditingId}`, productData);
+                    alert('Producto actualizado exitosamente');
+                } else {
+                    await axios.post(API_URL, productData);
+                    alert('Producto creado exitosamente');
+                }
+
+                closeModal();
+                loadProducts(currentPage);
+
+            } catch (error) {
+                console.error('Error saving product:', error);
+                alert(error.response?.data?.message || 'Error al guardar producto');
+            }
+        });
+
+        async function toggleFeatured(id, currentStatus) {
+            try {
+                await axios.post(`${API_URL}/${id}/featured`);
+                loadProducts(currentPage);
+            } catch (error) {
+                console.error('Error toggling featured:', error);
+                alert('Error al cambiar estado destacado');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+            try {
+                await axios.delete(`${API_URL}/${id}`); 
+                alert('Producto eliminado exitosamente');
+                loadProducts(currentPage);
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Error al eliminar producto');
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                loadProducts(currentPage - 1);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                loadProducts(currentPage + 1);
+            }
+        }
+
+        function logout() {
+            adminAuth.logout();
+        }
+
+        // Load products on page load
+        loadProducts();
+
+        // Search on enter
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loadProducts();
+        });
+
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {closeModal();}
+        });
+    </script>
+</body>
+</html>
