@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - TechStore Pro</title>
+    <title>Checkout - Grow House</title>
     <meta name="description" content="Finaliza tu compra de forma segura">
-    
-    <!-- TailwindCSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="../styles/output.css" rel="stylesheet">
     <link rel="icon" href="data:,">
+    <style>
+        html { box-sizing: border-box; }
+        body { overflow-x: hidden; max-width: 100%; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        *, *::before, *::after { box-sizing: border-box; }
+        .btn-green { background: linear-gradient(135deg, #207719, #46d560); color: white; transition: all 0.3s ease; }
+        .btn-green:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(32,119,25,0.4); }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-50">
 
     <!-- HEADER SIMPLIFICADO PARA CHECKOUT -->
     <header class="bg-white shadow-lg">
@@ -288,7 +294,7 @@
                                 <input 
                                     type="text" 
                                     placeholder="1234 5678 9012 3456"
-                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                                     id="card-number"
                                 >
                             </div>
@@ -300,7 +306,7 @@
                                     <input 
                                         type="text" 
                                         placeholder="MM/YY"
-                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                                         id="card-expiry"
                                     >
                                 </div>
@@ -310,7 +316,7 @@
                                     <input 
                                         type="text" 
                                         placeholder="123"
-                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                                         id="card-cvc"
                                     >
                                 </div>
@@ -322,7 +328,7 @@
                                 <input 
                                     type="text" 
                                     placeholder="JUAN PÉREZ"
-                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
                                     id="card-name"
                                 >
                             </div>
@@ -397,7 +403,7 @@
                         
                         <!-- Botones Finales -->
                         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a href="index.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                            <a href="index.html" class="btn-green px-6 py-3 rounded-lg font-semibold">
                                 Seguir Comprando
                             </a>
                             <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition duration-300">
@@ -409,15 +415,15 @@
                 
                 <!-- BOTONES DE NAVEGACIÓN -->
                 <div class="flex justify-between">
-                    <button 
-                        class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300 hidden" 
+                    <button
+                        class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition duration-300 hidden"
                         id="prev-step-btn"
                     >
                         ← Anterior
                     </button>
                     <div></div>
-                    <button 
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300" 
+                    <button
+                        class="btn-green px-6 py-3 rounded-lg font-semibold"
                         id="next-step-btn"
                     >
                         Continuar →
@@ -427,39 +433,12 @@
             
             <!-- SIDEBAR: RESUMEN DE PEDIDO (Lado Derecho) -->
             <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
                     <h3 class="text-xl font-bold text-gray-900 mb-6">Resumen del Pedido</h3>
                     
-                    <!-- PRODUCTOS DEL CARRITO -->
+                    <!-- PRODUCTOS DEL CARRITO (checkout.js los renderiza) -->
                     <div class="space-y-4 mb-6" id="checkout-cart-items">
-                        
-                        <!-- Producto Ejemplo 1 -->
-                        <div class="flex items-center space-x-3 border-b border-gray-200 pb-4">
-                            <div class="bg-gray-100 rounded-lg p-3">
-                                <span class="text-2xl">💻</span>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">MacBook Pro 16"</h4>
-                                <p class="text-sm text-gray-500">Cantidad: 1</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-bold text-gray-900">$6.200.000</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Producto Ejemplo 2 -->
-                        <div class="flex items-center space-x-3 border-b border-gray-200 pb-4">
-                            <div class="bg-gray-100 rounded-lg p-3">
-                                <span class="text-2xl">📱</span>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">iPhone 15 Pro</h4>
-                                <p class="text-sm text-gray-500">Cantidad: 1</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-bold text-gray-900">$4.800.000</span>
-                            </div>
-                        </div>
+                        <p class="text-sm text-gray-400 text-center py-2">Cargando productos...</p>
                     </div>
                     
                     <!-- TOTALES DEL PEDIDO -->
@@ -484,7 +463,7 @@
                             <div class="border-t border-gray-200 pt-2 mt-2">
                                 <div class="flex justify-between">
                                     <span class="text-lg font-bold text-gray-900">Total</span>
-                                    <span class="text-lg font-bold text-blue-600" id="total">$13.090.000</span>
+                                    <span class="text-lg font-bold text-green-700" id="total">$13.090.000</span>
                                 </div>
                             </div>
                         </div>

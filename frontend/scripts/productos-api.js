@@ -79,7 +79,7 @@ function renderProducts(products, container) {
 
 function createProductCard(producto) {
     const card = document.createElement('div');
-    card.className = 'product-card hover-lift rounded-2xl overflow-hidden shadow-lg group';
+    card.className = 'product-card hover-lift rounded-2xl overflow-hidden shadow-lg group flex flex-col h-full';
     card.setAttribute('data-product-id', producto.id || producto._id);
 
     const hasDiscount = producto.originalPrice && producto.originalPrice > producto.price;
@@ -87,68 +87,77 @@ function createProductCard(producto) {
         ? Math.round(((producto.originalPrice - producto.price) / producto.originalPrice) * 100)
         : 0;
 
-    const shortDescription = producto.description && producto.description.length > 100
-        ? producto.description.substring(0, 100) + '...'
+    const shortDescription = producto.description && producto.description.length > 80
+        ? producto.description.substring(0, 80) + '...'
         : producto.description || 'Sin descripción';
 
     const imagen = producto.mainImage || producto.images?.[0] || 'https://via.placeholder.com/400';
 
     card.innerHTML = `
-        <div class="relative">
-            <div class="h-64 bg-white flex items-center justify-center text-6xl relative overflow-hidden">
-                <img src="${imagen}" alt="${producto.name}" class="w-full h-full object-cover">
+        <div class="relative flex-shrink-0">
+            <div class="bg-white relative overflow-hidden" style="height: 280px;">
+                <img src="${imagen}" alt="${producto.name}"
+                     class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
                 ${hasDiscount ? `
-                    <div class="absolute top-4 right-4">
-                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                    <div class="absolute top-3 right-3">
+                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
                             -${discountPercent}%
                         </span>
                     </div>
                 ` : ''}
                 ${producto.featured ? `
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-yellow-400 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                            ¡Popular!
+                    <div class="absolute top-3 left-3">
+                        <span class="bg-yellow-400 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
+                            ⭐ Popular
                         </span>
                     </div>
                 ` : ''}
                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
             </div>
         </div>
-        <div class="p-6">
-            <div class="flex items-center mb-2">    
+
+        <div class="p-5 flex flex-col flex-1">
+            <div class="flex items-center mb-2">
                 ${renderStarsReadOnly(producto.rating?.average, producto.rating?.count)}
             </div>
-            <h3 class="text-xl font-bold mb-3 text-gray-800 group-hover:text-green-800 transition-colors duration-300">
+
+            <h3 class="text-base font-bold mb-2 text-gray-800 group-hover:text-green-800 transition-colors duration-300 leading-snug"
+                style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6rem;">
                 ${producto.name}
             </h3>
-            <p class="text-gray-600 mb-4 text-sm leading-relaxed">
+
+            <p class="text-gray-500 text-sm leading-relaxed mb-3"
+               style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5rem;">
                 ${shortDescription}
             </p>
-            <div class="flex items-center justify-between mb-4">
-                <div class="price-highlight text-2xl font-bold">
+
+            <div class="flex items-center justify-between mb-4 mt-auto">
+                <div class="price-highlight text-xl font-bold">
                     ${producto.formattedPrice || formatPrice(producto.price)}
                 </div>
                 ${hasDiscount ? `
-                    <div class="text-sm text-gray-500 line-through">
+                    <div class="text-sm text-gray-400 line-through">
                         ${formatPrice(producto.originalPrice)}
                     </div>
                 ` : ''}
             </div>
+
             <div class="flex gap-2">
                 <button onclick="viewProductDetail('${producto.id || producto._id}')"
-                    class="ver-detalles-btn bg-green-700 text-white px-4 py-1.5 rounded-lg hover:bg-green-600 transition duration-300 text-sm text-center flex-1 font-medium">
+                    class="ver-detalles-btn bg-green-700 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm text-center flex-1 font-medium">
                     Ver Detalles
                 </button>
                 ${(function() {
                     const user = JSON.parse(localStorage.getItem('growhouse-user-data'));
                     if (user && user.role === 'admin') {
-                        return `<button onclick="editProductFromCard('${producto.id || producto._id}')"
-                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1.5 rounded-lg transition duration-300 text-sm text-center flex-1 font-medium">
+                        const pid = producto.id || producto._id;
+                        return `<a href="admin-products.html?edit=${pid}"
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg transition duration-300 text-sm text-center flex-1 font-medium inline-flex items-center justify-center">
                             ✏️ Editar
-                        </button>`;
+                        </a>`;
                     } else {
                         return `<button onclick="addToCartFromAPI('${producto.id || producto._id}')"
-                            class="add-to-cart-btn bg-green-800 text-white px-4 py-1.5 rounded-lg hover:bg-green-900 transition duration-300 text-sm text-center flex-1 font-medium ${producto.quantity === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                            class="add-to-cart-btn bg-green-800 text-white px-3 py-2 rounded-lg hover:bg-green-900 transition duration-300 text-sm text-center flex-1 font-medium ${producto.quantity === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
                             ${producto.quantity === 0 ? 'disabled' : ''}>
                             Al Carrito
                         </button>`;

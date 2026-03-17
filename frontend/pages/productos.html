@@ -15,6 +15,41 @@
         .gradient-bg {
             background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
         }
+        html { box-sizing: border-box; }
+        body { overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; }
+        /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
+        #popupNovedades, #popupNotificaciones {
+            display: none;
+            position: fixed !important;
+            top: 76px !important;
+            z-index: 99999 !important;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(220, 252, 231, 0.93) !important;
+            border: 1px solid rgba(134, 239, 172, 0.7) !important;
+            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
+            animation: popupFadeIn 0.2s ease-out;
+        }
+        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
+        #popupNotificaciones { right: 1.5rem; }
+        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
+            padding: 0.9rem 1.1rem 0.6rem;
+            border-bottom: 1px solid rgba(134,239,172,0.5);
+            font-weight: 600; font-size: 0.95rem; color: #14532d;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #popupNovedades, #popupNotificaciones {
+                left: 1rem !important; right: 1rem !important;
+                width: auto !important; transform: none !important;
+            }
+        }
+
         .glass-effect {
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.1);
@@ -223,7 +258,7 @@
 <body class="bg-white font-sans antialiased">
 <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
-        <nav class="navegation mx-auto px-6 py-4">
+        <nav class="navegation mx-auto px-4 py-4" style="max-width:100%; box-sizing:border-box;">
             <div class="flex justify-between items-center">
                 <div class="flex items-center text-2xl font-bold">
                     <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
@@ -266,12 +301,6 @@
                                 class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                         </button>
 
-                        <!-- Ventana emergente Novedades -->
-                        <div id="popupNovedades"
-                            class="hidden absolute left-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
-                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
-                        </div>
                     </li>
                 </div>
                 <!-- Acciones del usuario -->
@@ -300,12 +329,6 @@
                             <i class="fa-solid fa-bell text-xl text-gray-600"></i>
                         </button>
 
-                        <!-- Ventana emergente Notificaciones -->
-                        <div id="popupNotificaciones"
-                            class="hidden absolute right-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
-                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
-                        </div>
                     </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
@@ -400,8 +423,8 @@
                         </div>
                     </div>
 
-                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado -->
-                    <div id="auth-buttons" class="flex items-center space-x-4">
+                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado (oculto en móvil) -->
+                    <div id="auth-buttons" class="hidden md:flex items-center space-x-4">
 
                         <!-- Iniciar Sesión -->
                         <a href="login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
@@ -423,44 +446,62 @@
             </div>
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
-                <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
-
+                <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
                     <a href="index.html"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
-
+                        class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Inicio</a>
                     <a href="productos.html"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
-
+                        class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Productos</a>
                     <a href="index.html#categorias"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Categorías</a>
-
+                        class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Categorías</a>
                     <a href="index.html#contacto"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Contacto</a>
-
+                        class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Contacto</a>
+                    <div id="mobile-auth-buttons" class="pt-3 mt-2 border-t border-green-100 flex flex-col gap-2">
+                        <a href="login.html"
+                            class="w-full text-center py-2.5 px-4 font-medium text-green-800 border border-green-900 rounded-full hover:bg-green-50 transition-all duration-300">
+                            Iniciar Sesión
+                        </a>
+                        <a href="register.html"
+                            class="w-full text-center py-2.5 px-4 font-semibold text-white rounded-full bg-gradient-to-r from-green-800 to-green-700 hover:shadow-lg transition-all duration-300">
+                            Registrarse
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-<section class="container mx-auto px-6 py-16">
+    <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
+    <div id="popupNovedades">
+        <div class="popup-header">🌱 Últimas novedades</div>
+        <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
+        </div>
+    </div>
+    <div id="popupNotificaciones">
+        <div class="popup-header">🔔 Notificaciones</div>
+        <div style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
+        </div>
+    </div>
+<section style="width:100%; padding: 3rem 1rem; box-sizing:border-box;">
     <!-- TÍTULO + BUSCADOR -->
-    <div class="flex items-center justify-between mb-12 ml-20 pr-20">
+    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:2rem; max-width:1280px; margin-left:auto; margin-right:auto;">
 
-        <h2 class="text-4xl font-bold text-gray-900">
+        <h2 style="font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight:700; color:#111827; margin:0;">
             Productos
         </h2>
 
-        <div class="flex items-center bg-white border border-gray-500 rounded-full px-4 py-1.5 w-[450px] md:w-[550px] lg:w-[650px]">
-            <input 
-                type="text" 
+        <div style="display:flex; align-items:center; background:white; border:1px solid #6b7280; border-radius:9999px; padding:0.4rem 1rem; flex:1; min-width:0; max-width:600px;">
+            <input
+                type="text"
                 id="search-input"
                 placeholder="¡Busca aquí!"
-                class="w-full bg-transparent focus:outline-none text-gray-700 text-sm">
-            <i class="fas fa-search text-gray-500 text-lg"></i>
+                style="width:100%; background:transparent; border:none; outline:none; color:#374151; font-size:0.875rem; font-family:'Poppins',sans-serif;">
+            <i class="fas fa-search" style="color:#6b7280; font-size:1rem; flex-shrink:0;"></i>
         </div>
     </div>
 
     <!-- GRID -->
-    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" style="max-width:1280px; margin:0 auto;">
         <div class="col-span-full flex flex-col items-center justify-center py-16">
             <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
             <p class="text-gray-600">Cargando productos...</p>
@@ -468,27 +509,8 @@
     </div>
 
     <!-- PAGINACIÓN -->
-    <div class="mt-20 flex justify-center" id="pagination-container"></div>
+    <div class="mt-16 flex justify-center" id="pagination-container"></div>
 </section>
-    <section class="pb-16">
-    <!-- Paginacion -->
-                <div class="mt-20 flex justify-center">
-                    <nav class="flex space-x-2">
-                        <button
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white"
-                            disabled>
-                            Anterior
-                        </button>
-                        <button class="px-4 py-2 bg-green-800 text-white rounded-lg">1</button>
-                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">2</button>
-                        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">3</button>
-                        <button
-                            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white">
-                            Siguiente
-                        </button>
-                    </nav>
-                </div>
-    </section>
         <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
             <div class="container mx-auto px-6">
 

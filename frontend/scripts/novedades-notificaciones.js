@@ -50,19 +50,19 @@ const NovedadesNotificacionesManager = {
                 this.log('Botón Novedades: VISIBLE ✅', 'success');
             } else {
                 btnNovedades.style.display = 'none';
-                popupNovedades.classList.add('hidden');
+                popupNovedades.style.display = 'none';
                 this.log('Botón Novedades: OCULTO ❌', 'warning');
             }
         }
 
-        // Notificaciones — sin cambios
+        // Notificaciones
         if (btnNotificaciones && popupNotificaciones) {
             if (isAuthenticated) {
                 btnNotificaciones.style.display = '';
                 this.log('Botón Notificaciones: VISIBLE ✅', 'success');
             } else {
                 btnNotificaciones.style.display = 'none';
-                popupNotificaciones.classList.add('hidden');
+                popupNotificaciones.style.display = 'none';
                 this.log('Botón Notificaciones: OCULTO ❌', 'warning');
             }
         }
@@ -84,30 +84,34 @@ inicializarEventos: function() {
 
     // Función para cerrar todos los popups
     const cerrarPopups = () => {
-        if (popupNovedades) popupNovedades.classList.add("hidden");
-        if (popupNotificaciones) popupNotificaciones.classList.add("hidden");
+        if (popupNovedades) popupNovedades.style.display = 'none';
+        if (popupNotificaciones) popupNotificaciones.style.display = 'none';
     };
 
-    // Evento para abrir/cerrar popup de Novedades — MODIFICADO
+    // Evento para abrir/cerrar popup de Novedades
     btnNovedades.addEventListener("click", (e) => {
         e.stopPropagation();
+        const estabaOculto = popupNovedades.style.display === 'none' || popupNovedades.style.display === '';
         cerrarPopups();
-        const estabaOculto = popupNovedades.classList.contains("hidden");
-        popupNovedades.classList.toggle("hidden");
-        // Cargar campañas solo al abrir
-        if (estabaOculto) this.cargarCampanas();
+        if (estabaOculto) {
+            popupNovedades.style.display = 'block';
+            this.cargarCampanas();
+        }
         this.log('Popup Novedades toggled', 'info');
     });
 
-    // Evento para abrir/cerrar popup de Notificaciones — sin cambios
+    // Evento para abrir/cerrar popup de Notificaciones
     btnNotificaciones.addEventListener("click", (e) => {
         e.stopPropagation();
+        const estabaOculto = popupNotificaciones.style.display === 'none' || popupNotificaciones.style.display === '';
         cerrarPopups();
-        popupNotificaciones.classList.toggle("hidden");
+        if (estabaOculto) {
+            popupNotificaciones.style.display = 'block';
+        }
         this.log('Popup Notificaciones toggled', 'info');
     });
 
-    // Cerrar popups al hacer click afuera — sin cambios
+    // Cerrar popups al hacer click afuera
     document.addEventListener("click", () => {
         cerrarPopups();
     });

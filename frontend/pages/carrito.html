@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,39 @@
     <link rel="stylesheet" href="../styles/output.css"> 
     <link rel="stylesheet" href="../styles/styles.css">  
     <style>
-        body{
-            font-family: 'Poppins', sans-serif;
+        html { box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
+        *, *::before, *::after { box-sizing: border-box; }
+        /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
+        #popupNovedades, #popupNotificaciones {
+            display: none;
+            position: fixed !important;
+            top: 76px !important;
+            z-index: 99999 !important;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(220, 252, 231, 0.93) !important;
+            border: 1px solid rgba(134, 239, 172, 0.7) !important;
+            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
+            animation: popupFadeIn 0.2s ease-out;
+        }
+        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
+        #popupNotificaciones { right: 1.5rem; }
+        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
+            padding: 0.9rem 1.1rem 0.6rem;
+            border-bottom: 1px solid rgba(134,239,172,0.5);
+            font-weight: 600; font-size: 0.95rem; color: #14532d;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #popupNovedades, #popupNotificaciones {
+                left: 1rem !important; right: 1rem !important;
+                width: auto !important; transform: none !important;
+            }
         }
         .gradient-bg {
             background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
@@ -224,7 +255,7 @@
 <!-- Header/Navegación -->
     <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
-        <nav class="navegation mx-auto px-6 py-4">
+        <nav class="navegation mx-auto px-4 py-4" style="max-width:100%; box-sizing:border-box;">
             <div class="flex justify-between items-center">
                 <div class="flex items-center text-2xl font-bold">
                     <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
@@ -267,12 +298,6 @@
                                 class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                         </button>
 
-                        <!-- Ventana emergente Novedades -->
-                        <div id="popupNovedades"
-                            class="hidden absolute left-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
-                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
-                        </div>
                     </li>
                 </div>
                 <!-- Acciones del usuario -->
@@ -301,12 +326,6 @@
                             <i class="fa-solid fa-bell text-xl text-gray-600"></i>
                         </button>
 
-                        <!-- Ventana emergente Notificaciones -->
-                        <div id="popupNotificaciones"
-                            class="hidden absolute right-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
-                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
-                        </div>
                     </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
@@ -401,8 +420,8 @@
                         </div>
                     </div>
 
-                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado -->
-                    <div id="auth-buttons" class="flex items-center space-x-4">
+                    <!-- BOTONES DE LOGIN/REGISTER - Solo visible si NO está logueado (oculto en móvil) -->
+                    <div id="auth-buttons" class="hidden md:flex items-center space-x-4">
 
                         <!-- Iniciar Sesión -->
                         <a href="login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 
@@ -424,24 +443,32 @@
             </div>
             <!-- Mobile Menu -->
             <div class="md:hidden mt-4 hidden" id="mobile-menu">
-                <div class="flex flex-col space-y-3 pb-4 bg-white rounded-lg shadow-lg p-4 border border-green-100">
-
-                    <a href="index.html"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Inicio</a>
-
-                    <a href="productos.html"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Productos</a>
-
-                    <a href="index.html#categorias"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Categorías</a>
-
-                    <a href="index.html#contacto"
-                        class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition-all duration-200">Contacto</a>
-
+                <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
+                    <a href="index.html" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Inicio</a>
+                    <a href="productos.html" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Productos</a>
+                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Categorías</a>
+                    <a href="index.html#contacto" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Contacto</a>
+                    <div id="mobile-auth-buttons" class="pt-3 mt-2 border-t border-green-100 flex flex-col gap-2">
+                        <a href="login.html" class="w-full text-center py-2.5 px-4 font-medium text-green-800 border border-green-900 rounded-full hover:bg-green-50 transition-all duration-300">Iniciar Sesión</a>
+                        <a href="register.html" class="w-full text-center py-2.5 px-4 font-semibold text-white rounded-full bg-gradient-to-r from-green-800 to-green-700 hover:shadow-lg transition-all duration-300">Registrarse</a>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
+    <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
+    <div id="popupNovedades">
+        <div class="popup-header">🌱 Últimas novedades</div>
+        <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
+        </div>
+    </div>
+    <div id="popupNotificaciones">
+        <div class="popup-header">🔔 Notificaciones</div>
+        <div style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
+        </div>
+    </div>
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         <!-- Page Title -->
@@ -497,7 +524,7 @@
 
             <!-- Cart Summary Section -->
             <div class="lg:col-span-1">
-                <div id="cart-summary" class="hidden bg-white rounded-xl shadow-lg p-6 sticky top-8">
+                <div id="cart-summary" class="hidden bg-white rounded-xl shadow-lg p-6 sticky top-24">
                     <h2 class="text-xl font-semibold text-gray-900 mb-6">Resumen del Pedido</h2>
                     
                     <div class="space-y-4 mb-6">
@@ -522,9 +549,11 @@
 
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Código de descuento</label>
-                        <div class="flex">
-                            <input id="promo-code" type="text" placeholder="Ingresa tu código" class="w-full px-4 py-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <button id="apply-promo" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-r-lg transition-all duration-200">
+                        <div class="flex flex-wrap gap-2">
+                            <input id="promo-code" type="text" placeholder="Ingresa tu código"
+                                class="flex-1 min-w-0 px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                                style="font-family:'Poppins',sans-serif;">
+                            <button id="apply-promo" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-5 rounded-lg transition-all duration-200 whitespace-nowrap">
                                 Aplicar
                             </button>
                         </div>

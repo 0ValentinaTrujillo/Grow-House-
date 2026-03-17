@@ -28,17 +28,21 @@ const UIManager = {
         
         // Obtener elementos del DOM
         const authButtons = document.getElementById('auth-buttons');
+        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
         const userMenuContainer = document.getElementById('user-menu-container');
         const userMenuButton = document.getElementById('user-menu-button');
         const userDropdown = document.getElementById('user-dropdown');
-        
+
         if (isAuth && user) {
             // ✅ USUARIO LOGUEADO
             console.log('✅ Mostrando menú de usuario');
-            
-            // Ocultar botones de login/register
+
+            // Ocultar botones de login/register (desktop y móvil)
             if (authButtons) {
                 authButtons.style.display = 'none';
+            }
+            if (mobileAuthButtons) {
+                mobileAuthButtons.style.display = 'none';
             }
             
             // Mostrar menú de usuario
@@ -62,9 +66,9 @@ const UIManager = {
             // ❌ USUARIO NO LOGUEADO
             console.log('❌ Mostrando botones de autenticación');
             
-            // Mostrar botones de login/register
+            // Mostrar botones de login/register (solo en md+, el CSS hidden md:flex lo maneja)
             if (authButtons) {
-                authButtons.style.display = 'flex';
+                authButtons.style.display = '';
             }
             
             // Ocultar menú de usuario

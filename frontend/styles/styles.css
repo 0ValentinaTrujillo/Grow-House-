@@ -1,3 +1,86 @@
+/* -------- RESET RESPONSIVO GLOBAL -------- */
+html {
+    box-sizing: border-box;
+}
+body {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* -------- POPUPS NOVEDADES Y NOTIFICACIONES — GLASS VERDE -------- */
+.popup-novedades,
+.popup-notificaciones {
+    position: fixed;
+    top: 76px;
+    z-index: 99999;
+    width: 360px;
+    max-width: calc(100vw - 2rem);
+    border-radius: 1rem;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(220, 252, 231, 0.93);
+    border: 1px solid rgba(134, 239, 172, 0.7);
+    box-shadow: 0 8px 32px rgba(32, 119, 25, 0.18), 0 2px 12px rgba(0,0,0,0.08);
+    animation: popupFadeIn 0.2s ease-out;
+}
+
+.popup-novedades {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.popup-notificaciones {
+    right: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .popup-novedades,
+    .popup-notificaciones {
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+        transform: none;
+    }
+}
+
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popupFadeInCentered {
+    from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.popup-novedades {
+    animation: popupFadeInCentered 0.2s ease-out;
+}
+
+/* Header interno del popup */
+.popup-novedades .popup-header,
+.popup-notificaciones .popup-header {
+    padding: 0.9rem 1.1rem 0.6rem;
+    border-bottom: 1px solid rgba(134, 239, 172, 0.5);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #14532d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Items hover dentro del popup */
+.popup-novedades .popup-item:hover,
+.popup-notificaciones .popup-item:hover {
+    background: rgba(187, 247, 208, 0.5);
+}
+
 /*--------SECCIÓN TITULO PRINCIPAL--------*/
 section#container {
     font-family: 'Oswald', sans-serif;
@@ -20,31 +103,46 @@ section#categorias{
     text-align: center; /* asegura que el texto del título quede centrado */
 }
 
-/* Contenedor  */
+/* Contenedor — grid en móvil, flex acordeón en desktop */
 .cards-container{
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* asegurar que las tarjetas se alineen al inicio verticalmente */
-    flex-wrap: wrap;         /* permitir salto de línea en pantallas pequeñas */
-    height: auto;            /* permitir que el contenedor crezca con las tarjetas */
-    gap: 20px;
-    transition: gap 0.3s;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+    .cards-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        gap: 20px;
+        padding: 0 2rem;
+    }
 }
 
 /* Tarjeta */
 .cards-container li{
     position: relative;
     overflow: hidden;
-    flex: 0 0 200px;
-    height: 400px;
+    height: 220px;
     border-radius: 15px;
     cursor: pointer;
     border: 1.2px solid #eee;
-    box-shadow: 
+    box-shadow:
         5px 10px 15px rgba(0,0,0,0.25),
         -2px -5px 10px rgba(0,0,0,0.05);
     transition: 0.3s;
+}
+
+@media (min-width: 768px) {
+    .cards-container li {
+        flex: 0 0 200px;
+        height: 400px;
+    }
 }
 
 /* Capa oscura al hacer hover */
@@ -122,11 +220,13 @@ section#categorias{
     text-align: center;        
 }
 
-/* Efecto al hacer hover en la tarjeta */
-.cards-container li:hover{
-    flex: 0 1 260px;
-    transform: scale(1.05);
-    z-index: 10;
+/* Efecto acordeón hover — solo desktop */
+@media (min-width: 768px) {
+    .cards-container li:hover{
+        flex: 0 1 260px;
+        transform: scale(1.05);
+        z-index: 10;
+    }
 }
 
 /*--------SECCIÓN PRODUCTOS DESTACADOS--------*/
@@ -138,28 +238,35 @@ section#productsventa {
     font-family: 'Poppins', sans-serif;
 }
 
-/*------DETALE-PRODUCTOS*/
+/*------DETALLE-PRODUCTOS*/
 .btn {
 border: 1px solid #555;
 background: white;
 cursor: pointer;
 }
 
-
 .container-details {
 max-width: 1200px;
 margin: 30px auto;
 background: white;
-padding: 40px;
+padding: clamp(1rem, 4vw, 2.5rem);
 border-radius: 20px;
 border: 1px solid #dcdcdc;
+box-sizing: border-box;
+width: 100%;
 }
-
 
 .content {
 display: grid;
-grid-template-columns: 350px 1fr;
-gap: 40px;
+grid-template-columns: 1fr;
+gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .content {
+        grid-template-columns: 380px 1fr;
+        gap: 2.5rem;
+    }
 }
 
 
@@ -217,3 +324,31 @@ cursor: pointer;
     border: 1px solid #dcdcdc;
 }
 
+
+/* ── Submenús flotantes del navbar ── */
+.floating-submenu {
+    display: none !important;
+    position: fixed;
+    min-width: 210px;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
+    border: 1px solid #d1fae5;
+    z-index: 99999;
+    padding: 0.5rem 0;
+    animation: slideInLeft 0.15s ease-out;
+}
+.floating-submenu.visible {
+    display: block !important;
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(8px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+.has-submenu:hover,
+.has-submenu.active {
+    background-color: #f0fdf4;
+}
+.has-submenu {
+    cursor: pointer;
+}

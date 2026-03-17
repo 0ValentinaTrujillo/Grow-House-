@@ -646,6 +646,44 @@
         document.getElementById('productModal').addEventListener('click', function(e) {
             if (e.target === this) {closeModal();}
         });
+
+        // Abrir modal directo si viene con ?edit=ID desde otra página
+        const editParam = new URLSearchParams(window.location.search).get('edit');
+        if (editParam) {
+            // Esperar a que los productos carguen antes de abrir el modal
+            const waitAndEdit = setInterval(async () => {
+                if (document.getElementById('productModal')) {
+                    clearInterval(waitAndEdit);
+                    try {
+                        const token = localStorage.getItem('growhouse-auth-token');
+                        const res = await axios.get(`${window.GROW_HOUSE_API}/products/${editParam}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        const product = res.data.data;
+                        currentEditingId = editParam;
+                        document.getElementById('modalTitle').textContent = 'Editar Producto';
+                        document.getElementById('productId').value = product.id || product._id;
+                        document.getElementById('productName').value = product.name;
+                        document.getElementById('productCategory').value = product.category;
+                        document.getElementById('productBrand').value = product.brand || '';
+                        document.getElementById('productPrice').value = product.price;
+                        document.getElementById('productOriginalPrice').value = product.originalPrice || '';
+                        document.getElementById('productQuantity').value = product.quantity;
+                        document.getElementById('productLowStockAlert').value = product.lowStockAlert || 5;
+                        document.getElementById('productDescription').value = product.description;
+                        document.getElementById('productMainImage').value = product.mainImage;
+                        document.getElementById('productStatus').value = product.status || 'active';
+                        document.getElementById('productFeatured').checked = product.featured || false;
+                        document.getElementById('productTags').value = (product.tags || []).join(', ');
+                        document.getElementById('productModal').classList.remove('hidden');
+                        // Limpiar el parámetro de la URL sin recargar
+                        window.history.replaceState({}, '', 'admin-products.html');
+                    } catch (err) {
+                        console.error('Error abriendo producto para editar:', err);
+                    }
+                }
+            }, 300);
+        }
     </script>
 </body>
 </html>

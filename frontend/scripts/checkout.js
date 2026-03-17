@@ -11,7 +11,7 @@ console.log('🛒 checkout.js cargando...');
 
 const CHECKOUT_CONFIG = {
     apiUrl: window.GROW_HOUSE_API,
-    cartKey: 'Grow-House-cart-data',
+    cartKey: 'Grow-House-cart',
     tokenKey: 'growhouse-auth-token',
     currency: { locale: 'es-CO', symbol: '$' },
     shipping: {
@@ -46,9 +46,21 @@ function getToken() {
     return localStorage.getItem(CHECKOUT_CONFIG.tokenKey);
 }
 
+function getCartKey() {
+    try {
+        const token = localStorage.getItem(CHECKOUT_CONFIG.tokenKey);
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const userId = payload.id || payload._id || payload.sub;
+            if (userId) return `${CHECKOUT_CONFIG.cartKey}-${userId}`;
+        }
+    } catch (e) {}
+    return `${CHECKOUT_CONFIG.cartKey}-guest`;
+}
+
 function getCart() {
     try {
-        const saved = localStorage.getItem(CHECKOUT_CONFIG.cartKey);
+        const saved = localStorage.getItem(getCartKey());
         return saved ? JSON.parse(saved) : [];
     } catch {
         return [];
@@ -326,7 +338,7 @@ async function submitOrder() {
         const order = result.data || result.order || result;
 
         // Limpiar carrito
-        localStorage.removeItem(CHECKOUT_CONFIG.cartKey);
+        localStorage.removeItem(getCartKey());
 
         // Mostrar paso de confirmación
         showConfirmation(order);

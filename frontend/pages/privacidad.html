@@ -3,31 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grow House | Confirmar Registro</title>
-    <link rel="icon" href="ruta/a/favicon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Grow House | Política de Privacidad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/output.css">
     <link rel="stylesheet" href="../styles/styles.css">
     <style>
-        body{
+        body {
             font-family: 'Poppins', sans-serif;
-            background-image: url("../assets/images/fondo-paginacion.jpg");
-            background-repeat: no-repeat;
-            background-size:cover;
+            background-color: #f9fafb;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
+            background: linear-gradient(135deg, #166534, #207719);
         }
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
+        .section-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 4px solid #207719;
+        }
+        .section-card h2 {
+            color: #166534;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-card p, .section-card li {
+            color: #4b5563;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .section-card ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .section-card ul li {
+            margin-bottom: 0.35rem;
+        }
+        .hero-banner {
+            background: linear-gradient(135deg, #166534, #207719);
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
         }
             .floating-submenu{display:none !important;position:fixed;min-width:210px;background:white;border-radius:.75rem;box-shadow:0 20px 50px -10px rgba(0,0,0,.22);border:1px solid #d1fae5;z-index:99999;padding:.5rem 0;}.floating-submenu.visible{display:block !important;}.has-submenu{cursor:pointer;}.has-submenu:hover,.has-submenu.active{background-color:#f0fdf4;}
     </style>
 </head>
-<body class="min-h-screen flex flex-col py-0 px-0">
+<body>
+
     <!-- HEADER -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
         <nav class="navegation mx-auto px-4 py-4" style="max-width:100%; box-sizing:border-box;">
@@ -202,20 +231,118 @@
             <span class="text-gray-700 text-sm">Transformar espacios</span>
         </a>
     </div>
-    <div class="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div class="glass-effect rounded-lg shadow-xl p-8">
-            <div class="text-center">
-                <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
-                <h2 class="text-3xl font-bold text-gray-900 mb-2">¡Registro Confirmado!</h2>
-                <p class="text-gray-600 mb-6">Tu cuenta ha sido activada exitosamente.</p>
-                <button id="redirect-btn" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity cursor-pointer">
-                    Ir a Inicio
-                </button>
-            </div>
-        </div>
+
+    <!-- HERO -->
+    <div class="hero-banner">
+        <div style="font-size:3rem;margin-bottom:1rem;">🛡️</div>
+        <h1 style="font-size:2rem;font-weight:700;margin-bottom:0.5rem;">Política de Privacidad</h1>
+        <p style="opacity:0.85;font-size:0.95rem;max-width:600px;margin:0 auto;">
+            En Grow House nos comprometemos a proteger tu información personal y a ser transparentes sobre cómo la usamos.
+        </p>
+        <p style="opacity:0.65;font-size:0.82rem;margin-top:1rem;">Última actualización: Marzo 2026</p>
     </div>
-    </div><!-- end centering wrapper -->
+
+    <!-- CONTENIDO -->
+    <main style="max-width:860px;margin:2.5rem auto;padding:0 1.5rem 3rem;">
+
+        <div class="section-card">
+            <h2><span>📋</span> 1. Información que recopilamos</h2>
+            <p>Al usar Grow House, podemos recopilar los siguientes tipos de información:</p>
+            <ul>
+                <li><strong>Información de registro:</strong> nombre, correo electrónico y contraseña al crear tu cuenta.</li>
+                <li><strong>Información de perfil:</strong> foto de perfil y preferencias personalizadas.</li>
+                <li><strong>Datos de compra:</strong> historial de pedidos, dirección de entrega y método de pago.</li>
+                <li><strong>Información de plantas:</strong> registros de tus plantas, fotos y notas de cuidado.</li>
+                <li><strong>Datos de uso:</strong> páginas visitadas, búsquedas realizadas y tiempo en la plataforma.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2><span>🎯</span> 2. Cómo usamos tu información</h2>
+            <p>Utilizamos tu información para:</p>
+            <ul>
+                <li>Procesar y gestionar tus pedidos y pagos.</li>
+                <li>Personalizar las recomendaciones de plantas y productos.</li>
+                <li>Enviarte notificaciones sobre el estado de tus pedidos.</li>
+                <li>Mejorar nuestra plataforma y experiencia de usuario.</li>
+                <li>Brindarte soporte cuando lo necesites.</li>
+                <li>Enviarte comunicaciones de marketing (solo con tu consentimiento).</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2><span>🔒</span> 3. Cómo protegemos tu información</h2>
+            <p>
+                Implementamos medidas de seguridad técnicas y organizacionales para proteger tu información personal contra
+                acceso no autorizado, alteración, divulgación o destrucción. Esto incluye:
+            </p>
+            <ul>
+                <li>Cifrado de contraseñas mediante algoritmos seguros (bcrypt).</li>
+                <li>Conexiones HTTPS para todas las comunicaciones.</li>
+                <li>Tokens JWT con expiración para autenticación.</li>
+                <li>Acceso restringido a bases de datos solo para personal autorizado.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2><span>🤝</span> 4. Compartir información con terceros</h2>
+            <p>
+                No vendemos ni alquilamos tu información personal a terceros. Podemos compartirla únicamente con:
+            </p>
+            <ul>
+                <li><strong>Proveedores de servicios:</strong> como pasarelas de pago o servicios de envío, necesarios para completar tu pedido.</li>
+                <li><strong>Google:</strong> si usas inicio de sesión con Google, aplican sus propias políticas de privacidad.</li>
+                <li><strong>Autoridades legales:</strong> cuando sea requerido por ley o para proteger nuestros derechos.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2><span>🌱</span> 5. Datos de tus plantas</h2>
+            <p>
+                Los registros de tus plantas, incluyendo fotos, notas de cuidado y diagnósticos realizados con nuestra IA,
+                son de tu propiedad. Los usamos exclusivamente para brindarte el servicio y mejorar nuestras recomendaciones.
+                Puedes eliminar tus registros en cualquier momento desde la sección <strong>Mis Plantas</strong>.
+            </p>
+        </div>
+
+        <div class="section-card">
+            <h2><span>⚙️</span> 6. Tus derechos</h2>
+            <p>Como usuario tienes derecho a:</p>
+            <ul>
+                <li><strong>Acceder</strong> a tu información personal en cualquier momento desde tu perfil.</li>
+                <li><strong>Rectificar</strong> datos incorrectos o desactualizados.</li>
+                <li><strong>Eliminar</strong> tu cuenta y toda la información asociada.</li>
+                <li><strong>Oponerte</strong> al uso de tus datos para fines de marketing.</li>
+                <li><strong>Exportar</strong> tus datos en formato legible bajo solicitud.</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h2><span>🍪</span> 7. Cookies y almacenamiento local</h2>
+            <p>
+                Usamos <strong>localStorage</strong> del navegador para mantener tu sesión activa y guardar preferencias
+                como el carrito de compras. No usamos cookies de rastreo de terceros para publicidad.
+            </p>
+        </div>
+
+        <div class="section-card">
+            <h2><span>📧</span> 8. Contacto</h2>
+            <p>
+                Si tienes preguntas sobre esta política de privacidad o deseas ejercer alguno de tus derechos,
+                puedes contactarnos a través de nuestra plataforma o escribirnos directamente. Responderemos
+                en un plazo máximo de 5 días hábiles.
+            </p>
+        </div>
+
+        <!-- Botón volver -->
+        <div style="text-align:center;margin-top:2rem;">
+            <a href="index.html"
+               style="background:linear-gradient(135deg,#166534,#207719);color:white;padding:0.75rem 2rem;border-radius:10px;text-decoration:none;font-weight:600;font-size:0.95rem;display:inline-flex;align-items:center;gap:0.5rem;">
+                <i class="fas fa-home"></i> Volver al inicio
+            </a>
+        </div>
+
+    </main>
 
     <script src="../scripts/config.js"></script>
     <script src="../scripts/auth-api.js"></script>
@@ -277,73 +404,6 @@
             }
         });
     });
-    </script>
-    <script>
-        // Obtener parámetros de la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const email = urlParams.get('email');
-        const token = urlParams.get('token');
-        const h2 = document.querySelector('h2');
-        const p = document.querySelector('p');
-        const icon = document.querySelector('i');
-        const btn = document.getElementById('redirect-btn');
-
-        if (email && token) {
-            // Confirmar el registro automáticamente
-            console.log('📧 Confirmando registro para:', email);
-            
-            fetch(`${window.GROW_HOUSE_API}/auth/confirm-registration?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`)
-                .then(response => response.json())
-                .then(result => {
-                    console.log('✅ Respuesta del servidor:', result);
-                    
-                    if (result.success) {
-                        // Login automático
-                        if (window.authAPI && result.token && result.user) {
-                            console.log('🔐 Haciendo login automático...');
-                            authAPI.saveAuthData(result.token, result.user);
-                            
-                            // Actualizar interfaz
-                            h2.textContent = '¡Bienvenido!';
-                            p.textContent = 'Tu cuenta ha sido activada. Redirigiendo al inicio...';
-                            icon.className = 'fas fa-smile text-green-500 text-6xl mb-4';
-                            btn.style.display = 'none';
-                            
-                            // Redirigir al index después de 2 segundos
-                            setTimeout(() => {
-                                window.location.href = 'index.html';
-                            }, 2000);
-                        } else {
-                            // Si no hay token, mostrar mensaje
-                            h2.textContent = '¡Registro Confirmado!';
-                            p.textContent = 'Tu cuenta ha sido activada. Ve a iniciar sesión.';
-                            btn.textContent = 'Ir a Login';
-                            btn.onclick = () => window.location.href = 'login.html';
-                        }
-                    } else {
-                        // Error
-                        h2.textContent = 'Error en la Confirmación';
-                        p.textContent = result.error || 'Hubo un problema confirmando tu registro.';
-                        icon.className = 'fas fa-times-circle text-red-500 text-6xl mb-4';
-                        btn.textContent = 'Intentar de Nuevo';
-                        btn.onclick = () => window.location.href = 'register.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error:', error);
-                    h2.textContent = 'Error en la Confirmación';
-                    p.textContent = 'Hubo un problema confirmando tu registro. Verifica tu conexión.';
-                    icon.className = 'fas fa-times-circle text-red-500 text-6xl mb-4';
-                    btn.textContent = 'Intentar de Nuevo';
-                    btn.onclick = () => window.location.href = 'register.html';
-                });
-        } else {
-            h2.textContent = 'Enlace Inválido';
-            p.textContent = 'El enlace de confirmación no es válido.';
-            icon.className = 'fas fa-exclamation-triangle text-yellow-500 text-6xl mb-4';
-            btn.textContent = 'Volver a Registro';
-            btn.onclick = () => window.location.href = 'register.html';
-        }
     </script>
 </body>
 </html>
