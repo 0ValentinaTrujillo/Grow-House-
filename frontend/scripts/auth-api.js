@@ -530,28 +530,28 @@ console.log('✅ auth-api.js cargado exitosamente');
  */
 function showAuthNotification(message, type = 'info') {
     console.log(`📢 Notificación [${type}]: ${message}`);
-    
+
     // Crear elemento del toast
     const toast = document.createElement('div');
-    
+
     // Determinar color según el tipo
     let bgColor = 'bg-blue-500';
     if (type === 'success') bgColor = 'bg-green-500';
     if (type === 'error') bgColor = 'bg-red-500';
     if (type === 'warning') bgColor = 'bg-yellow-500';
-    
+
     // Aplicar estilos (usando Tailwind CSS)
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${bgColor} text-white font-medium`;
+    toast.className = `fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg z-40 transform transition-all duration-300 ${bgColor} text-white font-medium`;
     toast.textContent = message;
-    
+
     // Agregar al DOM
     document.body.appendChild(toast);
-    
+
     // Animar salida después de 3 segundos
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(-20px)';
-        
+
         // Eliminar del DOM después de la animación
         setTimeout(() => toast.remove(), 300);
     }, 3000);

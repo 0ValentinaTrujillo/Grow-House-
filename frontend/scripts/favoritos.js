@@ -557,13 +557,13 @@ function createFavoriteCard(favorite) {
     });
     
     return `
-        <div class="favorite-card bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl" 
+        <div class="favorite-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300"
              style="opacity: 0; transform: translateY(20px); font-family: 'Poppins', sans-serif;"
              data-favorite-id="${favorite.id}"
                 onmouseenter="this.style.boxShadow='0 8px 30px rgba(76, 175, 80, 0.25), 0 0 20px rgba(134, 197, 134, 0.15)'; this.style.transform='translateY(-4px)';"
                 onmouseleave="this.style.boxShadow='0 4px 15px rgba(134, 197, 134, 0.15)'; this.style.transform='translateY(0)';">
-            
-            <div class="relative h-64 overflow-hidden bg-gray-100">
+
+            <div class="relative h-64 overflow-hidden bg-gray-100 flex-shrink-0">
                 <img 
                     src="${favorite.image}" 
                     alt="${favorite.name}"
@@ -581,7 +581,7 @@ function createFavoriteCard(favorite) {
                 </button>
             </div>
             
-            <div class="p-5">
+            <div class="p-5 flex flex-col flex-1">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-normal text-green-600 uppercase tracking-wide">
                         ${favorite.category}
@@ -603,15 +603,15 @@ function createFavoriteCard(favorite) {
                     ${formatPrice(favorite.price)}
                 </div>
                 
-                <div class="flex gap-2">
-                    <button 
+                <div class="flex gap-2 mt-auto pt-3">
+                    <button
                         onclick="viewProductDetail('${favorite.id}')"
-                        class="ver-detalles-btn bg-green-700 text-white px-4 py-1.5 rounded-lg hover:bg-green-600 transition duration-300 text-sm text-center flex-1 font-medium">
+                        class="ver-detalles-btn border border-green-700 text-green-700 bg-transparent px-3 py-2 rounded-lg hover:bg-green-50 transition duration-300 text-sm text-center flex-1 font-medium">
                         Ver Detalles
                     </button>
-                    <button 
+                    <button
                         onclick="addToCartFromFavorite('${favorite.id}')"
-                        class="flex-1 bg-green-800 hover:bg-green-900 text-white text-sm font-medium py-1.5 px-4 rounded-lg transition-all duration-200">
+                        class="flex-1 bg-green-800 hover:bg-green-900 text-white text-sm font-medium py-2 px-4 rounded-lg transition-all duration-200">
                         Al Carrito
                     </button>
                 </div>
@@ -657,26 +657,37 @@ function formatPrice(price) {
     }).format(price);
 }
 
-function showNotification(message, type = 'info') {
-    if (typeof window.showNotification === 'function') {
-        window.showNotification(message, type);
-        return;
-    }
-    
-    console.log(`${type.toUpperCase()}: ${message}`);
-    
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        type === 'warning' ? 'bg-yellow-500' :
-        'bg-blue-500'
-    } text-white font-medium`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.remove(), 3000);
+function showNotification(message, type = 'info', duration = 3000) {
+    // Remover notificaciones existentes
+    document.querySelectorAll('.cart-notification').forEach(n => n.remove());
+
+    const notification = document.createElement('div');
+    notification.className = `cart-notification fixed top-20 right-4 max-w-sm p-4 rounded-xl shadow-2xl text-white font-medium transform transition-all duration-300 ease-in-out translate-x-full ${
+        type === 'error'   ? 'bg-gradient-to-r from-red-500 to-red-600' :
+        type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+        type === 'info'    ? 'bg-gradient-to-r from-blue-400 to-blue-600' :
+                             'bg-gradient-to-r from-green-500 to-green-600'
+    }`;
+    notification.style.zIndex = '9999';
+
+    const icon = type === 'error' ? '❌' : type === 'warning' ? '⚠️' : type === 'info' ? 'ℹ️' : '✅';
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <span class="text-lg mr-2">${icon}</span>
+            <span>${message}</span>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translateX(0)';
+    });
+
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, duration);
 }
 
 // =============================================

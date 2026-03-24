@@ -49,5 +49,6 @@
         "usuario",
         "Ventana",
         "zuri"
-    ]
+    ],
+    "postman.settings.dotenv-detection-notification-visibility": false
 }

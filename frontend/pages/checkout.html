@@ -22,10 +22,19 @@
     <header class="bg-white shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-6">
             <div class="flex items-center justify-between">
-                <!-- Logo -->
-                <div class="flex items-center text-2xl font-bold">
-                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover mr-4">
-                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                <!-- Logo + Volver al carrito -->
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center text-2xl font-bold">
+                        <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                    </div>
+                    <a href="carrito.html"
+                        class="flex items-center gap-1.5 text-sm text-gray-500 hover:text-green-700 transition-colors duration-200 border border-gray-200 hover:border-green-300 rounded-lg px-3 py-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Volver al carrito
+                    </a>
                 </div>
                 <!-- Indicador Checkout Seguro -->
                 <div class="text-sm text-gray-500 flex items-center">
@@ -43,45 +52,45 @@
         <div class="max-w-4xl mx-auto px-4 py-4">
             <div class="flex items-center justify-center space-x-8">
                 <!-- Paso 1 -->
-                <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full bg-green-800 text-white flex items-center justify-center text-sm font-bold step-indicator" data-step="1">
+                <div class="flex items-center group cursor-pointer" onclick="if(typeof currentStep !== 'undefined' && currentStep > 1) goToStep(1)">
+                    <div class="w-8 h-8 rounded-full bg-green-800 text-white flex items-center justify-center text-sm font-bold step-indicator group-hover:bg-green-700 transition-colors" data-step="1">
                         1
                     </div>
-                    <span class="ml-2 text-sm font-medium text-gray-900">Información</span>
+                    <span class="ml-2 text-sm font-medium text-gray-900 group-hover:text-green-700 transition-colors">Información</span>
                 </div>
-                
+
                 <!-- Línea de progreso 1 -->
                 <div class="flex-1 h-0.5 bg-gray-200">
                     <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-1"></div>
                 </div>
-                
+
                 <!-- Paso 2 -->
-                <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="2">
+                <div class="flex items-center group cursor-pointer" onclick="if(typeof currentStep !== 'undefined' && currentStep > 2) goToStep(2)">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator group-hover:bg-green-100 transition-colors" data-step="2">
                         2
                     </div>
-                    <span class="ml-2 text-sm font-medium text-gray-500">Envío</span>
+                    <span class="ml-2 text-sm font-medium text-gray-500 group-hover:text-green-700 transition-colors">Envío</span>
                 </div>
-                
+
                 <!-- Línea de progreso 2 -->
                 <div class="flex-1 h-0.5 bg-gray-200">
                     <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-2"></div>
                 </div>
-                
+
                 <!-- Paso 3 -->
-                <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="3">
+                <div class="flex items-center group cursor-pointer" onclick="if(typeof currentStep !== 'undefined' && currentStep > 3) goToStep(3)">
+                    <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator group-hover:bg-green-100 transition-colors" data-step="3">
                         3
                     </div>
-                    <span class="ml-2 text-sm font-medium text-gray-500">Pago</span>
+                    <span class="ml-2 text-sm font-medium text-gray-500 group-hover:text-green-700 transition-colors">Pago</span>
                 </div>
-                
+
                 <!-- Línea de progreso 3 -->
                 <div class="flex-1 h-0.5 bg-gray-200">
                     <div class="h-full bg-green-800 transition-all duration-300" style="width: 0%" id="progress-bar-3"></div>
                 </div>
-                
-                <!-- Paso 4 -->
+
+                <!-- Paso 4 — no clicable -->
                 <div class="flex items-center">
                     <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold step-indicator" data-step="4">
                         ✓
@@ -437,9 +446,17 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-6">Resumen del Pedido</h3>
                     
                     <!-- PRODUCTOS DEL CARRITO (checkout.js los renderiza) -->
-                    <div class="space-y-4 mb-6" id="checkout-cart-items">
+                    <div class="space-y-4 mb-3" id="checkout-cart-items">
                         <p class="text-sm text-gray-400 text-center py-2">Cargando productos...</p>
                     </div>
+                    <!-- Enlace agregar más productos -->
+                    <a href="productos.html"
+                        class="flex items-center justify-center gap-1.5 w-full text-sm text-green-700 hover:text-green-800 font-medium border border-dashed border-green-300 hover:border-green-500 rounded-lg py-2 mb-4 transition-colors duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Agregar más productos
+                    </a>
                     
                     <!-- TOTALES DEL PEDIDO -->
                     <div class="border-t border-gray-200 pt-4">

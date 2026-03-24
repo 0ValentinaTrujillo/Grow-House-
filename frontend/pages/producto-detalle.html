@@ -657,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let left = rect.left - smW - 6;
         if (left < 6) left = rect.right + 6;
+        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
 
         let top = rect.top;
         if (top + smH > winH - 8) top = winH - smH - 8;
@@ -671,6 +672,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const submenu   = document.getElementById(submenuId);
 
         trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
         trigger.addEventListener('mouseleave', () => {
             hideTimeout = setTimeout(() => {
                 if (submenu && !submenu.matches(':hover')) hideAllSubmenus();

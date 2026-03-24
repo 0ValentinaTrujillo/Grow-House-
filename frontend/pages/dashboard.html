@@ -875,8 +875,7 @@ function showToast(msg, type = 'success') {
 // AUTH
 // ─────────────────────────────────────────────
 function logout() {
-    localStorage.removeItem('growhouse-auth-token');
-    window.location.href = 'login.html';
+    adminAuth.logout();
 }
 
 const token = localStorage.getItem('growhouse-auth-token');

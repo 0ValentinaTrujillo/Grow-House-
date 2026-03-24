@@ -344,6 +344,7 @@
                     if (redirect) {
                         window.location.href = redirect;
                     } else if (data.isNewUser) {
+                        localStorage.setItem('growhouse-nueva-cuenta', 'true');
                         window.location.href = 'recomendaciones.html';
                     } else {
                         window.location.href = 'index.html';

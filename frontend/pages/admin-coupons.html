@@ -503,6 +503,10 @@ document.getElementById("nextPage").addEventListener("click", () => {
 // ===============================
 // INIT
 // ===============================
+function logout() {
+    adminAuth.logout();
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     const isAuthorized = await adminAuth.protectAdminRoute();
     if (!isAuthorized) return;

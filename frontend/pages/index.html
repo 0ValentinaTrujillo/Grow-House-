@@ -18,6 +18,9 @@
             overflow-x: hidden;
             max-width: 100%;
         }
+        header {
+        font-family: 'Poppins', sans-serif;
+        }
         /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
         #popupNovedades, #popupNotificaciones {
             display: none;
@@ -30,8 +33,8 @@
             overflow: hidden;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            background: rgba(220, 252, 231, 0.93) !important;
-            border: 1px solid rgba(134, 239, 172, 0.7) !important;
+            background: rgb(255, 255, 255) !important;
+            border: 1px solid rgb(251, 251, 251) !important;
             box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
             animation: popupFadeIn 0.2s ease-out;
         }
@@ -318,7 +321,6 @@
                             <span
                                 class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                         </button>
-
                     </li>
                 </div>
                 <!-- Acciones del usuario -->
@@ -346,7 +348,6 @@
                         <button id="btnNotificaciones" class="hover:text-green-800 relative">
                             <i class="fa-solid fa-bell text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200"></i>
                         </button>
-
                     </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
@@ -496,13 +497,13 @@
     </header>
     <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
     <div id="popupNovedades">
-        <div class="popup-header">🌱 Últimas novedades</div>
+        <div class="popup-header">Últimas novedades</div>
         <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
+            <p class="text-sm text-gray-600 p-4">Aun no hay novedades.</p>
         </div>
     </div>
     <div id="popupNotificaciones">
-        <div class="popup-header">🔔 Notificaciones</div>
+        <div class="popup-header">Notificaciones</div>
         <div style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
         </div>
@@ -750,6 +751,9 @@
         </div>
 
     </footer>
+    <script>
+    window.GROW_HOUSE_API = 'http://localhost:5000/api';
+    </script>
     <!-- Config - PRIMERO -->
     <script src="../scripts/config.js"></script>
     <!-- Auth API - PRIMERO -->
@@ -848,6 +852,7 @@
 
             let left = rect.left - smW - 6;
             if (left < 6) left = rect.right + 6;
+            if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
 
             let top = rect.top;
             if (top + smH > winH - 8) top = winH - smH - 8;
@@ -862,6 +867,8 @@
             const submenu   = document.getElementById(submenuId);
 
             trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+
+            trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
             trigger.addEventListener('mouseleave', () => {
                 hideTimeout = setTimeout(() => {
                     if (submenu && !submenu.matches(':hover')) hideAllSubmenus();

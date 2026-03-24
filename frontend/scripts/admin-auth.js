@@ -231,7 +231,7 @@ class AdminAuth {
         // Emitir evento para que otras partes de la app sepan
         window.dispatchEvent(new CustomEvent('userLoggedOut'));
         
-        this.redirectToLogin('Sesión cerrada exitosamente');
+        window.location.href = 'index.html';
     }
 
     /**

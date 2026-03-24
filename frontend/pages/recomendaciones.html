@@ -582,6 +582,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const winH = window.innerHeight;
         let left = rect.left - smW - 6;
         if (left < 6) left = rect.right + 6;
+        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
         let top = rect.top;
         if (top + smH > winH - 8) top = winH - smH - 8;
         if (top < 8) top = 8;
@@ -592,6 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const submenuId = trigger.dataset.submenu;
         const submenu = document.getElementById(submenuId);
         trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
         trigger.addEventListener('mouseleave', () => {
             hideTimeout = setTimeout(() => {
                 if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
@@ -630,6 +632,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Sin sesión → login
     if (!token) { window.location.href = 'login.html'; return; }
+
+    // Ocultar header y footer si viene de registro nuevo (o Google primera vez)
+    if (localStorage.getItem('growhouse-nueva-cuenta') === 'true') {
+      const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
+      if (header) header.style.display = 'none';
+      if (footer) footer.style.display = 'none';
+    }
 
     try {
       const res = await fetch(window.GROW_HOUSE_API + '/recomendaciones/estado', {
@@ -723,6 +733,7 @@ document.addEventListener('DOMContentLoaded', function () {
         filtros: data.preferencias || preferencias,
       }));
 
+      localStorage.removeItem('growhouse-nueva-cuenta');
       window.location.href = 'index.html#productosrecomendadosparati';
 
     } catch (e) {
@@ -733,5 +744,77 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 </script>
+    <!-- FOOTER -->
+    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <!-- Logo y descripción -->
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+                    <p class="text-gray-900 mb-6 leading-relaxed">
+                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y
+                        naturaleza.
+                    </p>
+                    <!-- Redes sociales -->
+                    <div class="flex space-x-4 mt-5">
+                        <!-- FB -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full
+                                bg-gradient-to-br from-blue-500 to-blue-700
+                                shadow-lg shadow-blue-900/30
+                                hover:scale-125 hover:shadow-blue-600/50
+                                transition-all duration-300">
+                            <i class="fab fa-facebook-f text-2xl text-white"></i>
+                        </a>
+                        <!-- IG -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full
+                                bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500
+                                shadow-lg shadow-purple-900/30
+                                hover:scale-125 hover:shadow-pink-600/50
+                                transition-all duration-300">
+                            <i class="fab fa-instagram text-2xl text-white"></i>
+                        </a>
+                        <!-- WhatsApp -->
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full
+                                bg-gradient-to-br from-green-400 to-green-600
+                                shadow-lg shadow-green-900/30
+                                hover:scale-125 hover:shadow-green-500/50
+                                transition-all duration-300">
+                            <i class="fab fa-whatsapp text-2xl text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enlaces rápidos -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                    <ul class="space-y-2 text-gray-900">
+                        <li>📧 info@growhouse.com</li>
+                        <li>📱 +57 301 234 5678</li>
+                        <li>📍 Pital-Huila, Colombia</li>
+                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Línea final -->
+            <div class="border-t border-green-800 pt-2 text-center">
+                <p class="text-gray-900">
+                    © 2024 Grow House. Todos los derechos reservados |
+                    <a href="privacidad.html" class="hover:text-green-700 transition">Política de Privacidad</a> |
+                    <a href="#" class="hover:text-green-700 transition">Términos de Servicio</a>
+                </p>
+            </div>
+        </div>
+    </footer>
   </body>
 </html>

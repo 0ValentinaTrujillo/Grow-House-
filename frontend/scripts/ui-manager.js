@@ -156,7 +156,14 @@ const UIManager = {
         if (userMenuButton && userDropdown) {
             userMenuButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                userDropdown.classList.toggle('hidden');
+                const estabaOculto = userDropdown.classList.contains('hidden');
+                // Cerrar todos los menús antes de abrir este
+                if (window.NovedadesNotificacionesManager) {
+                    window.NovedadesNotificacionesManager.cerrarTodosLosMenus();
+                }
+                if (estabaOculto) {
+                    userDropdown.classList.remove('hidden');
+                }
                 console.log('Toggle dropdown');
             });
             

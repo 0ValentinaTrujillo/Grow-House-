@@ -667,7 +667,8 @@
                 if (result.success) {
                     // ✅ Guardar sesión con el nombre correcto
                     localStorage.setItem('growhouse-auth-token', result.token);
-                    localStorage.setItem('growhouse_user', JSON.stringify(result.user));
+                    localStorage.setItem('growhouse-user-data', JSON.stringify(result.user));
+                    localStorage.setItem('growhouse-login-time', new Date().toISOString());
 
                     // ✅ Marcar que debe hacer la encuesta (solo usuarios nuevos)
                     localStorage.setItem('growhouse-nueva-cuenta', 'true');

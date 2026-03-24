@@ -352,3 +352,11 @@ cursor: pointer;
 .has-submenu {
     cursor: pointer;
 }
+
+/* -------- CLASES TAILWIND JIT ARBITRARIAS — necesarias para páginas de usuario -------- */
+/* El CDN de Tailwind 2.x no soporta valores arbitrarios como min-w-[18px] ni h-[18px].  */
+/* output.css las compila para páginas públicas; aquí las definimos para páginas de usuario. */
+.min-w-\[18px\]  { min-width: 18px; }
+.w-\[18px\]      { width: 18px; }
+.h-\[18px\]      { height: 18px; }
+.min-w-\[120px\] { min-width: 120px; }

@@ -13,7 +13,7 @@
 
     :root {
       --verde:       #207719;
-      --verde-claro: #46d560;
+      --verde-claro: #2aba44;
       --verde-l:     #207719;
       --verde-ñ:     #3ab325ee;
       --gris-texto:  #3a3c3f;
@@ -25,13 +25,14 @@
       font-family: 'Poppins', sans-serif;
       background: #ffffff;
       min-height: 100vh;
-      padding: 20px 20px 40px;
+      padding: 20px 0 40px;
     }
 
     .header {
+      font-family: 'Poppins', sans-serif;
       text-align: center;
       margin-bottom: 28px;
-      padding-top: 8px;
+      padding-top: 32px;
     }
 
     .header h1 {
@@ -47,6 +48,38 @@
 
     .header p { color: var(--gris-texto); font-size: 1rem; }
 
+            /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
+        #popupNovedades, #popupNotificaciones {
+            display: none;
+            position: fixed !important;
+            top: 76px !important;
+            z-index: 99999 !important;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(252, 255, 253, 0.93) !important;
+            border: 1px solid rgba(246, 253, 249, 0.7) !important;
+            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
+            animation: popupFadeIn 0.2s ease-out;
+        }
+        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
+        #popupNotificaciones { right: 1.5rem; }
+        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
+            padding: 0.9rem 1.1rem 0.6rem;
+            border-bottom: 1px solid rgb(213, 230, 219);
+            font-weight: 600; font-size: 0.95rem; color: #14532d;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #popupNovedades, #popupNotificaciones {
+                left: 1rem !important; right: 1rem !important;
+                width: auto !important; transform: none !important;
+            }
+        }
+
     /* ── GRID DOS COLUMNAS ── */
     .main-grid {
       display: grid;
@@ -55,6 +88,7 @@
       margin-bottom: 24px;
       align-items: start;
     }
+
 
     @media (max-width: 860px) {
       .main-grid { grid-template-columns: 1fr; }
@@ -65,6 +99,65 @@
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
       padding: 28px;
+      height: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow: hidden;
+    }
+
+    #card-captura #preview-container {
+      flex: 1;
+      min-height: 0;
+      max-height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    #card-captura #preview-container > div {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+    }
+
+    #card-captura #preview-container img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+      border-radius: 14px;
+      display: block;
+    }
+
+    #card-resultado {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: 620px;
+    }
+
+    #panel-resultado {
+      flex: 1;
+      display: flex;
+      overflow-y: auto;
+      flex-direction: column;
+      min-height: 0;
+      scrollbar-width: thin;
+      scrollbar-color: #06b865 transparent;
+    }
+
+    #panel-resultado .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
     }
 
     .card-title {
@@ -90,7 +183,7 @@
       border-radius: 12px;
       font-family: 'Poppins', sans-serif;
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 400;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -120,7 +213,7 @@
     }
 
     .btn:disabled {
-      background: #9ca3af !important;
+      background: #b9c0cd !important;
       cursor: not-allowed;
       transform: none !important;
       box-shadow: none !important;
@@ -128,7 +221,7 @@
 
     .btn-full {
       width: 100%;
-      padding: 18px;
+      padding: 12px;
       font-size: 1.05rem;
       margin-top: 4px;
     }
@@ -248,8 +341,8 @@
     }
 
     .info-box {
-      background: linear-gradient(135deg, var(--verde-bg), var(--verde-bg2));
-      border: 2px solid var(--borde-verde);
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
       border-radius: 14px;
       padding: 18px;
       margin-bottom: 16px;
@@ -266,8 +359,8 @@
     }
 
     .dato {
-      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
-      border: 2px solid var(--borde-verde);
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
       border-radius: 14px;
       padding: 14px;
     }
@@ -280,11 +373,11 @@
       margin-bottom: 4px;
     }
 
-    .dato .valor { font-weight: 700; color: var(--verde); font-size: 0.92rem; }
+    .dato .valor { font-weight: 700; color: #1a1a1a; font-size: 0.92rem; }
 
     .planta-resultado {
-      background: linear-gradient(135deg, #f0fdf4, #d1fae5);
-      border: 2px solid var(--borde-verde);
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 16px;
@@ -303,7 +396,7 @@
       margin-bottom: 12px;
     }
 
-    .resultado-nombre { color: var(--verde); font-size: 1.25rem; font-weight: 700; margin-bottom: 3px; }
+    .resultado-nombre { color: #1a1a1a; font-size: 1.25rem; font-weight: 700; margin-bottom: 3px; }
     .resultado-cientifico { font-style: italic; color: var(--gris-texto); font-size: 0.82rem; }
 
     .resultado-number {
@@ -329,32 +422,33 @@
     .recomendaciones-box li { font-size: 0.88rem; line-height: 1.7; color: #374151; }
 
     .img-generada { border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(32, 119, 25, 0.15); margin-bottom: 16px; }
-    .img-generada img { width: 100%; display: block; }
+    .img-generada { background: linear-gradient(135deg, #f0fdf4, #d1fae5); }
+    .img-generada img { width: 100%; max-height: 280px; object-fit: contain; display: block; }
     .img-generada-label { background: linear-gradient(135deg, var(--verde-bg), var(--verde-bg2)); padding: 10px; text-align: center; color: var(--verde); font-weight: 700; font-size: 0.85rem; }
 
+
     .btn-guardar {
+      flex-shrink: 0;
+      position: static;
+      z-index: unset;
       width: 100%;
-      padding: 18px;
+      padding: 12px;
       border-radius: 14px;
       border: none;
       background: linear-gradient(135deg, var(--verde), var(--verde-claro));
       color: white;
       font-family: 'Poppins', sans-serif;
-      font-weight: 700;
+      font-weight: 400;
       font-size: 1.05rem;
       cursor: pointer;
       transition: all .3s;
-      box-shadow: 0 10px 25px rgba(4, 111, 26, 0.4);
     }
 
-    .btn-guardar:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(4, 111, 26, 0.6); }
     .btn-guardar:disabled { background: #9ca3af; box-shadow: none; cursor: not-allowed; transform: none; }
 
     .empty-state {
       text-align: center;
-      padding: 50px 20px;
-      border: 2px dashed #d1d5db;
-      border-radius: 12px;
+      padding: 20px;
       color: var(--gris-texto);
     }
 
@@ -364,7 +458,6 @@
       text-align: center;
       color: rgb(48, 48, 48);
       padding: 18px 20px;
-      background: linear-gradient(135deg, var(--verde-l), var(--verde-ñ));
       border-radius: 14px;
       font-size: 0.88rem;
       margin-top: 4px;
@@ -519,13 +612,13 @@
         </nav>
     </header>
     <!-- Popups fuera del header -->
-    <div id="popupNovedades" style="display:none">
+    <div id="popupNovedades">
         <div class="popup-header">🌱 Últimas novedades</div>
         <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
         </div>
     </div>
-    <div id="popupNotificaciones" style="display:none">
+    <div id="popupNotificaciones">
         <div class="popup-header">🔔 Notificaciones</div>
         <div style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
@@ -564,12 +657,12 @@
         </a>
     </div>
 
-  <div class="header">
+  <div class="header mx-4 md:mx-8">
     <h1 id="titulo-header">Agregar Planta</h1>
-    <p id="sub-header">Captura tu planta y la IA la identificará</p>
+    <p id="sub-header">Captura tu planta y la IA la identificará para que tengas un mejor conocimiento sobre ella.</p>
   </div>
 
-  <div class="main-grid">
+  <div class="main-grid mx-4 md:mx-8">
 
     <!-- CARD IZQUIERDA: CAPTURA -->
     <div class="card" id="card-captura">
@@ -591,8 +684,8 @@
 
       <div id="preview-container"></div>
 
-      <button id="btn-analizar" class="btn btn-primary btn-full" onclick="analizarPlanta()" disabled>
-         Analizar Planta con IA
+      <button id="btn-analizar" class="btn btn-primary btn-full" onclick="analizarPlanta()" disabled style="flex-shrink: 0; margin-top: auto;">
+         Analizar Planta 
       </button>
     </div>
 
@@ -610,7 +703,7 @@
 
   </div><!-- /main-grid -->
 
-  <div class="footer"> <strong>Tip:</strong> Toma la foto con buena luz para mejores resultados <a href="index.html" class="to-black">Inicio</a>
+  <div class="footer"> <strong>Tip:</strong> Toma la foto con buena luz para mejores resultados 
   </div> 
 
   <canvas id="canvas"></canvas>
@@ -622,6 +715,7 @@
 <script src="../scripts/ui-manager.js"></script>
 <script src="../scripts/session.js"></script>
 <script src="../scripts/novedades-notificaciones.js"></script>
+<script src="../scripts/plantas-notificaciones.js"></script>
 <script src="../scripts/carrito.js"></script>
 <!-- Script submenus -->
 <script>
@@ -647,6 +741,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const winH = window.innerHeight;
         let left = rect.left - smW - 6;
         if (left < 6) left = rect.right + 6;
+        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
         let top = rect.top;
         if (top + smH > winH - 8) top = winH - smH - 8;
         if (top < 8) top = 8;
@@ -657,6 +752,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const submenuId = trigger.dataset.submenu;
         const submenu = document.getElementById(submenuId);
         trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
         trigger.addEventListener('mouseleave', () => {
             hideTimeout = setTimeout(() => {
                 if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
@@ -677,9 +773,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <script>
-  // ✅ URL del backend gestionada por config.js
-  const API_BASE = window.GROW_HOUSE_API;
-
   const CLAVE = 'zuri_plantas_v1';
   let imagenActual   = null;
   let analisisActual = null;
@@ -752,7 +845,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('panel-resultado').innerHTML = `
       <div class="empty-state">
         <div class="icono">🪴</div>
-        <p style="font-size:1rem;">Presiona <strong>"Analizar Planta con IA"</strong></p>
+        <p style="font-size:1rem;">Presiona <strong>"Analizar Planta"</strong></p>
       </div>`;
     analisisActual = null;
   }
@@ -909,5 +1002,54 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>` : ''}`;
   }
 </script>
+
+    <!-- FOOTER -->
+    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+                    <p class="text-gray-900 mb-6 leading-relaxed">
+                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                    </p>
+                    <div class="flex space-x-4 mt-5">
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-900/30 hover:scale-125 hover:shadow-blue-600/50 transition-all duration-300">
+                            <i class="fab fa-facebook-f text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500 shadow-lg shadow-purple-900/30 hover:scale-125 hover:shadow-pink-600/50 transition-all duration-300">
+                            <i class="fab fa-instagram text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-900/30 hover:scale-125 hover:shadow-green-500/50 transition-all duration-300">
+                            <i class="fab fa-whatsapp text-2xl text-white"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                    <ul class="space-y-2 text-gray-900">
+                        <li>📧 info@growhouse.com</li>
+                        <li>📱 +57 301 234 5678</li>
+                        <li>📍 Pital-Huila, Colombia</li>
+                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-green-800 pt-2 text-center">
+                <p class="text-gray-900">
+                    © 2024 Grow House. Todos los derechos reservados |
+                    <a href="privacidad.html" class="hover:text-green-700 transition">Política de Privacidad</a> |
+                    <a href="#" class="hover:text-green-700 transition">Términos de Servicio</a>
+                </p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

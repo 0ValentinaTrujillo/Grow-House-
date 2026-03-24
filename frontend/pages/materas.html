@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../styles/output.css"> 
     <link rel="stylesheet" href="../styles/styles.css">  
     <style>
+        header {
+            font-family: 'Poppins', sans-serif;
+        }
         .gradient-bg {
             background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
         }
@@ -74,6 +77,38 @@
 
         .bg-verde:hover {
             background-color: var(--color-hover);
+        }
+
+        /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
+        #popupNovedades, #popupNotificaciones {
+            display: none;
+            position: fixed !important;
+            top: 76px !important;
+            z-index: 99999 !important;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgb(255, 255, 255) !important;
+            border: 1px solid rgb(251, 251, 251) !important;
+            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
+            animation: popupFadeIn 0.2s ease-out;
+        }
+        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
+        #popupNotificaciones { right: 1.5rem; }
+        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
+            padding: 0.9rem 1.1rem 0.6rem;
+            border-bottom: 1px solid rgba(134,239,172,0.5);
+            font-weight: 600; font-size: 0.95rem; color: #14532d;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #popupNovedades, #popupNotificaciones {
+                left: 1rem !important; right: 1rem !important;
+                width: auto !important; transform: none !important;
+            }
         }
 
         /* ── Submenús flotantes ── */
@@ -220,7 +255,6 @@
     </style>
 </head>
 <body class="bg-white font-sans antialiased">
-<!-- Header/Navegación -->
     <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
         <nav class="navegation mx-auto px-6 py-4">
@@ -265,13 +299,6 @@
                             <span
                                 class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                         </button>
-
-                        <!-- Ventana emergente Novedades -->
-                        <div id="popupNovedades"
-                            class="hidden absolute left-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Últimas novedades</h3>
-                            <p class="text-sm text-gray-600">Nuevos productos disponibles.</p>
-                        </div>
                     </li>
                 </div>
                 <!-- Acciones del usuario -->
@@ -297,15 +324,8 @@
                     <!-- 🔔 Notificaciones (al lado del Carrito) -->
                     <li class="relative list-none ml-2">
                         <button id="btnNotificaciones" class="hover:text-green-800 relative">
-                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
+                            <i class="fa-solid fa-bell text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200"></i>
                         </button>
-
-                        <!-- Ventana emergente Notificaciones -->
-                        <div id="popupNotificaciones"
-                            class="hidden absolute right-0 mt-2 w-96 bg-white shadow-lg p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-semibold text-lg mb-2">Notificaciones</h3>
-                            <p class="text-sm text-gray-600">Aún no tienes notificaciones.</p>
-                        </div>
                     </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
@@ -440,6 +460,19 @@
             </div>
         </nav>
     </header>
+    <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
+    <div id="popupNovedades">
+        <div class="popup-header">Últimas novedades</div>
+        <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Aun no hay novedades.</p>
+        </div>
+    </div>
+    <div id="popupNotificaciones">
+        <div class="popup-header">Notificaciones</div>
+        <div style="max-height:320px; overflow-y:auto;">
+            <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
+        </div>
+    </div>
     <!-- GRID DE PRODUCTOS -->
     <section id="materas" class="container mx-auto px-6 py-16">
         <!-- CONTENEDOR DEL TÍTULO + BUSCADOR -->
@@ -890,6 +923,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let left = rect.left - smW - 6;
         if (left < 6) left = rect.right + 6;
+        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
 
         let top = rect.top;
         if (top + smH > winH - 8) top = winH - smH - 8;
@@ -904,6 +938,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const submenu   = document.getElementById(submenuId);
 
         trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
         trigger.addEventListener('mouseleave', () => {
             hideTimeout = setTimeout(() => {
                 if (submenu && !submenu.matches(':hover')) hideAllSubmenus();

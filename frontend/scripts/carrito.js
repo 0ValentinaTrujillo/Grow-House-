@@ -67,40 +67,40 @@ function showNotification(message, type = 'success', duration = 1000) {
     // Remover notificaciones existentes
     const existingNotifications = document.querySelectorAll('.cart-notification');
     existingNotifications.forEach(notification => notification.remove());
-    
+
     const notification = document.createElement('div');
-    notification.className = `cart-notification fixed top-4 right-4 z-50 max-w-sm p-4 rounded-xl shadow-2xl text-white font-medium transform transition-all duration-300 ease-in-out translate-x-full ${
-        type === 'error' ? 'bg-gradient-to-r from-red-500 to-red-600' : 
-        type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 
+    notification.className = `cart-notification fixed top-20 right-4 z-40 max-w-sm p-4 rounded-xl shadow-2xl text-white font-medium transform transition-all duration-300 ease-in-out translate-x-full ${
+        type === 'error' ? 'bg-gradient-to-r from-red-500 to-red-600' :
+        type === 'warning' ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
         type === 'info' ? 'bg-gradient-to-r from-blue-400 to-blue-600' :
         'bg-gradient-to-r from-green-500 to-green-600'
     }`;
-    
+
     // Agregar icono según el tipo
-    const icon = type === 'error' ? '❌' : 
-                type === 'warning' ? '⚠️' : 
+    const icon = type === 'error' ? '❌' :
+                type === 'warning' ? '⚠️' :
                 type === 'info' ? 'ℹ️' : '✅';
-    
+
     notification.innerHTML = `
         <div class="flex items-center">
             <span class="text-lg mr-2">${icon}</span>
             <span>${message}</span>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     // Animación de entrada
     requestAnimationFrame(() => {
         notification.style.transform = 'translateX(0)';
     });
-    
+
     // Auto-remove con animación
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => notification.remove(), 300);
     }, duration);
-    
+
     return notification;
 }
 

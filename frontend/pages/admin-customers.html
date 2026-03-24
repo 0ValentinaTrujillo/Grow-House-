@@ -360,6 +360,13 @@ function nextPage(){
 
 loadCustomers();
 
+function logout() {
+    localStorage.removeItem('growhouse-auth-token');
+    localStorage.removeItem('growhouse-user-data');
+    localStorage.removeItem('growhouse-login-time');
+    window.location.href = 'index.html';
+}
+
 </script>
 
 </body>

@@ -195,54 +195,91 @@ function renderizarPopup(notifs) {
   const popup = document.getElementById('popupNotificaciones');
   if (!popup) return;
 
-  if (!notifs.length) {
-    popup.innerHTML = `
-      <h3 style="font-weight:600;font-size:1rem;margin-bottom:8px;">Notificaciones</h3>
-      <div style="text-align:center;padding:16px 0;color:#6b7280;font-size:0.88rem;">
-        <div style="font-size:2rem;margin-bottom:8px;">🌱</div>
-        Tus plantas están al día. ¡Buen trabajo!
-      </div>`;
-    actualizarContadorCampana(0);
-    return;
-  }
+  const TIPO_COLOR = {
+    'riego':         { bg: '#eff6ff', border: '#bfdbfe', titulo: '#1d4ed8' },
+    'riego-pronto':  { bg: '#f0f9ff', border: '#bae6fd', titulo: '#0369a1' },
+    'fertilizacion': { bg: '#f0fdf4', border: '#bbf7d0', titulo: '#15803d' },
+    'poda':          { bg: '#fefce8', border: '#fde68a', titulo: '#92400e' },
+    'luz':           { bg: '#fffbeb', border: '#fde68a', titulo: '#b45309' },
+  };
 
-  const items = notifs.map((n, i) => `
-    <div style="
-      display:flex;align-items:flex-start;gap:10px;
-      padding:10px 12px;border-radius:10px;margin-bottom:6px;
-      background:${n.urgente ? '#fef2f2' : '#f0fdf4'};
-      border:1px solid ${n.urgente ? '#fecaca' : '#bbf7d0'};
-      font-size:0.82rem;
-    ">
-      <div style="flex-shrink:0;margin-top:2px;">${n.icono}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-weight:600;color:${n.urgente ? '#dc2626' : '#15803d'};margin-bottom:2px;">
-          ${n.titulo}
-        </div>
-        <div style="color:#374151;line-height:1.4;">${n.texto}</div>
-        ${n.accion ? `
-          <button
-            data-notif-index="${i}"
-            style="
-              margin-top:6px;background:#207719;color:white;border:none;
-              padding:4px 12px;border-radius:20px;font-size:0.75rem;
-              font-family:'Poppins',sans-serif;cursor:pointer;font-weight:600;
-            "
-          >Marcar como hecho</button>
-        ` : ''}
+  const emptyState = `
+    <div class="notif-empty">
+      <div class="notif-empty-icon-wrap">
+        <i class="fa-solid fa-leaf" style="font-size:24px;color:#86efac;"></i>
       </div>
-    </div>
-  `).join('');
+      <p class="notif-empty-title">¡Plantas al día!</p>
+      <p class="notif-empty-sub">Todos los cuidados están<br>registrados correctamente</p>
+    </div>`;
+
+  const items = notifs.map((n, i) => {
+    const c = TIPO_COLOR[n.tipo] || TIPO_COLOR['fertilizacion'];
+    return `
+      <div class="notif-item" style="background:${n.urgente ? '#fef2f2' : c.bg};border-left:3px solid ${n.urgente ? '#ef4444' : c.border};">
+        <div style="flex-shrink:0;margin-top:2px;">${n.icono}</div>
+        <div class="notif-item-body">
+          <div class="notif-item-text" style="color:${n.urgente ? '#dc2626' : c.titulo};">${n.titulo}</div>
+          <div class="notif-item-time">${n.texto}</div>
+          ${n.accion ? `
+            <button data-notif-index="${i}" class="notif-accion-btn">
+              Marcar como hecho
+            </button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
 
   popup.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <h3 style="font-weight:600;font-size:1rem;">Notificaciones</h3>
-      <a href="mis_plantas.html" style="font-size:0.75rem;color:#207719;text-decoration:none;font-weight:600;">
-        Ver plantas →
-      </a>
+    <div class="notif-header">
+      <div class="notif-header-left">
+        <div class="notif-icon-wrap">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="notif-title-wrap">
+          <span class="notif-title-main">Notificaciones</span>
+          <span class="notif-title-sub">Cuidados de tus plantas</span>
+        </div>
+      </div>
+      <a href="mis_plantas.html" class="notif-ver-plantas">Ver plantas →</a>
     </div>
-    <div style="max-height:320px;overflow-y:auto;padding-right:2px;">${items}</div>
-  `;
+    <div class="notif-body" id="notificacionesLista">
+      ${notifs.length ? items : emptyState}
+    </div>
+    <div class="notif-footer">
+      <span>Las notificaciones se actualizan automáticamente</span>
+    </div>`;
+
+  // Inyectar estilos del botón "Marcar como hecho" y enlace si no existen
+  if (!document.getElementById('plantas-notif-extra-styles')) {
+    const s = document.createElement('style');
+    s.id = 'plantas-notif-extra-styles';
+    s.textContent = `
+      .notif-item { border-left: 3px solid #bbf7d0; }
+      .notif-accion-btn {
+        margin-top: 7px;
+        background: #16a34a;
+        color: #fff;
+        border: none;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-family: 'Poppins', sans-serif;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.15s;
+      }
+      .notif-accion-btn:hover { background: #15803d; }
+      .notif-ver-plantas {
+        font-size: 12px;
+        color: #16a34a;
+        text-decoration: none;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: color 0.15s;
+      }
+      .notif-ver-plantas:hover { color: #15803d; }
+    `;
+    document.head.appendChild(s);
+  }
 
   // Eventos de los botones "Marcar como hecho"
   popup.querySelectorAll('[data-notif-index]').forEach(btn => {

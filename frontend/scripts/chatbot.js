@@ -76,7 +76,7 @@ class ChatbotClient {
                     headers: {
                         'Content-Type': 'application/json',
                         // Enviar token si existe
-                        ...(localStorage.getItem('token') && {
+                        ...(localStorage.getItem('growhouse-auth-token') && {
                             'Authorization': `Bearer ${localStorage.getItem('token')}`
                         })
                     },

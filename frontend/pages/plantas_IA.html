@@ -24,7 +24,9 @@
             font-family: 'Poppins', sans-serif;
             background: #ffffff;
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px 0 40px;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
@@ -35,11 +37,13 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
+            padding-top: 32px; 
         }
 
         .header h1 {
             color: black;
             font-size: 2.5rem;
+            font-weight: 700; /* agrega esto */
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -51,6 +55,38 @@
             color: #6b7280;
             font-size: 1.2rem;
         }
+
+            /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
+        #popupNovedades, #popupNotificaciones {
+            display: none;
+            position: fixed !important;
+            top: 76px !important;
+            z-index: 99999 !important;
+            width: 360px;
+            max-width: calc(100vw - 2rem);
+            border-radius: 1rem;
+            overflow: hidden;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(252, 255, 253, 0.93) !important;
+            border: 1px solid rgba(246, 253, 249, 0.7) !important;
+            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
+            animation: popupFadeIn 0.2s ease-out;
+        }
+        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
+        #popupNotificaciones { right: 1.5rem; }
+        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
+            padding: 0.9rem 1.1rem 0.6rem;
+            border-bottom: 1px solid rgb(213, 230, 219);
+            font-weight: 600; font-size: 0.95rem; color: #14532d;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        @media (max-width: 640px) {
+            #popupNovedades, #popupNotificaciones {
+                left: 1rem !important; right: 1rem !important;
+                width: auto !important; transform: none !important;
+            }
+        }    
 
         .main-grid {
             display: grid;
@@ -81,6 +117,11 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(148, 148, 155, 0.473);
             padding: 30px;
+            height: 620px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow: hidden;
         }
 
         /* Card de resultados oculta por defecto */
@@ -122,7 +163,7 @@
             border: none;
             border-radius: 12px;
             font-size: 1rem;
-            font-weight: bold;
+            font-weight: 400;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -132,14 +173,14 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #207719, #46d560);
+            background: linear-gradient(135deg, #207719, #1cd13d);
             color: white;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #207719, #46d560);
+            background: linear-gradient(135deg, #207719, #1abc38);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
+            box-shadow: 0 8px 20px rgba(4, 111, 26, 0.978);
         }
 
         .btn-secondary {
@@ -155,26 +196,37 @@
 
         .btn-analyze {
             width: 100%;
-            padding: 20px;
+            padding: 12px;
             font-size: 1.1rem;
-            margin-top: 15px;
+            margin-top: auto;
+            flex-shrink: 0;
         }
 
         .btn:disabled {
-            background: #9ca3af;
+            background: #b1b5bd;
             cursor: not-allowed;
             transform: none;
         }
 
         #preview-container {
-            margin-top: 20px;
+            flex: 1;
+            min-height: 0;
+            max-height: 380px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+            border-radius: 14px;
+            overflow: hidden;
         }
 
         #preview-container img, #camera-preview {
             width: 100%;
+            height: 100%;
+            object-fit: contain;
             border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: block;
         }
 
         .badge {
@@ -191,10 +243,15 @@
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 20px;
             border: 2px dashed #d1d5db;
             border-radius: 12px;
             color: #9ca3af;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .empty-state-icon {
@@ -228,27 +285,27 @@
         }
 
         .info-box-blue {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            border: 2px solid rgba(184, 253, 181, 0.63);
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
         }
 
         .info-box-blue h3 {
-            color: var(--color-principal);
+            color: #1a1a1a;
             margin-bottom: 10px;
         }
 
         .planta-card {
-            background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
             padding: 20px;
             border-radius: 12px;
-            border: 2px solid rgba(184, 253, 181, 0.63);
             margin-bottom: 15px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .planta-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(100, 221, 96, 0.822);
+            box-shadow: 0 10px 25px -12px rgba(100, 221, 96, 0.822);
         }
 
         .planta-header {
@@ -259,7 +316,7 @@
         }
 
         .planta-title {
-            color: var(--color-principal);
+            color: #1a1a1a;
             font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 5px;
@@ -279,7 +336,7 @@
         }
 
         .planta-detail strong {
-            color: var(--color-principal);
+            color: #1a1a1a;
         }
 
         .combinaciones-box {
@@ -321,14 +378,19 @@
             color: rgb(48, 48, 48);
             margin-top: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #207719, #3ab325ee);
             border-radius: 12px;
         }
 
-        .results-container {
-            max-height: 600px;
+        #results-card {
             overflow-y: auto;
-            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #06b865 transparent;
+        }
+
+        .results-container {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 6px;
         }
 
         .results-container::-webkit-scrollbar {
@@ -358,7 +420,10 @@
 
         .generated-image-container img {
             width: 100%;
+            max-height: 280px;
+            object-fit: contain;
             display: block;
+            background: linear-gradient(135deg, #f0fdf4, #d1fae5);
         }
 
         .generated-image-label {
@@ -526,13 +591,13 @@
         </nav>
     </header>
     <!-- Popups fuera del header -->
-    <div id="popupNovedades" style="display:none">
+    <div id="popupNovedades">
         <div class="popup-header">🌱 Últimas novedades</div>
         <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
         </div>
     </div>
-    <div id="popupNotificaciones" style="display:none">
+    <div id="popupNotificaciones">
         <div class="popup-header">🔔 Notificaciones</div>
         <div style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
@@ -572,7 +637,7 @@
     </div>
 
     <div class="container">
-        <div class="header">
+        <div class="header mx-4 md:mx-8">
             <h1>Transforma tu espacio</h1>
             <p>Dale vida a tu hogar con plantas perfectas para cada esquina.</p>
         </div>
@@ -615,7 +680,7 @@
         </div>
 
         <div class="footer">
-            <strong>Tip:</strong> Toma fotos desde diferentes ángulos para obtener mejores recomendaciones <a href="index.html" class="to-black">Inicio</a>
+            <strong>Tip:</strong> Toma fotos desde diferentes ángulos para obtener mejores recomendaciones
         </div>
     </div>
 
@@ -628,6 +693,7 @@
     <script src="../scripts/ui-manager.js"></script>
     <script src="../scripts/session.js"></script>
     <script src="../scripts/novedades-notificaciones.js"></script>
+    <script src="../scripts/plantas-notificaciones.js"></script>
     <script src="../scripts/carrito.js"></script>
     <!-- Script submenus -->
     <script>
@@ -653,6 +719,7 @@
             const winH = window.innerHeight;
             let left = rect.left - smW - 6;
             if (left < 6) left = rect.right + 6;
+            if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
             let top = rect.top;
             if (top + smH > winH - 8) top = winH - smH - 8;
             if (top < 8) top = 8;
@@ -663,6 +730,7 @@
             const submenuId = trigger.dataset.submenu;
             const submenu = document.getElementById(submenuId);
             trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+            trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
             trigger.addEventListener('mouseleave', () => {
                 hideTimeout = setTimeout(() => {
                     if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
@@ -851,7 +919,7 @@
                             <div>
                                 <div class="planta-title">${p.nombre_cientifico_y_comun || p.nombre_comun || 'Planta recomendada'}</div>
                             </div>
-                            <span class="planta-number">#${i + 1}</span>
+                            <span class="planta-number">${i + 1}</span>
                         </div>
                         <div class="planta-detail">
                             <strong>Ubicación:</strong> ${p.numero_y_ubicacion || p.ubicacion || 'Por definir'}
@@ -875,5 +943,54 @@
             container.innerHTML = html;
         }
     </script>
+
+    <!-- FOOTER -->
+    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-auto">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+                    <p class="text-gray-900 mb-6 leading-relaxed">
+                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
+                    </p>
+                    <div class="flex space-x-4 mt-5">
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg shadow-blue-900/30 hover:scale-125 hover:shadow-blue-600/50 transition-all duration-300">
+                            <i class="fab fa-facebook-f text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-yellow-500 shadow-lg shadow-purple-900/30 hover:scale-125 hover:shadow-pink-600/50 transition-all duration-300">
+                            <i class="fab fa-instagram text-2xl text-white"></i>
+                        </a>
+                        <a href="#" class="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-lg shadow-green-900/30 hover:scale-125 hover:shadow-green-500/50 transition-all duration-300">
+                            <i class="fab fa-whatsapp text-2xl text-white"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                    <ul class="space-y-2 text-gray-900">
+                        <li>📧 info@growhouse.com</li>
+                        <li>📱 +57 301 234 5678</li>
+                        <li>📍 Pital-Huila, Colombia</li>
+                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-green-800 pt-2 text-center">
+                <p class="text-gray-900">
+                    © 2024 Grow House. Todos los derechos reservados |
+                    <a href="privacidad.html" class="hover:text-green-700 transition">Política de Privacidad</a> |
+                    <a href="#" class="hover:text-green-700 transition">Términos de Servicio</a>
+                </p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

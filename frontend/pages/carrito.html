@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="../styles/styles.css">  
     <style>
         html { box-sizing: border-box; }
+        header{
+            font-family: 'Poppins', sans-serif
+        }
         body { font-family: 'Poppins', sans-serif; overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
         *, *::before, *::after { box-sizing: border-box; }
         /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
@@ -25,8 +28,8 @@
             overflow: hidden;
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            background: rgba(220, 252, 231, 0.93) !important;
-            border: 1px solid rgba(134, 239, 172, 0.7) !important;
+            background: rgb(254, 255, 254) !important;
+            border: 1px solid rgb(255, 255, 255) !important;
             box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
             animation: popupFadeIn 0.2s ease-out;
         }
@@ -253,7 +256,6 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 <!-- Header/Navegación -->
-    <!-- Header/Navegación -->
     <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
         <nav class="navegation mx-auto px-4 py-4" style="max-width:100%; box-sizing:border-box;">
             <div class="flex justify-between items-center">
@@ -458,13 +460,13 @@
     </header>
     <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
     <div id="popupNovedades">
-        <div class="popup-header">🌱 Últimas novedades</div>
+        <div class="popup-header">Últimas novedades</div>
         <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
+            <p class="text-sm text-gray-600 p-4">Aún no hay novedades</p>
         </div>
     </div>
     <div id="popupNotificaciones">
-        <div class="popup-header">🔔 Notificaciones</div>
+        <div class="popup-header">Notificaciones</div>
         <div style="max-height:320px; overflow-y:auto;">
             <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
         </div>
@@ -762,6 +764,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let left = rect.left - smW - 6;
         if (left < 6) left = rect.right + 6;
+        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
 
         let top = rect.top;
         if (top + smH > winH - 8) top = winH - smH - 8;
@@ -776,6 +779,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const submenu   = document.getElementById(submenuId);
 
         trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
+
+        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
         trigger.addEventListener('mouseleave', () => {
             hideTimeout = setTimeout(() => {
                 if (submenu && !submenu.matches(':hover')) hideAllSubmenus();

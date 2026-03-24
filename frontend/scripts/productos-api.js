@@ -144,7 +144,7 @@ function createProductCard(producto) {
 
             <div class="flex gap-2">
                 <button onclick="viewProductDetail('${producto.id || producto._id}')"
-                    class="ver-detalles-btn bg-green-700 text-white px-3 py-2 rounded-lg hover:bg-green-600 transition duration-300 text-sm text-center flex-1 font-medium">
+                    class="ver-detalles-btn border border-green-700 text-green-700 bg-transparent px-3 py-2 rounded-lg hover:bg-green-50 transition duration-300 text-sm text-center flex-1 font-medium">
                     Ver Detalles
                 </button>
                 ${(function() {
@@ -157,7 +157,7 @@ function createProductCard(producto) {
                         </a>`;
                     } else {
                         return `<button onclick="addToCartFromAPI('${producto.id || producto._id}')"
-                            class="add-to-cart-btn bg-green-800 text-white px-3 py-2 rounded-lg hover:bg-green-900 transition duration-300 text-sm text-center flex-1 font-medium ${producto.quantity === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                            class="add-to-cart-btn bg-green-700 text-white px-3 py-2 rounded-lg hover:bg-green-800 transition duration-300 text-sm text-center flex-1 font-medium ${producto.quantity === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
                             ${producto.quantity === 0 ? 'disabled' : ''}>
                             Al Carrito
                         </button>`;
