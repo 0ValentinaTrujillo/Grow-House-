@@ -102,6 +102,7 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
     ? [
         'https://grow-house.vercel.app',
         'https://www.grow-house.com',
+        'https://grow-house-frontend-wj15.onrender.com', 
         process.env.FRONTEND_URL
     ].filter(Boolean)
     : [
