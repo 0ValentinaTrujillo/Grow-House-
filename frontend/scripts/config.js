@@ -10,7 +10,7 @@
 
     window.GROW_HOUSE_API = isLocal
         ? 'http://localhost:5000/api'
-        : 'https://grow-house-ihww.onrender.com';
+        : 'https://grow-house-ihww.onrender.com/api';
 
     // Compatibilidad con Rating.js
     window.API_BASE_URL = window.GROW_HOUSE_API;
