@@ -1074,6 +1074,13 @@
         }
     });
     </script>
-</body>
 
+    <script>
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.action === 'redirect') {
+            window.location.href = e.data.url;
+        }
+    });
+    </script>
+</body>
 </html>
