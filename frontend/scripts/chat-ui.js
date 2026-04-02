@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 box-shadow: 0 25px 60px rgba(0,0,0,0.3);
             ">
                 <img 
-                    src="/frontend/src/assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
+                    src="/frontendassets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
                     alt="Zuri"
                     style="width:100px; height:100px; object-fit:cover; border-radius:50%; display:block; margin: 0 auto 15px auto; box-shadow: 0 4px 16px rgba(0,0,0,0.15);"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
@@ -71,21 +71,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p style="color:#6b7280; font-size:0.9rem; margin-bottom:25px; line-height:1.5;">
                     Para usar el asistente de plantas necesitas una cuenta en Grow House.
                 </p>
-                <a href="/frontend/src/pages/login.html" style="
+                <a href="/frontend/pages/login.html" style="
                     display: block;
                     background: linear-gradient(135deg, #207719, #46d560);
                     color: white;
                     padding: 14px 20px;
-                    border-radius: 25px;
+                    border-radius: 10px;
                     text-decoration: none;
                     font-weight: 600;
                     margin-bottom: 12px;
                 ">Iniciar Sesión</a>
-                <a href="/frontend/src/pages/register.html" style="
+                <a href="/frontend/pages/register.html" style="
                     display: block;
                     color: #207719;
                     padding: 12px 20px;
-                    border-radius: 25px;
+                    border-radius: 10px;
                     text-decoration: none;
                     font-weight: 600;
                     border: 2px solid #207719;
