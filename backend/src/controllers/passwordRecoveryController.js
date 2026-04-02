@@ -82,6 +82,42 @@ exports.SolicitarCodigo = async (req, res) => {
 };
 
 // ----------------------------------------
+// 2️⃣ VERIFICAR CÓDIGO
+// ----------------------------------------
+exports.verificarCodigo = async (req, res) => {
+    try {
+        const { email, codigo } = req.body;
+
+        const user = await User.findOne({ email })
+            .select("+codigoRecuperacion +codigoExpiracion");
+
+        if (!user) {
+            return res.json({ success: false, message: "Correo no encontrado" });
+        }
+
+        if (user.codigoRecuperacion !== codigo) {
+            return res.json({ success: false, message: "Código incorrecto" });
+        }
+
+        if (user.codigoExpiracion < Date.now()) {
+            return res.json({ success: false, message: "Código expirado" });
+        }
+
+        return res.json({
+            success: true,
+            message: "Código verificado correctamente"
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.json({
+            success: false,
+            message: "Error en el servidor"
+        });
+    }
+};
+
+// ----------------------------------------
 // 3️⃣ CAMBIAR CONTRASEÑA
 // ----------------------------------------
 exports.cambiarPassword = async (req, res) => {
