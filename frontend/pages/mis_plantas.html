@@ -599,7 +599,43 @@
             height: 100%;
             border: none;
         }
-        
+
+@media (max-width: 640px) {
+  .planta-card {
+    flex-wrap: wrap;
+    padding-bottom: 52px;
+  }
+
+  .planta-info {
+    padding-right: 0;
+    width: calc(100% - 102px);
+  }
+
+  .badge-dificultad {
+    top: 12px;
+    right: 12px;
+    font-size: 0.62rem;
+    padding: 3px 10px;
+  }
+
+  .btn-borrar {
+    bottom: 10px;
+    right: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .planta-thumb {
+    width: 72px;
+    height: 72px;
+  }
+
+  .planta-nombre {
+    font-size: 0.9rem;
+  }
+}
     </style>
 </head>
 <body>
