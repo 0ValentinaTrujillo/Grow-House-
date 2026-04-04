@@ -599,7 +599,57 @@
             height: 100%;
             border: none;
         }
-        
+
+@media (max-width: 640px) {
+  .planta-card {
+    flex-wrap: wrap;
+    padding-bottom: 52px;
+    padding-top: 38px; /* espacio para el badge arriba */
+  }
+
+  .planta-info {
+    padding-right: 0;
+    width: calc(100% - 90px);
+  }
+
+  .badge-dificultad {
+    top: 10px;
+    left: 12px;
+    width: fit-content;
+    font-size: 0.62rem;
+    padding: 3px 10px;
+  }
+
+  .btn-borrar {
+    bottom: 10px;
+    right: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  .planta-thumb {
+    width: 72px;
+    height: 72px;
+  }
+
+  .planta-nombre {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .btn-fab {
+    bottom: 28px;
+    right: 24px;
+  }
+
+  .chat-btn {
+    bottom: 100px; /* sube el cactus para no tapar el + */
+    right: 16px;
+  }
+}
     </style>
 </head>
 <body>
@@ -808,6 +858,7 @@
 <script src="../scripts/profile-image.js"></script>
 <script src="../scripts/navbar-avatar.js"></script>
 <script src="../scripts/ui-manager.js"></script>
+<script src="../scripts/main.js"></script>
 <script src="../scripts/session.js"></script>
 <script src="../scripts/novedades-notificaciones.js"></script>
 <script src="../scripts/plantas-notificaciones.js"></script>
@@ -1128,5 +1179,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     </script>
+
 </body>
 </html>

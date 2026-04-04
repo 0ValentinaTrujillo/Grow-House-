@@ -128,12 +128,11 @@ const NovedadesNotificacionesManager = {
         const btnNotificaciones = document.getElementById("btnNotificaciones");
         const popupNotificaciones = document.getElementById("popupNotificaciones");
 
-        // Novedades — visible solo si está autenticado Y no es admin
+        // Novedades desktop — visible solo si está autenticado Y no es admin
         if (btnNovedades && popupNovedades) {
             if (isAuthenticated && !isAdmin) {
                 btnNovedades.style.display = '';
                 this.log('Botón Novedades: VISIBLE ✅', 'success');
-                // Verificar badge al mostrarse
                 this.verificarNovedades();
                 this.iniciarPolling();
             } else {
@@ -142,6 +141,13 @@ const NovedadesNotificacionesManager = {
                 if (this._pollTimer) clearInterval(this._pollTimer);
                 this.log('Botón Novedades: OCULTO ❌', 'warning');
             }
+        }
+
+        // ✅ Novedades móvil — misma lógica
+        const btnNovedadesMobile = document.getElementById('btnNovedadesMobile');
+        if (btnNovedadesMobile) {
+            btnNovedadesMobile.style.display = (isAuthenticated && !isAdmin) ? '' : 'none';
+            this.log(`Botón Novedades Móvil: ${(isAuthenticated && !isAdmin) ? 'VISIBLE ✅' : 'OCULTO ❌'}`, 'info');
         }
 
         // Notificaciones
@@ -182,6 +188,22 @@ const NovedadesNotificacionesManager = {
             }
             this.log('Popup Novedades toggled', 'info');
         });
+
+        // ✅ Botón Novedades móvil
+        const btnNovedadesMobile = document.getElementById('btnNovedadesMobile');
+        if (btnNovedadesMobile) {
+            btnNovedadesMobile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const estabaOculto = popupNovedades.style.display === 'none' || popupNovedades.style.display === '';
+                this.cerrarTodosLosMenus();
+                if (estabaOculto) {
+                    popupNovedades.style.display = 'block';
+                    this.cargarCampanas();
+                    this.marcarComoVistas();
+                }
+                this.log('Popup Novedades Móvil toggled', 'info');
+            });
+        }
 
         btnNotificaciones.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -261,7 +283,6 @@ const NovedadesNotificacionesManager = {
         const style = document.createElement('style');
         style.id = 'notif-styles';
         style.textContent = `
-            /* ── Posicionamiento base para páginas sin CSS propio ── */
             #popupNovedades, #popupNotificaciones {
                 position: fixed !important;
                 top: 76px !important;
@@ -286,7 +307,6 @@ const NovedadesNotificacionesManager = {
                     transform: none !important;
                 }
             }
-            /* ── Diseño del popup de notificaciones ── */
             #popupNotificaciones {
                 background: #ffffff !important;
                 border: 1px solid #e5e7eb !important;
@@ -515,7 +535,6 @@ if (document.readyState === 'loading') {
         NovedadesNotificacionesManager.init();
     });
 } else {
-    // El DOM ya está cargado
     NovedadesNotificacionesManager.init();
 }
 
