@@ -256,7 +256,7 @@ box-sizing: border-box;
 width: 100%;
 }
 
-.container-details .content {
+.content {
 display: grid;
 grid-template-columns: 1fr;
 gap: 2rem;
