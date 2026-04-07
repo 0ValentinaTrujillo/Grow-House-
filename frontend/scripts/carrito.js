@@ -677,6 +677,26 @@ function setupEventListeners() {
     if (checkoutBtn && checkoutBtn.parentElement) {
         checkoutBtn.parentElement.insertBefore(clearBtn, checkoutBtn.nextSibling);
     }
+
+    // Cerrar modal auth
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', () => {
+            document.getElementById('modal-auth-required').classList.add('hidden');
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('modal-auth-required')?.classList.add('hidden');
+        }
+    });
+    
+        const modalClose = document.getElementById('modal-close');
+    if (modalClose) {
+        modalClose.addEventListener('click', () => {
+            document.getElementById('modal-auth-required').classList.add('hidden');
+        });
+    }
     
     console.log('✅ Event listeners configurados correctamente');
 }
