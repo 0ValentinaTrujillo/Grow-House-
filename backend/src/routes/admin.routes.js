@@ -21,6 +21,8 @@ const couponController = require('../controllers/couponController');
 router.use(protect);
 // Campañas para clientes logueados
 router.get('/marketing/campaigns/public', adminController.getPublicCampaigns);
+// Cupones para clientes logueados
+router.get('/coupons/public', couponController.getPublicCoupons);
 
 router.use(authorize('admin'));
 

@@ -474,4 +474,26 @@ exports.toggleCouponStatus = async (req, res) => {
     }
 };
 
+/**
+ * Obtener cupones activos para mostrar a usuarios logueados
+ */
+exports.getPublicCoupons = async (req, res) => {
+    try {
+        const now = new Date();
+        const coupons = await Coupon.find({
+            status: 'active',
+            startDate: { $lte: now },
+            expiryDate: { $gt: now }
+        })
+        .select('code description discountType discountValue expiryDate minOrderValue')
+        .sort('-createdAt')
+        .limit(10);
+
+        res.json({ success: true, data: coupons });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error al obtener cupones' });
+    }
+};
+
 
