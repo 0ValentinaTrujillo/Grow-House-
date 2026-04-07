@@ -162,6 +162,59 @@
             cursor: pointer;
         }
 
+  /* ── Responsive fix: detalles de producto ── */
+  @media (max-width: 768px) {
+        .left-card {
+        position: static !important;
+        top: unset !important;
+        max-width: 100% !important;
+      }
+      /* Quitar sticky en móvil para que el layout fluya */
+      .container-details .content > div:first-child {
+          position: static !important;
+          top: unset !important;
+          max-width: 100% !important;
+      }
+
+      /* Reducir padding del contenedor principal */
+      .container-details {
+          padding: 0.75rem !important;
+          margin-top: 0.5rem !important;
+      }
+
+      /* Imagen más compacta en móvil */
+      .container-details .content > div:first-child > div:first-child {
+          aspect-ratio: 4/3 !important;
+          max-height: 280px;
+      }
+
+      /* Precio más compacto */
+      #product-price {
+          font-size: 1.6rem !important;
+      }
+
+      /* El grid ya es 1 columna, asegurar gap correcto */
+      .container-details .content {
+          gap: 1rem !important;
+      }
+
+      /* Details (acordeones) más compactos */
+      .container-details details summary {
+          padding: 0.75rem 1rem !important;
+          font-size: 0.9rem !important;
+      }
+
+      .container-details details > div {
+          padding: 0 1rem 1rem !important;
+          font-size: 0.875rem !important;
+      }
+
+      /* Título del producto */
+      #product-title {
+          font-size: 1.4rem !important;
+      }
+  }
+
     </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -397,13 +450,13 @@
 
     <!-- Contenedor de detalles del producto -->
     <div class="container-details" style="max-width:1200px; margin:1rem auto 2rem; padding: clamp(1rem,4vw,2.5rem)">
-        <div class="content grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div class="content grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             
             <!-- LEFT CARD - Imagen, precio y botones -->
-            <div class="w-full mx-auto flex flex-col gap-4"
+            <div class="left-card w-full mx-auto flex flex-col gap-4"
                 style="background:white; border-radius:1.25rem; border:1px solid #e5e7eb;
-                       box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: clamp(1rem,3vw,1.5rem);
-                       max-width: 480px; align-self: start; position: sticky; top: 90px;">
+                    box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: clamp(1rem,3vw,1.5rem);
+                    max-width: 480px; align-self: start; position: sticky; top: 90px;">
 
                 <!-- Imagen principal -->
                 <div class="w-full overflow-hidden bg-gray-100"
