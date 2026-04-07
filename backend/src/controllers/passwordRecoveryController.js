@@ -1,21 +1,7 @@
 const User = require('../models/User');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// ----------------------------------------
-// Helper: crear transporte fresco
-// ----------------------------------------
-function crearTransporte() {
-    return nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-        connectionTimeout: 10000,  // 10 segundos
-        greetingTimeout: 10000,
-        socketTimeout: 10000
-    });
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ----------------------------------------
 // 1️⃣ SOLICITAR CÓDIGO
@@ -39,31 +25,24 @@ exports.SolicitarCodigo = async (req, res) => {
         user.codigoExpiracion = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        // Timeout de 15s para que nunca quede pending infinito
-        const envioCorreo = new Promise((resolve, reject) => {
-            const timer = setTimeout(() => {
-                reject(new Error('Timeout enviando correo'));
-            }, 15000);
-
-            crearTransporte().sendMail({
-                from: `"Grow House" <${process.env.EMAIL_USER}>`,
-                to: email,
-                subject: "Código de recuperación - Grow House",
-                html: `
-                    <h2>Tu código de recuperación</h2>
-                    <p>Código: <strong>${codigo}</strong></p>
-                    <p>Este código vence en 10 minutos.</p>
-                `
-            }).then(result => {
-                clearTimeout(timer);
-                resolve(result);
-            }).catch(err => {
-                clearTimeout(timer);
-                reject(err);
-            });
+        const { error } = await resend.emails.send({
+            from: `Grow House <no-reply@growhouse.site>`, // ← reemplaza con tu dominio verificado en Resend
+            to: email,
+            subject: "Código de recuperación - Grow House",
+            html: `
+                <h2>Tu código de recuperación</h2>
+                <p>Código: <strong>${codigo}</strong></p>
+                <p>Este código vence en 10 minutos.</p>
+            `
         });
 
-        await envioCorreo;
+        if (error) {
+            console.error('Error Resend:', error);
+            return res.json({
+                success: false,
+                message: "No se pudo enviar el correo. Intenta de nuevo."
+            });
+        }
 
         return res.json({
             success: true,
@@ -74,9 +53,7 @@ exports.SolicitarCodigo = async (req, res) => {
         console.error('Error SolicitarCodigo:', error.message);
         return res.json({
             success: false,
-            message: error.message === 'Timeout enviando correo'
-                ? 'No se pudo conectar al servidor de correo. Intenta de nuevo.'
-                : 'Error en el servidor'
+            message: "Error en el servidor"
         });
     }
 };
