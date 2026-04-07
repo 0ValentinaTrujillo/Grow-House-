@@ -41,10 +41,10 @@ const CuponesBanner = {
         navigator.clipboard.writeText(code).then(() => {
             const original = btn.textContent;
             btn.textContent = '¡Copiado!';
-            btn.classList.add('bg-green-600');
+            btn.style.background = '#15803d';
             setTimeout(() => {
                 btn.textContent = original;
-                btn.classList.remove('bg-green-600');
+                btn.style.background = '#166534';
             }, 2000);
         });
     },
@@ -53,56 +53,166 @@ const CuponesBanner = {
         if (coupons.length === 0) return '';
 
         const cards = coupons.map(c => `
-            <div class="coupon-card flex-shrink-0 bg-white rounded-xl shadow-md border border-green-100 p-4 w-64 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-green-500 to-green-700"></div>
-                <div class="pl-3">
-                    <span class="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full mb-2">
-                        🎟️ Cupón activo
+            <div style="
+                flex-shrink: 0;
+                width: clamp(260px, 80vw, 320px);
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                border: 1px solid #dcfce7;
+                padding: 14px;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background: linear-gradient(to bottom, #16a34a, #166534); border-radius:4px 0 0 4px;"></div>
+                
+                <div style="padding-left: 12px;">
+                    <span style="display:inline-block; background:#dcfce7; color:#166534; font-size:11px; font-weight:600; padding:3px 10px; border-radius:999px; margin-bottom:8px;">
+                        Cupón activo
                     </span>
-                    <p class="text-2xl font-extrabold text-green-700 mb-1">${this.formatDiscount(c)}</p>
-                    <p class="text-gray-600 text-sm mb-3 leading-snug">${c.description || 'Descuento especial'}</p>
-                    ${c.minOrderValue ? `<p class="text-xs text-gray-400 mb-2">Mínimo: $${new Intl.NumberFormat('es-CO').format(c.minOrderValue)}</p>` : ''}
-                    <div class="flex items-center gap-2">
-                        <code class="flex-1 bg-gray-100 text-green-800 font-bold text-sm px-3 py-1.5 rounded-lg tracking-widest text-center">
-                            ${c.code}
-                        </code>
+                    
+                    <p style="font-size:24px; font-weight:800; color:#166534; margin:0 0 4px;">
+                        ${this.formatDiscount(c)}
+                    </p>
+                    
+                    <p style="font-size:12px; color:#6b7280; margin:0 0 8px; line-height:1.4;">
+                        ${c.description || 'Descuento especial'}
+                    </p>
+                    
+                    ${c.minOrderValue ? `
+                    <p style="font-size:11px; color:#9ca3af; margin:0 0 8px;">
+                        Mínimo: $${new Intl.NumberFormat('es-CO').format(c.minOrderValue)}
+                    </p>` : ''}
+                    
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:nowrap; margin-bottom:8px;">
+                        <code style="
+                            flex: 1;
+                            min-width: 0;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            background: #f3f4f6;
+                            color: #166534;
+                            font-weight: 700;
+                            font-size: 11px;
+                            padding: 6px 8px;
+                            border-radius: 8px;
+                            letter-spacing: 1.5px;
+                            text-align: center;
+                            font-family: monospace;
+                            border: 1px dashed #86efac;
+                        ">${c.code}</code>
                         <button onclick="CuponesBanner.copyCode('${c.code}', this)"
-                            class="bg-green-700 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-all duration-200 whitespace-nowrap">
+                            style="
+                                flex-shrink: 0;
+                                background: #166534;
+                                color: white;
+                                font-size: 11px;
+                                font-weight: 600;
+                                padding: 6px 12px;
+                                border-radius: 8px;
+                                border: none;
+                                cursor: pointer;
+                                white-space: nowrap;
+                                transition: background 0.2s;
+                            ">
                             Copiar
                         </button>
                     </div>
-                    <p class="text-xs text-gray-400 mt-2">Vence: ${this.formatExpiry(c.expiryDate)}</p>
+                    
+                    <p style="font-size:11px; color:#9ca3af; margin:0;">
+                        Vence: ${this.formatExpiry(c.expiryDate)}
+                    </p>
                 </div>
             </div>
         `).join('');
 
         return `
-            <div id="cupones-banner" class="fixed bottom-0 left-0 right-0 z-[9998] bg-white border-t-2 border-green-700 shadow-2xl"
-                style="transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);">
-                
-                <!-- Header del banner -->
-                <div class="flex items-center justify-between px-4 py-2 bg-gradient-to-r from-green-800 to-green-600">
-                    <div class="flex items-center gap-2">
-                        <span class="text-white text-sm font-semibold">🎟️ Cupones disponibles para ti</span>
-                        <span class="bg-white text-green-800 text-xs font-bold px-2 py-0.5 rounded-full">${coupons.length}</span>
+            <div id="cupones-banner" style="
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 9998;
+                background: white;
+                border-top: 2px solid #166534;
+                border-radius: 16px 16px 0 0;
+                box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+                transform: translateY(100%);
+                transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            ">
+                <!-- Header -->
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 10px 16px;
+                    background: linear-gradient(to right, #166534, #15803d);
+                    border-radius: 14px 14px 0 0;
+                ">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span style="color:white; font-size:13px; font-weight:600;">
+                            🎟️ Cupones disponibles para ti
+                        </span>
+                        <span style="background:white; color:#166534; font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;">
+                            ${coupons.length}
+                        </span>
                     </div>
-                    <button id="cupones-banner-close"
-                        class="text-white hover:text-green-200 transition-colors text-lg font-bold leading-none">
-                        ✕
-                    </button>
+                    <button id="cupones-banner-close" style="
+                        color: white;
+                        background: rgba(255,255,255,0.15);
+                        border: none;
+                        border-radius: 6px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        padding: 2px 8px;
+                        line-height: 1.4;
+                        transition: background 0.2s;
+                    ">✕</button>
                 </div>
 
-                <!-- Carrusel de cupones -->
-                <div class="flex gap-4 overflow-x-auto px-4 py-4 scrollbar-hide"
-                    style="scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Carrusel -->
+                <div style="
+                    display: flex;
+                    gap: 12px;
+                    overflow-x: auto;
+                    padding: 14px 16px;
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                ">
                     ${cards}
                 </div>
+
+                <!-- Hint scroll en móvil -->
+                <p style="font-size:11px; color:#9ca3af; text-align:center; padding:0 0 10px; margin:0;">
+                    ← desliza para ver más cupones →
+                </p>
             </div>
 
-            <!-- Botón para reabrir el banner -->
-            <button id="cupones-banner-toggle"
-                class="fixed bottom-4 left-4 z-[9997] hidden bg-green-700 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-full shadow-lg transition-all duration-200 flex items-center gap-2">
-                🎟️ Ver cupones <span class="bg-white text-green-800 text-xs font-bold px-1.5 rounded-full">${coupons.length}</span>
+            <!-- Botón flotante para reabrir -->
+            <button id="cupones-banner-toggle" style="
+                display: none;
+                position: fixed;
+                bottom: 16px;
+                left: 16px;
+                z-index: 9997;
+                background: #166534;
+                color: white;
+                font-size: 12px;
+                font-weight: 600;
+                padding: 8px 16px;
+                border-radius: 999px;
+                border: none;
+                cursor: pointer;
+                align-items: center;
+                gap: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                transition: background 0.2s;
+            ">
+                🎟️ Ver cupones
+                <span style="background:white; color:#166534; font-size:11px; font-weight:700; padding:1px 7px; border-radius:999px;">
+                    ${coupons.length}
+                </span>
             </button>
         `;
     },
@@ -112,36 +222,29 @@ const CuponesBanner = {
         const closeBtn = document.getElementById('cupones-banner-close');
         const toggleBtn = document.getElementById('cupones-banner-toggle');
 
-        // Cerrar banner
         closeBtn?.addEventListener('click', () => {
             banner.style.transform = 'translateY(100%)';
             setTimeout(() => {
-                toggleBtn.classList.remove('hidden');
-                toggleBtn.classList.add('flex');
+                toggleBtn.style.display = 'flex';
             }, 400);
         });
 
-        // Reabrir banner
         toggleBtn?.addEventListener('click', () => {
             banner.style.transform = 'translateY(0)';
-            toggleBtn.classList.add('hidden');
-            toggleBtn.classList.remove('flex');
+            toggleBtn.style.display = 'none';
         });
     },
 
     async init() {
-        // Solo mostrar si el usuario está logueado
         if (typeof authAPI === 'undefined' || !authAPI.isAuthenticated()) return;
 
         const coupons = await this.fetchCupones();
         if (coupons.length === 0) return;
 
-        // Insertar banner en el DOM
         const wrapper = document.createElement('div');
         wrapper.innerHTML = this.createBannerHTML(coupons);
         document.body.appendChild(wrapper);
 
-        // Animar entrada después de 1.5s
         setTimeout(() => {
             const banner = document.getElementById('cupones-banner');
             if (banner) banner.style.transform = 'translateY(0)';
