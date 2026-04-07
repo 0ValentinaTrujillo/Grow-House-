@@ -298,12 +298,15 @@ function calculateTaxes(subtotal) {
 
 function calculateDiscount(subtotal) {
     if (!appliedPromo) return 0;
-    
+
     if (appliedPromo.type === 'percentage') {
         return Math.round(subtotal * (appliedPromo.value / 100));
     }
     if (appliedPromo.type === 'fixed') {
-        return Math.min(appliedPromo.value, subtotal);
+        return Math.min(appliedPromo.fixedDiscount || appliedPromo.value, subtotal);
+    }
+    if (appliedPromo.type === 'freeShipping') {
+        return 0;
     }
     return 0;
 }
@@ -519,45 +522,67 @@ function updateShippingMessage(subtotal) {
 // 7. CÓDIGOS DE DESCUENTO MEJORADOS
 // =============================================
 
-function applyPromoCode(code) {
+async function applyPromoCode(code) {
     const promoCode = code.toUpperCase().trim();
-    const promo = CART_CONFIG.promoCodes[promoCode];
     const messageElement = document.getElementById('promo-message');
     const applyBtn = document.getElementById('apply-promo');
-    
-    // Loading state
+
     if (applyBtn) {
-        applyBtn.classList.add('loading');
-        applyBtn.textContent = '';
+        applyBtn.disabled = true;
+        applyBtn.textContent = 'Validando...';
     }
-    
-    setTimeout(() => {
-        if (!promo) {
-            showMessage(messageElement, `Código "${promoCode}" no válido`, 'error');
-            showNotification(`Código "${promoCode}" no es válido`, 'error');
-        } else {
-            const subtotal = calculateSubtotal();
-            if (subtotal < promo.minAmount) {
-                showMessage(messageElement, `Monto mínimo requerido: ${formatPrice(promo.minAmount)}`, 'error');
-                showNotification(`Necesitas ${formatPrice(promo.minAmount)} mínimo`, 'warning');
-            } else {
-                appliedPromo = promo;
-                showMessage(messageElement, `✨ ${promoCode} aplicado: ${promo.type === 'percentage' ? promo.value + '%' : formatPrice(promo.value)} descuento`, 'success');
-                showNotification(`¡Descuento ${promoCode} aplicado!`, 'success');
-                updateSummary();
-                
-                // Limpiar campo
-                const promoInput = document.getElementById('promo-code');
-                if (promoInput) promoInput.value = '';
-            }
+
+    try {
+        const token = localStorage.getItem('growhouse-auth-token');
+        const subtotal = calculateSubtotal();
+
+        const res = await fetch(window.GROW_HOUSE_API + '/admin/coupons/validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                code: promoCode,
+                userId: authAPI.getUser()?.id,
+                orderValue: subtotal
+            })
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            showMessage(messageElement, data.message, 'error');
+            showNotification(data.message, 'error');
+            return;
         }
-        
-        // Restore button
+
+        // Guardar promo aplicada
+        appliedPromo = {
+            type: data.data.discountType === 'percentage' ? 'percentage' : 'fixed',
+            value: data.data.discountType === 'percentage'
+                ? data.data.discount / subtotal * 100
+                : data.data.discount,
+            fixedDiscount: data.data.discount,
+            code: data.data.code
+        };
+
+        showMessage(messageElement, `✨ ${promoCode} aplicado: -$${new Intl.NumberFormat('es-CO').format(data.data.discount)}`, 'success');
+        showNotification(`¡Descuento ${promoCode} aplicado!`, 'success');
+        updateSummary();
+
+        const promoInput = document.getElementById('promo-code');
+        if (promoInput) promoInput.value = '';
+
+    } catch (error) {
+        console.error('❌ Error validando cupón:', error);
+        showNotification('Error al validar el cupón', 'error');
+    } finally {
         if (applyBtn) {
-            applyBtn.classList.remove('loading');
+            applyBtn.disabled = false;
             applyBtn.textContent = 'Aplicar';
         }
-    }, 1000); // Simular loading
+    }
 }
 
 function showMessage(element, message, type) {

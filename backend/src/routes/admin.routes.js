@@ -23,6 +23,8 @@ router.use(protect);
 router.get('/marketing/campaigns/public', adminController.getPublicCampaigns);
 // Cupones para clientes logueados
 router.get('/coupons/public', couponController.getPublicCoupons);
+// Validar cupón para usuarios logueados
+router.post('/coupons/validate', couponController.validateCoupon);
 
 router.use(authorize('admin'));
 
