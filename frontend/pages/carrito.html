@@ -738,6 +738,55 @@
         </a>
     </div>
 
+<!-- Modal: Login requerido para checkout -->
+<div id="modal-auth-required" class="fixed inset-0 z-[99999] flex items-center justify-center hidden">
+  <div id="modal-overlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
+    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <i class="fas fa-lock text-green-700 text-2xl"></i>
+    </div>
+    <h2 class="text-xl font-bold text-gray-900 mb-2">¡Acceso requerido!</h2>
+    <p class="text-gray-600 mb-6">
+      Debes tener una cuenta en <span class="font-semibold text-green-700">Grow House</span> para proceder al checkout.
+    </p>
+    <div class="flex flex-col gap-3">
+      <a href="login.html" class="w-full py-2.5 px-4 bg-green-800 hover:bg-green-700 text-white font-semibold rounded-full transition-all duration-200">
+        Iniciar Sesión
+      </a>
+      <a href="register.html" class="w-full py-2.5 px-4 border border-green-800 text-green-800 font-semibold rounded-full hover:bg-green-50 transition-all duration-200">
+        Registrarse
+      </a>
+      <button id="modal-close" class="text-sm text-gray-400 hover:text-gray-600 transition-colors mt-1">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const modal = document.getElementById('modal-auth-required');
+    const overlay = document.getElementById('modal-overlay');
+    const closeBtn = document.getElementById('modal-close');
+
+    checkoutBtn.addEventListener('click', function () {
+      // Usa authAPI.isAuthenticated() que ya tienes disponible
+      if (!authAPI.isAuthenticated()) {
+        modal.classList.remove('hidden');
+        return;
+      }
+      window.location.href = 'checkout.html';
+    });
+
+    overlay.addEventListener('click', () => modal.classList.add('hidden'));
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') modal.classList.add('hidden');
+    });
+  });
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('user-menu-container');
