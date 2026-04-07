@@ -636,6 +636,12 @@ function setupEventListeners() {
                 return;
             }
 
+            // 🔐 Verificar autenticación ANTES de proceder
+            if (!authAPI.isAuthenticated()) {
+                document.getElementById('modal-auth-required').classList.remove('hidden');
+                return; // ← Detiene todo aquí
+            }
+
             // Loading state
             checkoutBtn.classList.add('loading');
             checkoutBtn.innerHTML = '<span>Procesando...</span>';
