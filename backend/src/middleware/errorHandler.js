@@ -157,14 +157,8 @@ const notFound = (req, res, next) => {
                 update: 'PUT /api/products/:id',
                 delete: 'DELETE /api/products/:id'
             },
-            users: {
-                register: 'POST /api/auth/register',
-                login: 'POST /api/auth/login',
-                profile: 'GET /api/users/profile'
-            },
-            orders: {
-                getAll: 'GET /api/orders',
-                create: 'POST /api/orders'
+            admin: {
+                login: 'POST /api/auth/login'
             }
         }
     });

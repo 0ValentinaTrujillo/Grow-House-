@@ -114,11 +114,7 @@
                                 style="width:1rem; height:1rem; accent-color:#166534;">
                             <span style="font-size:0.875rem; color:#374151;">Recordarme</span>
                         </label>
-                        <a href="recoverpassword.html"
-                            style="font-size:0.875rem; color:#166534; font-weight:500; text-decoration:none; transition:color 0.2s;"
-                            onmouseover="this.style.color='#14532d'" onmouseout="this.style.color='#166534'">
-                            ¿Olvidaste tu contraseña?
-                        </a>
+                        <span style="font-size:0.875rem; color:#6b7280;">Acceso exclusivo administrador</span>
                     </div>
 
                     <!-- Error general -->
@@ -143,38 +139,8 @@
                     </button>
                 </form>
 
-                <!-- Divider -->
-                <div class="relative" style="margin: 1.5rem 0;">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-200"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-4 bg-white text-gray-400">O continúa con</span>
-                    </div>
-                </div>
-
-                <!-- Google One-Tap -->
-                <div id="g_id_onload"
-                    data-client_id="873365892028-gpklspl23p04fidlkvbva2mp3u2o2sbi.apps.googleusercontent.com"
-                    data-callback="handleCredentialResponse"
-                    data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin"
-                    data-type="standard"
-                    data-size="large"
-                    data-theme="outline"
-                    data-text="signin_with"
-                    data-shape="rectangular"
-                    data-logo_alignment="left">
-                </div>
-
-                <!-- Registro -->
                 <p style="margin-top:1.5rem; text-align:center; color:#6b7280; font-size:0.9rem;">
-                    ¿No tienes cuenta?
-                    <a href="register.html" style="color:#166534; font-weight:600; text-decoration:none;"
-                        onmouseover="this.style.color='#14532d'" onmouseout="this.style.color='#166534'">
-                        Regístrate aquí
-                    </a>
+                    Este catálogo no permite registro de usuarios.
                 </p>
             </div>
 
@@ -193,7 +159,7 @@
     <script src="../scripts/config.js"></script>
     <script src="../scripts/auth-api.js"></script>
     <script src="../scripts/session.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- (Catálogo) Se removió login con Google y registro -->
 
     <script>
         console.log('🔐 Inicializando login.html');
@@ -272,10 +238,7 @@
                 const result = await authAPI.login(email, password);
                 if (result.success) {
                     showAuthNotification('¡Bienvenido de vuelta!', 'success');
-                    setTimeout(() => {
-                        const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'index.html';
-                        window.location.href = redirectUrl;
-                    }, 1500);
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
                 } else {
                     showGeneralError(result.error);
                     loginBtn.disabled = false;
@@ -322,35 +285,5 @@
         console.log('✅ login.html inicializado correctamente');
     </script>
 
-    <script>
-        async function handleCredentialResponse(response) {
-            try {
-                const res = await fetch(window.GROW_HOUSE_API + "/auth/google-login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token: response.credential })
-                });
-                const data = await res.json();
-                if (!data.success) { showAuthNotification(data.message || 'Error al iniciar sesión con Google', 'error'); return; }
-                authAPI.saveAuthData(data.token, data.user);
-                const msg = data.isNewUser ? `¡Bienvenido a Grow House, ${data.user.firstName}!` : `¡Bienvenido de nuevo, ${data.user.firstName}!`;
-                showAuthNotification(msg, 'success');
-                setTimeout(() => {
-                    const redirect = new URLSearchParams(window.location.search).get('redirect');
-                    if (redirect) {
-                        window.location.href = redirect;
-                    } else if (data.isNewUser) {
-                        localStorage.setItem('growhouse-nueva-cuenta', 'true');
-                        window.location.href = 'recomendaciones.html';
-                    } else {
-                        window.location.href = 'index.html';
-                    }
-                }, 1000);
-            } catch (err) {
-                console.error("Error Google Login:", err);
-                showAuthNotification('No se pudo conectar con el servidor', 'error');
-            }
-        }
-    </script>
 </body>
 </html>

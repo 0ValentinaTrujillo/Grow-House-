@@ -20,37 +20,7 @@
         html { box-sizing: border-box; }
         body { overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
         *, *::before, *::after { box-sizing: border-box; }
-        /* --- POPUPS NOVEDADES & NOTIFICACIONES --- */
-        #popupNovedades, #popupNotificaciones {
-            display: none;
-            position: fixed !important;
-            top: 76px !important;
-            z-index: 99999 !important;
-            width: 360px;
-            max-width: calc(100vw - 2rem);
-            border-radius: 1rem;
-            overflow: hidden;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            background: rgba(220, 252, 231, 0.93) !important;
-            border: 1px solid rgba(134, 239, 172, 0.7) !important;
-            box-shadow: 0 8px 32px rgba(32,119,25,0.18), 0 2px 12px rgba(0,0,0,0.08) !important;
-            animation: popupFadeIn 0.2s ease-out;
-        }
-        #popupNovedades { left: 50%; transform: translateX(-50%); animation: popupFadeInCentered 0.2s ease-out; }
-        #popupNotificaciones { right: 1.5rem; }
-        #popupNovedades .popup-header, #popupNotificaciones .popup-header {
-            padding: 0.9rem 1.1rem 0.6rem;
-            border-bottom: 1px solid rgba(134,239,172,0.5);
-            font-weight: 600; font-size: 0.95rem; color: #14532d;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        @media (max-width: 640px) {
-            #popupNovedades, #popupNotificaciones {
-                left: 1rem !important; right: 1rem !important;
-                width: auto !important; transform: none !important;
-            }
-        }
+        /* (Catálogo) Se removieron Novedades/Notificaciones */
 
         .glass-effect {
             backdrop-filter: blur(10px);
@@ -294,16 +264,6 @@
                         <span
                             class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                     </a>
-                    <!--Novedades (al lado de Contacto) -->
-                    <li class="relative list-none">
-                        <button id="btnNovedades"
-                            class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                            Novedades
-                            <span
-                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                        </button>
-
-                    </li>
                 </div>
                 <!-- Acciones del usuario -->
                 <div class="flex items-center space-x-4">
@@ -325,13 +285,6 @@
                             0
                         </span>
                     </a>
-                    <!-- 🔔 Notificaciones (al lado del Carrito) -->
-                    <li class="relative list-none ml-2">
-                        <button id="btnNotificaciones" class="hover:text-green-800 relative">
-                            <i class="fa-solid fa-bell text-xl text-gray-600"></i>
-                        </button>
-
-                    </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
                         <button id="user-menu-button"
@@ -435,14 +388,6 @@
                                 transition-all duration-300 shadow-sm hover:shadow-md">
                             Iniciar Sesión
                         </a>
-
-                        <!-- Registrarse -->
-                        <a href="register.html" class="px-6 py-2.5 font-semibold text-white 
-                                rounded-full bg-gradient-to-r from-green-800 to-green-700
-                                hover:shadow-lg hover:scale-105
-                                transition-all duration-300">
-                            Registrarse
-                        </a>
                     </div>
                 </div>
             </div>
@@ -462,28 +407,12 @@
                             class="w-full text-center py-2.5 px-4 font-medium text-green-800 border border-green-900 rounded-full hover:bg-green-50 transition-all duration-300">
                             Iniciar Sesión
                         </a>
-                        <a href="register.html"
-                            class="w-full text-center py-2.5 px-4 font-semibold text-white rounded-full bg-gradient-to-r from-green-800 to-green-700 hover:shadow-lg transition-all duration-300">
-                            Registrarse
-                        </a>
                     </div>
                 </div>
             </div>
         </nav>
     </header>
-    <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
-    <div id="popupNovedades">
-        <div class="popup-header">🌱 Últimas novedades</div>
-        <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Nuevos productos disponibles.</p>
-        </div>
-    </div>
-    <div id="popupNotificaciones">
-        <div class="popup-header">🔔 Notificaciones</div>
-        <div style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
-        </div>
-    </div>
+    <!-- (Catálogo) Novedades/Notificaciones removidas -->
 <section style="width:100%; padding: 3rem 1rem; box-sizing:border-box;">
     <!-- TÍTULO + BUSCADOR -->
     <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:2rem; max-width:1280px; margin-left:auto; margin-right:auto;">
@@ -559,7 +488,6 @@
                         <ul class="space-y-2">
                             <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
                             <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                            <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
                         </ul>
                     </div>
 
@@ -585,95 +513,12 @@
                 </div>
             </div>
 
-            <!-- Botón flotante del chatbot -->
-        <button id="chat-toggle" class="chat-btn">
-            <img
-                src="../assets/images/pngtree-cute-cactus-in-pot-with-flower-crown-cartoon-illustration-png-image_19938173.png"
-                id="icon-cactus"
-                class="icon"
-                alt="Chat Zuri"
-            >
-        </button>
-
-        <!-- Panel flotante del chatbot -->
-        <div id="emergency-screen" class="emergency-screen">
-            <div class="chat-container">
-                <iframe src="chatboot.html" class="chat-iframe"></iframe>
-            </div>
-        </div>
-
         </footer>
 <!-- Config - PRIMERO -->
 <script src="../scripts/config.js"></script>
-<!-- Auth API - PRIMERO -->
-<script src="../scripts/auth-api.js"></script>
-
-<script src="../scripts/coupun-banner.js"></script>
-
-<!-- Profile Image Manager - ANTES del Navbar Avatar -->
-<script src="../scripts/profile-image.js"></script>
-
-<!-- Navbar Avatar Manager -->
-<script src="../scripts/navbar-avatar.js"></script>
-
-<!-- UI Manager - SEGUNDO (NUEVO) -->
-<script src="../scripts/ui-manager.js"></script>
-
-<!-- Session Manager - TERCERO -->
-<script src="../scripts/session.js"></script>
-
-<!-- Novedades y Notificaciones Manager -->
-<script src="../scripts/novedades-notificaciones.js"></script>
-<script src="../scripts/plantas-notificaciones.js"></script>
-
-<!-- API de productos -->
-<script src="../scripts/Rating.js"></script>
 <script src="../scripts/api.js"></script>
+<script src="../scripts/Rating.js"></script>
 <script src="../scripts/productos-api.js"></script>
-
-<!-- Carrito y otros scripts - DESPUÉS -->
-<script src="../scripts/carrito.js"></script>
-<script src="../scripts/main.js"></script>
-
-<!--chatbot-->
-    <script src="../scripts/chatbot.js"></script>
-    <script src="../scripts/chat-ui.js"></script>
-
-<!-- Botones de producto - SIMPLIFICADO -->
-
-    <!-- Submenú Seguridad -->
-    <div id="submenu-seguridad" class="floating-submenu">
-        <div class="px-4 py-2 border-b border-gray-100">
-            <p class="text-gray-700 text-sm font-medium">Seguridad</p>
-        </div>
-        <a href="recoverpassword.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🔑</span>
-            <span class="text-gray-700 text-sm">Cambiar Contraseña</span>
-        </a>
-        <a href="privacidad.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🛡️</span>
-            <span class="text-gray-700 text-sm">Privacidad</span>
-        </a>
-    </div>
-
-    <!-- Submenú Zuri -->
-    <div id="submenu-zuri" class="floating-submenu">
-        <div class="px-4 py-2 border-b border-gray-100">
-            <p class="text-gray-700 text-sm font-medium">Zuri</p>
-        </div>
-        <a href="registro_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">📋</span>
-            <span class="text-gray-700 text-sm">Registrar plantas</span>
-        </a>
-        <a href="mis_plantas.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">🪴</span>
-            <span class="text-gray-700 text-sm">Mis plantas</span>
-        </a>
-        <a href="plantas_IA.html" class="flex items-center px-4 py-2.5 hover:bg-green-50 transition-colors">
-            <span class="mr-3">💡</span>
-            <span class="text-gray-700 text-sm">Transformar espacios</span>
-        </a>
-    </div>
 <script>
 // =============================================
 // CONFIGURACIÓN

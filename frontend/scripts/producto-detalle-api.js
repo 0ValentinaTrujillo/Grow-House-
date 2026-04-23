@@ -49,19 +49,7 @@ async function loadProductDetails() {
         
         // Renderizar detalles
         renderProductDetails(currentProduct);
-        
-        // Inicializar comentarios
-        if (typeof window.initComments === 'function') {
-            console.log('🔧 Llamando a initComments...');
-            window.initComments(productIdFromUrl);
-        } else {
-            console.warn('⚠️ Sistema de comentarios no disponible');
-        }
-        
-        // Actualizar botón de favoritos
-        setTimeout(() => {
-            updateFavoriteButtonState();
-        }, 500);
+        // (Catálogo) se removieron comentarios y favoritos
         
     } catch (error) {
         console.error('❌ Error cargando producto:', error);
@@ -79,7 +67,6 @@ function renderProductDetails(product) {
     // Actualizar elementos del DOM
     updateProductImage(product);
     updateProductInfo(product);
-    updateProductActions(product);
     
     // Ocultar loading
     hideLoadingState();
@@ -193,154 +180,6 @@ function updateProductInfo(product) {
             }
         }
     });
-}
-
-/**
- * Actualizar acciones del producto (botón agregar al carrito)
- */
-function updateProductActions(product) {
-    const addButton = document.querySelector('.add-to-cart-btn');
-    
-    if (addButton) {
-        // Actualizar atributos del botón
-        addButton.setAttribute('data-product-id', product._id || product.id);
-        addButton.setAttribute('data-product', product._id || product.id);
-        addButton.setAttribute('data-price', product.price);
-        addButton.setAttribute('data-image', product.mainImage || product.images?.[0] || '');
-        
-        // Deshabilitar si no hay stock
-        if (product.quantity === 0) {
-            addButton.disabled = true;
-            addButton.classList.add('opacity-50', 'cursor-not-allowed');
-            addButton.innerHTML = `
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-                <span>Agotado</span>
-            `;
-        } else {
-            addButton.disabled = false;
-            addButton.classList.remove('opacity-50', 'cursor-not-allowed');
-        }
-        
-        // Remover event listener anterior para evitar duplicados
-        addButton.onclick = null;
-        
-        // Event listener para agregar al carrito
-        addButton.onclick = () => handleAddToCart(product);
-    }
-}
-
-// =============================================
-// MANEJO DE ACCIONES
-// =============================================
-
-/**
- * Agregar producto al carrito
- */
-function handleAddToCart(product) {
-    console.log('🛒 Agregando al carrito:', product);
-    
-    if (product.quantity === 0) {
-        showNotification('Producto agotado', 'error');
-        return;
-    }
-    
-    const cartItem = {
-        id: product._id || product.id,
-        name: product.name,
-        price: product.price,
-        image: product.mainImage || product.images?.[0] || 'https://via.placeholder.com/200',
-        quantity: 1
-    };
-    
-    if (typeof addToCart === 'function') {
-        addToCart(cartItem);
-        showNotification(`✅ ${product.name} agregado al carrito`, 'success');
-    } else {
-        console.error('❌ Función addToCart no encontrada');
-        showNotification('Error al agregar al carrito', 'error');
-    }
-}
-
-/**
- * Toggle favorito del producto actual
- */
-window.toggleCurrentProductFavorite = function() {
-    console.log('❤️ Toggle favorito clickeado');
-    
-    if (!currentProduct) {
-        console.error('❌ Producto no cargado');
-        showNotification('Error: Producto no cargado', 'error');
-        return;
-    }
-    
-    console.log('📦 Producto actual:', currentProduct);
-    
-    // Verificar si la función toggleFavorite existe
-    if (typeof window.toggleFavorite !== 'function') {
-        console.error('❌ Función toggleFavorite no encontrada');
-        showNotification('Error: Sistema de favoritos no disponible', 'error');
-        return;
-    }
-    
-    const favoriteData = {
-        id: currentProduct._id || currentProduct.id,
-        name: currentProduct.name,
-        price: currentProduct.price,
-        image: currentProduct.mainImage || currentProduct.images?.[0] || 'https://via.placeholder.com/400',
-        category: currentProduct.category || 'General',
-        description: currentProduct.description || ''
-    };
-    
-    console.log('💚 Datos para favorito:', favoriteData);
-    
-    window.toggleFavorite(favoriteData);
-    
-    // Actualizar botón después de un pequeño delay
-    setTimeout(updateFavoriteButtonState, 200);
-};
-
-/**
- * Actualizar estado del botón de favoritos
- */
-function updateFavoriteButtonState() {
-    const favButton = document.querySelector('.fav');
-    
-    if (!favButton || !currentProduct) return;
-    
-    const productId = currentProduct._id || currentProduct.id;
-    
-    let isFav = false;
-    if (typeof window.isFavorite === 'function') {
-        isFav = window.isFavorite(productId);
-    }
-    
-    console.log(`💚 Producto ${productId} es favorito:`, isFav);
-    
-    const svgFilled = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-    </svg>`;
-
-    const svgEmpty = `<svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-    </svg>`;
-
-    if (isFav) {
-        favButton.innerHTML = svgFilled;
-        // ✅ Quitar gris, poner rojo
-        favButton.classList.remove('text-gray-400');
-        favButton.classList.add('text-red-500');
-    } else {
-        favButton.innerHTML = svgEmpty;
-        // ✅ Quitar rojo, poner gris
-        favButton.classList.remove('text-red-500');
-        favButton.classList.add('text-gray-400');
-    }
-    
-    favButton.onclick = window.toggleCurrentProductFavorite;
-    favButton.style.cursor = 'pointer';
-    favButton.classList.add('transition-all', 'duration-200', 'hover:scale-105');
 }
 
 // =============================================
@@ -469,18 +308,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('❌ Error inicializando página:', error);
         showErrorPage('Error al cargar la página. Por favor intenta de nuevo.');
     }
-});
-
-// Event listener para actualización de favoritos
-window.addEventListener('favoritesUpdated', () => {
-    console.log('🔄 Favoritos actualizados, refrescando estado del botón...');
-    updateFavoriteButtonState();
-});
-
-// Event listener para cuando se cargan los favoritos inicialmente
-window.addEventListener('favoritesLoaded', () => {
-    console.log('💚 Favoritos cargados, actualizando botón...');
-    updateFavoriteButtonState();
 });
 
 console.log('✅ producto-detalle-api.js cargado correctamente');

@@ -259,15 +259,6 @@
                         <span
                             class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
                     </a>
-                    <!--Novedades (al lado de Contacto) -->
-                    <li class="relative list-none">
-                        <button id="btnNovedades"
-                            class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                            Novedades
-                            <span
-                                class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                        </button>
-                    </li>
                 </div>
                 <!-- Acciones del usuario -->
                 <div class="flex items-center space-x-4">
@@ -289,12 +280,6 @@
                             0
                         </span>
                     </a>
-                    <!-- 🔔 Notificaciones (al lado del Carrito) -->
-                    <li class="relative list-none ml-2">
-                        <button id="btnNotificaciones" class="hover:text-green-800 relative">
-                            <i class="fa-solid fa-bell text-xl text-gray-600 hover:text-gray-700 transition-colors duration-200"></i>
-                        </button>
-                    </li>
                     <!-- MENÚ DE USUARIO - CORREGIDO v2.0 -->
                     <div id="user-menu-container" style="display: none; position: relative;">
                         <button id="user-menu-button"
@@ -398,14 +383,6 @@
                                 transition-all duration-300 shadow-sm hover:shadow-md">
                             Iniciar Sesión
                         </a>
-
-                        <!-- Registrarse -->
-                        <a href="register.html" class="px-6 py-2.5 font-semibold text-white 
-                                rounded-full bg-gradient-to-r from-green-800 to-green-700
-                                hover:shadow-lg hover:scale-105
-                                transition-all duration-300">
-                            Registrarse
-                        </a>
                     </div>
                 </div>
             </div>
@@ -431,29 +408,13 @@
                             class="w-full text-center py-2.5 px-4 font-medium text-green-800 border border-green-900 rounded-full hover:bg-green-50 transition-all duration-300">
                             Iniciar Sesión
                         </a>
-                        <a href="register.html"
-                            class="w-full text-center py-2.5 px-4 font-semibold text-white rounded-full bg-gradient-to-r from-green-800 to-green-700 hover:shadow-lg transition-all duration-300">
-                            Registrarse
-                        </a>
                     </div>
 
                 </div>
             </div>
         </nav>
     </header>
-    <!-- Popups fuera del header para evitar el bug de backdrop-filter -->
-    <div id="popupNovedades">
-        <div class="popup-header">Últimas novedades</div>
-        <div id="novedadesLista" style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Aun no hay novedades.</p>
-        </div>
-    </div>
-    <div id="popupNotificaciones">
-        <div class="popup-header">Notificaciones</div>
-        <div style="max-height:320px; overflow-y:auto;">
-            <p class="text-sm text-gray-600 p-4">Aún no tienes notificaciones.</p>
-        </div>
-    </div>
+    <!-- (Catálogo) Novedades/Notificaciones removidas -->
     <!-- GRID DE PRODUCTOS -->
     <section id="productsventa" class="container mx-auto px-6 py-16">
         <!-- CONTENEDOR DEL TÍTULO + BUSCADOR -->
@@ -583,7 +544,6 @@
 <!-- Auth API - PRIMERO -->
 <script src="../scripts/auth-api.js"></script>
 
-<script src="../scripts/coupun-banner.js"></script>
 
 <!-- Profile Image Manager - Para gestión de imágenes de perfil -->
 <script src="../scripts/profile-image.js"></script>
@@ -598,19 +558,13 @@
 <script src="../scripts/session.js"></script>
 
 <!-- Novedades y Notificaciones - CUARTO -->
-<script src="../scripts/novedades-notificaciones.js"></script>
-<script src="../scripts/plantas-notificaciones.js"></script>
 
 <!-- Carrito y otros scripts - DESPUÉS -->
-<script src="../scripts/carrito.js"></script>
 <script src="../scripts/stars.js"></script>
 <script src="../scripts/productos-api.js"></script>
 <script src="../scripts/Rating.js"></script>
 <script src="../scripts/main.js"></script>
 
-<!--chatbot-->
-    <script src="../scripts/chatbot.js"></script>
-    <script src="../scripts/chat-ui.js"></script>
 
     <!-- Submenú Seguridad -->
     <div id="submenu-seguridad" class="floating-submenu">

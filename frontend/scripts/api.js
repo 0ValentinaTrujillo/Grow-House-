@@ -262,20 +262,9 @@ class APIClient {
     }
 
     /**
-     * Registro de usuario
+     * (Solo admin) Registro de usuarios eliminado
      */
-    async register(userData) {
-        console.log('📝 Registrando usuario:', userData.email);
-        const response = await this.post('/auth/register', userData);
-        
-        if (response.token) {
-            this.setToken(response.token);
-            localStorage.setItem('techstore_user', JSON.stringify(response.user));
-            console.log('✅ Registro exitoso');
-        }
-        
-        return response;
-    }
+    // async register(...) { ... } removido
 
     /**
      * Logout

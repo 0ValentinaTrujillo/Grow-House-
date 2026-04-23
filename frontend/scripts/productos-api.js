@@ -147,22 +147,6 @@ function createProductCard(producto) {
                     class="ver-detalles-btn border border-green-700 text-green-700 bg-transparent px-3 py-2 rounded-lg hover:bg-green-50 transition duration-300 text-sm text-center flex-1 font-medium">
                     Ver Detalles
                 </button>
-                ${(function() {
-                    const user = JSON.parse(localStorage.getItem('growhouse-user-data'));
-                    if (user && user.role === 'admin') {
-                        const pid = producto.id || producto._id;
-                        return `<a href="admin-products.html?edit=${pid}"
-                            class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg transition duration-300 text-sm text-center flex-1 font-medium inline-flex items-center justify-center">
-                            ✏️ Editar
-                        </a>`;
-                    } else {
-                        return `<button onclick="addToCartFromAPI('${producto.id || producto._id}')"
-                            class="add-to-cart-btn bg-green-700 text-white px-3 py-2 rounded-lg hover:bg-green-800 transition duration-300 text-sm text-center flex-1 font-medium ${producto.quantity === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
-                            ${producto.quantity === 0 ? 'disabled' : ''}>
-                            Al Carrito
-                        </button>`;
-                    }
-                })()}
             </div>
         </div>
     `;
@@ -230,51 +214,6 @@ function showErrorState(container, errorMessage) {
 function updatePaginationInfo(pagination) {
     console.log('📄 Paginación:', pagination);
     // Aquí puedes actualizar la UI de paginación si existe
-}
-
-// =============================================
-// AGREGAR AL CARRITO DESDE API
-// =============================================
-
-async function addToCartFromAPI(productId) {
-  console.log('🛒 Agregando producto al carrito:', productId);
-
-  try {
-    // Obtener detalles reales del producto
-    const response = await api.getProduct(productId);
-    const product = response.data;
-
-    // Validar ID real
-    const finalId = product._id || product.id || product.name; // fallback por seguridad
-
-    // Verificar stock
-    if (product.quantity === 0) {
-      showNotification('❌ Producto agotado', 'error');
-      return;
-    }
-
-    // Crear objeto del carrito
-    const cartItem = {
-      id: finalId,  // ✅ ID único y consistente
-      name: product.name,
-      price: product.price,
-      image: product.mainImage || product.images?.[0] || 'https://via.placeholder.com/200',
-      quantity: 1
-    };
-
-    // Agregar al carrito
-    if (typeof addToCart === 'function') {
-      addToCart(cartItem);
-      showNotification(`${product.name} agregado al carrito`, 'success');
-    } else {
-      console.error('❌ Función addToCart no encontrada');
-      showNotification('⚠️ Error al agregar al carrito', 'error');
-    }
-
-  } catch (error) {
-    console.error('❌ Error agregando al carrito:', error);
-    showNotification(' Error al agregar producto', 'error');
-  }
 }
 
 // =============================================

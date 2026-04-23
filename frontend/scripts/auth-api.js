@@ -23,102 +23,7 @@ class AuthAPI {
     }
 
     // =============================================
-    // MÉTODO: REGISTRO DE USUARIO
-    // =============================================
-    
-    /**
-     * Registrar un nuevo usuario en el sistema
-     * 
-     * @param {Object} userData - Datos del usuario a registrar
-     * @param {string} userData.firstName - Nombre del usuario
-     * @param {string} userData.lastName - Apellido del usuario
-     * @param {string} userData.email - Email (único)
-     * @param {string} userData.password - Contraseña (mínimo 8 caracteres)
-     * @param {string} [userData.phone] - Teléfono (opcional)
-     * @param {string} [userData.role] - Rol del usuario (default: 'customer')
-     * 
-     * @returns {Promise<Object>} Resultado de la operación
-     * @returns {boolean} .success - Si el registro fue exitoso
-     * @returns {Object} .user - Datos del usuario registrado
-     * @returns {string} .token - Token JWT generado
-     * @returns {string} .error - Mensaje de error (si falló)
-     * 
-     * Ejemplo de uso:
-     * const result = await authAPI.register({
-     *     firstName: 'Juan',
-     *     lastName: 'Pérez',
-     *     email: 'juan@example.com',
-     *     password: 'Password123!'
-     * });
-     * 
-     * if (result.success) {
-     *     console.log('Usuario registrado:', result.user);
-     * } else {
-     *     console.error('Error:', result.error);
-     * }
-     */
-    async register(userData) {
-        console.log('📝 Intentando registrar usuario:', userData.email);
-        
-        try {
-            // Hacer petición POST al endpoint de registro
-            const response = await fetch(`${this.baseURL}/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-
-            // Obtener respuesta del servidor
-            const data = await response.json();
-
-            // Si el servidor respondió con error (status 4xx o 5xx)
-            if (!response.ok) {
-                console.error('❌ Error en registro:', data.error);
-                throw new Error(data.error || data.message || 'Error al registrar usuario');
-            }
-
-            // Si requiere confirmación (registro con Google)
-            if (data.requiresConfirmation) {
-                console.log('✅ Registro con Google iniciado, requiere confirmación');
-                return {
-                    success: true,
-                    email: data.email,
-                    message: data.message,
-                    requiresConfirmation: true
-                };
-            }
-
-            // Si es registro manual
-if (data.requiresVerification) {
-    return { success: true, email: data.email, message: data.message, requiresVerification: true };
-}
-console.log('✅ Código de verificación enviado a:', data.email);
-            // Guardar token y usuario en localStorage
-            this.saveAuthData(data.token, data.user);
-
-            // Retornar resultado exitoso
-            return {
-                success: true,
-                user: data.user,
-                token: data.token,
-                message: 'Usuario registrado exitosamente'
-            };
-
-        } catch (error) {
-            // Capturar cualquier error (de red, del servidor, etc.)
-            console.error('❌ Error en register():', error);
-            
-            return {
-                success: false,
-                error: error.message || 'Error de conexión con el servidor'
-            };
-        }
-    }
-
-    // =============================================
-    // MÉTODO: LOGIN DE USUARIO
+    // MÉTODO: LOGIN DE ADMIN (ÚNICO USUARIO)
     // =============================================
     
     /**
@@ -143,10 +48,10 @@ console.log('✅ Código de verificación enviado a:', data.email);
      * }
      */
     async login(email, password) {
-        console.log('🔑 Intentando login:', email);
+        console.log('🔑 Intentando login admin:', email);
         
         try {
-            // Hacer petición POST al endpoint de login
+            // Hacer petición POST al endpoint de login (admin)
             const response = await fetch(`${this.baseURL}/login`, {
                 method: 'POST',
                 headers: {
@@ -164,130 +69,32 @@ console.log('✅ Código de verificación enviado a:', data.email);
                 throw new Error(data.error || data.message || 'Credenciales inválidas');
             }
 
-            console.log('✅ Login exitoso:', data.user.email);
+            const admin = data.data || data.user || {};
+            const token = data.token;
+
+            const adminUser = {
+                id: admin.id || admin._id,
+                name: admin.name || 'Admin',
+                email: admin.email,
+                role: 'admin'
+            };
+
+            console.log('✅ Login admin exitoso:', adminUser.email);
 
             // Guardar token y datos del usuario en localStorage
-            this.saveAuthData(data.token, data.user);
+            this.saveAuthData(token, adminUser);
 
             // Retornar resultado exitoso
             return {
                 success: true,
-                user: data.user,
-                token: data.token,
+                user: adminUser,
+                token,
                 message: 'Inicio de sesión exitoso'
             };
 
         } catch (error) {
             // Capturar cualquier error
             console.error('❌ Error en login():', error);
-            
-            return {
-                success: false,
-                error: error.message || 'Error de conexión con el servidor'
-            };
-        }
-    }
-
-    // =============================================
-    // MÉTODO: OBTENER PERFIL DEL USUARIO
-    // =============================================
-    
-    /**
-     * Obtener información del usuario autenticado
-     * 
-     * Este método usa el token JWT almacenado para obtener
-     * la información actualizada del usuario desde el backend.
-     * 
-     * NOTA: Este método incluye el userId en la query string
-     * porque el backend está configurado temporalmente para testing.
-     * En producción, el backend extraerá el userId del token JWT.
-     * 
-     * Útil para:
-     * - Verificar si el token sigue siendo válido
-     * - Obtener datos actualizados del usuario
-     * - Sincronizar información entre pestañas
-     * 
-     * @returns {Promise<Object>} Resultado de la operación
-     * @returns {boolean} .success - Si se obtuvo el perfil
-     * @returns {Object} .user - Datos actualizados del usuario
-     * @returns {string} .error - Mensaje de error (si falló)
-     * 
-     * Ejemplo de uso:
-     * const result = await authAPI.getProfile();
-     * 
-     * if (result.success) {
-     *     console.log('Usuario:', result.user);
-     * } else {
-     *     // Token inválido o expirado
-     *     console.log('Sesión expirada');
-     * }
-     */
-    async getProfile() {
-        console.log('👤 Obteniendo perfil del usuario');
-        
-        // Obtener token del localStorage
-        const token = this.getToken();
-        
-        // Si no hay token, el usuario no está autenticado
-        if (!token) {
-            console.error('❌ No hay token de autenticación');
-            return {
-                success: false,
-                error: 'No autenticado'
-            };
-        }
-
-        // Obtener el ID del usuario almacenado
-        const user = this.getUser();
-
-        // Si no hay usuario, no podemos hacer la petición
-        if (!user || !user.id) {
-            console.error('❌ No hay datos de usuario almacenados');
-            return {
-                success: false,
-                error: 'No hay datos de usuario'
-            };
-        }
-
-        try {
-            // Hacer petición GET al endpoint de perfil
-            // IMPORTANTE: Incluir userId en la query (temporal para testing)
-            // En producción esto no será necesario, el backend lo extraerá del token
-            const response = await fetch(`${this.baseURL}/profile?userId=${user.id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-
-            // Si el token es inválido o expiró
-            if (!response.ok) {
-                console.error('❌ Error obteniendo perfil:', data.error);
-                
-                // Si es error 401 (no autorizado), cerrar sesión
-                if (response.status === 401) {
-                    console.log('🔒 Token inválido o expirado, cerrando sesión...');
-                    this.logout();
-                }
-                
-                throw new Error(data.error || data.message || 'Error al obtener perfil');
-            }
-
-            console.log('✅ Perfil obtenido:', data.user.email);
-
-            // Actualizar datos del usuario en localStorage
-            this.saveUser(data.user);
-
-            return {
-                success: true,
-                user: data.user
-            };
-
-        } catch (error) {
-            console.error('❌ Error en getProfile():', error);
             
             return {
                 success: false,
@@ -385,9 +192,7 @@ console.log('✅ Código de verificación enviado a:', data.email);
      */
     saveUser(user) {
         try {
-            console.trace('📍 saveUser llamado desde:'); // ← agrega esta línea
             localStorage.setItem(AUTH_CONFIG.storage.userKey, JSON.stringify(user));
-            console.log('✅ Datos de usuario actualizados');
         } catch (error) {
             console.error('❌ Error guardando usuario:', error);
         }
@@ -432,45 +237,6 @@ console.log('✅ Código de verificación enviado a:', data.email);
         
         console.log('🔍 ¿Usuario autenticado?', isAuth);
         return isAuth;
-    }
-
-    // =============================================
-    // MÉTODO: VERIFICAR SI EL TOKEN ES VÁLIDO
-    // =============================================
-    
-    /**
-     * Verificar si el token JWT es válido
-     * 
-     * Este método hace una petición al backend para verificar
-     * si el token sigue siendo válido. Si no lo es, cierra la sesión.
-     * 
-     * Es útil para:
-     * - Verificar sesión al cargar la página
-     * - Renovar datos del usuario
-     * - Detectar sesiones expiradas
-     * 
-     * @returns {Promise<boolean>} true si el token es válido, false si no
-     */
-    async verifyToken() {
-        console.log('🔍 Verificando validez del token');
-        
-        // Si no hay sesión activa, retornar false
-        if (!this.isAuthenticated()) {
-            console.log('❌ No hay sesión activa');
-            return false;
-        }
-
-        // Intentar obtener el perfil para verificar si el token es válido
-        const result = await this.getProfile();
-        
-        if (!result.success) {
-            console.log('❌ Token inválido o expirado');
-            this.logout();
-            return false;
-        }
-
-        console.log('✅ Token válido');
-        return true;
     }
 
     /**
@@ -572,12 +338,9 @@ console.log('');
 console.log('📌 Instancia disponible: window.authAPI');
 console.log('');
 console.log('🔧 Métodos disponibles:');
-console.log('   • authAPI.register(userData)');
 console.log('   • authAPI.login(email, password)');
-console.log('   • authAPI.getProfile()');
 console.log('   • authAPI.logout()');
 console.log('   • authAPI.isAuthenticated()');
-console.log('   • authAPI.verifyToken()');
 console.log('   • authAPI.getToken()');
 console.log('   • authAPI.getUser()');
 console.log('');

@@ -25,28 +25,23 @@ const SessionManager = {
             'index.html',
             'productos.html',
             'producto-detalle.html',
-            'contacto.html',
-            'carrito.html'
+            'contacto.html'
         ],
         
-        // Rutas protegidas - Solo usuarios logueados
+        // Rutas protegidas - Solo admin logueado
         protected: [
-            'perfil.html',
-            'mis-pedidos.html',
-            'checkout.html',
-            'novedades.html',
-            'notificaciones.html',
+            'dashboard.html',
+            'admin-products.html'
         ],
         
-        // Rutas de autenticación - Solo usuarios NO logueados
+        // Rutas de autenticación - Solo si NO hay sesión
         auth: [
-            'login.html',
-            'register.html'
+            'login.html'
         ],
         
         // Páginas de redirección
         redirects: {
-            afterLogin: 'index.html',      // A dónde ir después de login
+            afterLogin: 'dashboard.html',  // A dónde ir después de login
             afterLogout: 'index.html',     // A dónde ir después de logout
             needsAuth: 'login.html'        // A dónde ir si necesita autenticarse
         }

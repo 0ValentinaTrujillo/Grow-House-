@@ -100,11 +100,11 @@ const productSchema = new mongoose.Schema({
     default: null // ← opcional: si no hay marca, se guarda como null
 },
 
-// =============================================
-// IMÁGENES Y MULTIMEDIA - VALIDACIÓN MEJORADA
-// =============================================
+    // =============================================
+    // IMÁGENES Y MULTIMEDIA - VALIDACIÓN MEJORADA
+    // =============================================
 
-mainImage: {
+    mainImage: {
     type: String,
     required: [true, 'La imagen principal es obligatoria'],
     validate: {
@@ -133,7 +133,7 @@ mainImage: {
                     urlObj.hostname.includes(domain)
                 );
                 
-                // ACEPTAR SI: es dominio confiable O tiene extensión de imagen
+                // ACEPTAR SI: Es dominio confiable o tiene extensión de imagen
                 const isValid = isTrustedDomain || hasImageExtension;
                 
                 if (isValid) {
@@ -157,44 +157,12 @@ mainImage: {
     default: 10
 },
 
-quantity: {
+    quantity: {
     type: Number,
     default: 0,
     min: 0
 },
 
-    // =============================================
-    // RATINGS Y REVIEWS
-    // =============================================
-
-    rating: {
-        average: {
-            type: Number,
-            min: [0, 'La calificación no puede ser menor a 0'],
-            max: [5, 'La calificación no puede ser mayor a 5'],
-            default: 0
-        },
-        count: {
-            type: Number,
-            min: [0, 'El conteo de calificaciones no puede ser negativo'],
-            default: 0
-        },
-        breakdown: {
-            five:  { type: Number, min: 0, default: 0 },
-            four:  { type: Number, min: 0, default: 0 },
-            three: { type: Number, min: 0, default: 0 },
-            two:   { type: Number, min: 0, default: 0 },
-            one:   { type: Number, min: 0, default: 0 }
-        },
-        // ✅ NUEVO: Registra qué usuario calificó y con cuántas estrellas
-        userRatings: [
-            {
-                userId:    { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-                rating:    { type: Number, required: true, min: 1, max: 5 },
-                createdAt: { type: Date, default: Date.now }
-            }
-        ]
-    },
     // =============================================
     // ETIQUETAS Y BÚSQUEDA
     // =============================================
@@ -340,6 +308,7 @@ productSchema.virtual('statusText').get(function () {
     };
     return statusTexts[this.status] || this.status;
 });
+
 // =============================================
 // MIDDLEWARE - FUNCIONES AUTOMÁTICAS
 // =============================================

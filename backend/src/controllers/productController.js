@@ -1,18 +1,16 @@
 // =============================================
 // CONTROLADOR DE PRODUCTOS - GROW HOUSE
-// Con generación de información por IA (Claude)
 // =============================================
 
 const mongoose = require('mongoose');
 const Product = require('../models/product');
 
-
 // =============================================
-// FUNCIÓN DE IA - GENERAR INFO DEL PRODUCTO
+// FUNCIÓN DE IA - GENERAR INFORMACIÓN DEL PRODUCTO
 // =============================================
 
 async function generateProductAIInfo(product) {
-    console.log(`🤖 Generando información IA para: ${product.name}`);
+    console.log(`🤖 Generando información para: ${product.name}`);
 
     const prompt = `Eres un experto en plantas, jardinería y productos para el hogar verde. 
 Dado el siguiente producto de una tienda colombiana llamada "Grow House", genera información útil para el comprador.
@@ -64,11 +62,11 @@ try {
         const clean = text.replace(/```json|```/g, '').trim();
         const parsed = JSON.parse(clean);
 
-        console.log(`✅ Info IA generada correctamente para: ${product.name}`);
+        console.log(`✅ Info generada correctamente para: ${product.name}`);
         return parsed;
 
     } catch (error) {
-        console.error(`❌ Error generando info IA: ${error.message}`);
+        console.error(`❌ Error generando info: ${error.message}`);
         return null;
     }
 }
@@ -161,7 +159,7 @@ const getAllProducts = async (req, res, next) => {
 
 // =============================================
 // FUNCIÓN 2: OBTENER PRODUCTO POR ID
-// Con generación automática de info IA si no existe
+// Con generación automática de información si no existe
 // =============================================
 
 const getProductById = async (req, res, next) => {
@@ -190,9 +188,9 @@ const getProductById = async (req, res, next) => {
         // Incrementar vistas
         await Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
 
-        // ✅ GENERAR INFO IA si no existe todavía
+        // ✅ GENERAR INFORMACIÓN SI NO EXISTE TODAVÍA
         if (!product.aiInfo || !product.aiInfo.generatedAt) {
-            console.log(`🤖 Producto sin info IA, generando...`);
+            console.log(`🤖 Producto sin informacón, generando...`);
 
             const aiData = await generateProductAIInfo(product);
 
@@ -208,10 +206,10 @@ const getProductById = async (req, res, next) => {
                     $set: { aiInfo: product.aiInfo }
                 });
 
-                console.log(`💾 Info IA guardada en MongoDB para: ${product.name}`);
+                console.log(`💾 Información guardada en MongoDB para: ${product.name}`);
             }
         } else {
-            console.log(`✅ Info IA ya existente para: ${product.name}, usando caché`);
+            console.log(`✅ Información ya existente para: ${product.name}, usando caché`);
         }
 
         console.log(`✅ Producto encontrado: ${product.name}`);
@@ -260,24 +258,6 @@ const createProduct = async (req, res, next) => {
         const product = new Product(req.body);
         await product.save();
 
-        // ✅ Generar info IA para el producto recién creado (en background)
-        generateProductAIInfo(product).then(async (aiData) => {
-            if (aiData) {
-                await Product.findByIdAndUpdate(product._id, {
-                    $set: {
-                        aiInfo: {
-                            generalInfo: aiData.generalInfo,
-                            careGuide: aiData.careGuide,
-                            generatedAt: new Date()
-                        }
-                    }
-                });
-                console.log(`🤖 Info IA generada en background para: ${product.name}`);
-            }
-        }).catch(err => {
-            console.warn(`⚠️ Error generando IA en background: ${err.message}`);
-        });
-
         console.log(`✅ Producto creado: ${product.name} - ID: ${product._id}`);
 
         res.status(201).json({
@@ -316,12 +296,12 @@ const updateProduct = async (req, res, next) => {
             }
         }
 
-        // Si se cambia nombre, descripción o categoría → regenerar info IA
+        // Si se cambia nombre, descripción o categoría → regenerar información
         const fieldsAffectingAI = ['name', 'description', 'category', 'brand', 'tags'];
         const shouldRegenerateAI = fieldsAffectingAI.some(f => req.body[f] !== undefined);
 
         if (shouldRegenerateAI) {
-            console.log('🤖 Campos clave modificados, se regenerará info IA al próximo acceso');
+            console.log('🤖 Campos clave modificados, se regenerará información al próximo acceso');
             req.body['aiInfo.generatedAt'] = null; // Forzar regeneración
         }
 

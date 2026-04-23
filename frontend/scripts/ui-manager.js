@@ -37,7 +37,7 @@ const UIManager = {
             // ✅ USUARIO LOGUEADO
             console.log('✅ Mostrando menú de usuario');
 
-            // Ocultar botones de login/register (desktop y móvil)
+            // Ocultar botones de login (desktop y móvil)
             if (authButtons) {
                 authButtons.style.display = 'none';
             }
@@ -66,7 +66,7 @@ const UIManager = {
             // ❌ USUARIO NO LOGUEADO
             console.log('❌ Mostrando botones de autenticación');
             
-            // Mostrar botones de login/register (solo en md+, el CSS hidden md:flex lo maneja)
+            // Mostrar botón de login (solo en md+, el CSS hidden md:flex lo maneja)
             if (authButtons) {
                 authButtons.style.display = '';
             }
@@ -158,9 +158,7 @@ const UIManager = {
                 e.stopPropagation();
                 const estabaOculto = userDropdown.classList.contains('hidden');
                 // Cerrar todos los menús antes de abrir este
-                if (window.NovedadesNotificacionesManager) {
-                    window.NovedadesNotificacionesManager.cerrarTodosLosMenus();
-                }
+                // (Catálogo) Novedades/Notificaciones removidas
                 if (estabaOculto) {
                     userDropdown.classList.remove('hidden');
                 }

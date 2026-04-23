@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
  */
 const connectDB = async () => {
     try {
+        const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/growhouse';
+
         const options = {
             maxPoolSize: 10,
             serverSelectionTimeoutMS: 5000,
@@ -17,7 +19,7 @@ const connectDB = async () => {
             family: 4
         };
 
-        const conn = await mongoose.connect(process.env.MONGODB_URI, options);
+        const conn = await mongoose.connect(mongoUri, options);
 
         console.log(`✓ MongoDB → ${conn.connection.name} @ Atlas`);
 

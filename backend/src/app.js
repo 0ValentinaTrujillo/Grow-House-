@@ -2,9 +2,8 @@
 // APLICACIÓN PRINCIPAL - GROW HOUSE BACKEND
 // =============================================
 
-require('dotenv').config(); // Cargar variables de entorno PRIMERO
+require('dotenv').config();
 
-// Banner de inicio
 console.log('╔════════════════════════════════════╗');
 console.log('║     GROW HOUSE API  v1.0.0         ║');
 console.log('╚════════════════════════════════════╝');
@@ -14,70 +13,56 @@ console.log(`  ▸ MongoDB   growhouse @ Atlas`);
 console.log(`  ▸ OpenAI    ${process.env.OPENAI_API_KEY ? 'configurado ✓' : 'no configurado ✗'}`);
 console.log('  ─────────────────────────────────');
 
-
-const express = require('express');
-const adminRoutes = require('./routes/admin.routes');
-const cors = require('cors');
-const { connectDB } = require('./config/database');
+const express        = require('express');
+const adminRoutes    = require('./routes/admin.routes');
+const cors           = require('cors');
+const { connectDB }  = require('./config/database');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
-const { generalLimiter } = require('./middleware/rateLimiter'); 
-const mongoSanitize = require('express-mongo-sanitize'); 
-const xss = require('xss-clean');  
-const helmet = require('helmet');
-const authRoutes = require("./routes/auth");
-const mongoose = require("mongoose");
+const { generalLimiter } = require('./middleware/rateLimiter');
+const mongoSanitize  = require('express-mongo-sanitize');
+const xss            = require('xss-clean');
+const helmet         = require('helmet');
+const authRoutes     = require('./routes/auth.routes');
+const saleRoutes     = require('./routes/sale.routes'); // 🆕
 
-// ruta chatbot 
-const chatbotRoutes = require('./routes/chatbot');
-
-
-
-// Crear aplicación Express
 const app = express();
 
-// Necesario para Render (y cualquier proxy inverso): permite leer IP real del cliente
 app.set('trust proxy', 1);
 
 // =============================================
-// HELMET - HEADERS DE SEGURIDAD
+// HELMET
 // =============================================
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-            imgSrc: ["'self'", "data:", "https:"],
-            fontSrc: ["'self'", "https:", "data:"],
-            connectSrc: ["'self'"] 
+            styleSrc:   ["'self'", "'unsafe-inline'", "https:"],
+            imgSrc:     ["'self'", "data:", "https:"],
+            fontSrc:    ["'self'", "https:", "data:"],
+            connectSrc: ["'self'"]
         }
     }
 }));
-
 
 // =============================================
 // LOGGING PERSONALIZADO
 // =============================================
 app.use((req, res, next) => {
     const timestamp = new Date().toISOString();
-    const method = req.method;
-    const url = req.originalUrl;
-    const ip = req.ip || req.connection.remoteAddress;
-    
+    const method    = req.method;
+    const url       = req.originalUrl;
+    const ip        = req.ip || req.connection.remoteAddress;
+
     let requestType = '📡';
-    if (url.includes('/products')) requestType = '📱';
-    if (url.includes('/users')) requestType = '👤';
-    if (url.includes('/orders')) requestType = '🛒';
-    if (url.includes('/auth')) requestType = '🔐';
-    if (url.includes('/chatbot')) requestType = '🤖'; 
-    if (url.includes('/health')) requestType = '💚';
-    if (url.includes('/recomendaciones')) requestType = '🌿';
-    if (url.includes('/espacios')) requestType = '🏠';
-    
+    if (url.includes('/products')) requestType = '🌿';
+    if (url.includes('/auth'))     requestType = '🔐';
+    if (url.includes('/sales'))    requestType = '💰'; // 🆕
+    if (url.includes('/health'))   requestType = '💚';
+
     console.log(`${requestType} ${timestamp} - ${method} ${url} - IP: ${ip}`);
     next();
 });
 
-// Morgan
 const morganMiddleware = require('./config/morganConfig');
 app.use(morganMiddleware);
 
@@ -86,9 +71,9 @@ app.use(morganMiddleware);
 // =============================================
 app.use('/api/', (req, res, next) => {
     if (
-        req.path.includes("solicitar-codigo") ||
-        req.path.includes("verificar-codigo") ||
-        req.path.includes("cambiar-password")
+        req.path.includes('solicitar-codigo') ||
+        req.path.includes('verificar-codigo') ||
+        req.path.includes('cambiar-password')
     ) {
         return next();
     }
@@ -106,12 +91,12 @@ const allowedOrigins = process.env.NODE_ENV === 'production'
         process.env.FRONTEND_URL
     ].filter(Boolean)
     : [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:4200',
-      'http://localhost:5500',
-      'http://127.0.0.1:5500',      
-      'http://127.0.0.1:5501'
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:4200',
+        'http://localhost:5500',
+        'http://127.0.0.1:5500',
+        'http://127.0.0.1:5501'
     ];
 
 app.use(cors({
@@ -135,14 +120,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // SANITIZACIÓN
 // =============================================
 app.use(mongoSanitize({ replaceWith: '_' }));
-
-// ✅ xss() excluye rutas con imágenes base64
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/avatar') || req.path.startsWith('/api/registro')) {
-        return next();
-    }
-    xss()(req, res, next);
-});
+app.use(xss());
 
 // =============================================
 // CONECTAR DB
@@ -155,51 +133,29 @@ connectDB();
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: '🏪 Grow House API + Chatbot IA activa',
+        message: '🏪 Grow House API',
         environment: process.env.NODE_ENV || 'development'
     });
 });
 
 // =============================================
-// LOGIN O REGISTER CON GOOGLE
-// =============================================
-app.use("/api/auth", authRoutes);
-
-
-// =============================================
 // RUTAS API
 // =============================================
+app.use('/api/auth',     authRoutes);
 app.use('/api/products', require('./routes/products'));
-app.use('/api/orders', require('./routes/orders'));
-app.use('/api/avatar', require('./routes/avatar.routes'));
-
-// 🔥RUTA DE ADMINISTRADOR
-app.use('/api/admin', adminRoutes);
-
-// IA
-app.use('/api/chatbot', chatbotRoutes);
-
-//recomendaciones
-app.use('/api/recomendaciones', require('./routes/recomendaciones'));
-
-// Registro
-app.use('/api/registro', require('./routes/registro'));
-
-//Espacios
-app.use('/api/espacios', require('./routes/espacios'));
-
+app.use('/api/sales',    saleRoutes);      // 🆕
+app.use('/api/admin',    adminRoutes);
 
 // =============================================
 // HEALTH
 // =============================================
 app.get('/api/health', (req, res) => {
     const mongoose = require('mongoose');
-
     res.json({
         success: true,
-        service: 'Grow House API',
+        service:  'Grow House API',
         database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-        uptime: process.uptime()
+        uptime:   process.uptime()
     });
 });
 
