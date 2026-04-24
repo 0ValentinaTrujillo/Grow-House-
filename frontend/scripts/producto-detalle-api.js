@@ -86,8 +86,7 @@ function updateProductImage(product) {
     }
 }
 /**
- * Actualizar información del producto con IA y calificaciones
- * Incluye manejo de calificaciones previas del usuario
+ * Actualizar información del producto con IA 
  */
 function updateProductInfo(product) {
     // ── Nombre ──
@@ -115,15 +114,6 @@ function updateProductInfo(product) {
         } else {
             priceContainer.textContent = formatPrice(product.price);
         }
-    }
-
-    // ── Estrellas ──
-    if (typeof renderStarsInteractive === 'function') {
-        renderStarsInteractive(
-            product._id || product.id,
-            product.rating?.average || 0,
-            product.rating?.count   || 0
-        );
     }
 
 // ── INFORMACIÓN GENERAL ──
