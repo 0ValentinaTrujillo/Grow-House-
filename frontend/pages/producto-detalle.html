@@ -1,387 +1,173 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grow House | Detalles del Producto</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="../styles/output.css"> 
-    <style>
-        html { box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; max-width: 100%; box-sizing: border-box; }
-        *, *::before, *::after { box-sizing: border-box; }
-        /* (Catálogo) Se removieron Novedades/Notificaciones */
-        .gradient-bg {
-            background: linear-gradient(135deg, #2c7611, #317319, #2c7611)
-        }
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .hover-lift {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .hover-lift:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .product-card {
-            background: linear-gradient(145deg, #ffffff, #f8fafc);
-            border: 1px solid rgba(147, 51, 234, 0.1);
-        }
-        .product-card:hover {
-            border-color: rgba(147, 51, 234, 0.3);
-            box-shadow: 0 20px 40px rgba(147, 51, 234, 0.15);
-        }
-        .price-highlight {
-            color: #207939;
-            font-weight: 800;
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #207719, #46d560);
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #207719, #46d560);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(4, 111, 26, 0.978);
-        }
-
-        :root {
-            --color-principal: #207719;
-            --color-hover: #207719;
-        }
-
-        .texto-verde {
-            color: var(--color-principal);
-        }
-
-        .texto-verde:hover {
-            color: var(--color-hover);
-        }
-
-        .bg-verde {
-            background-color: var(--color-principal);
-        }
-
-        .bg-verde:hover {
-            background-color: var(--color-hover);
-        }
-        
-        /* (Catálogo) Se removieron favoritos, carrito y comentarios */
-        
-        /* Scroll suave */
-        html {
-            scroll-behavior: smooth;
-        }        /* ── Submenús flotantes ── */
-        .floating-submenu {
-            display: none;
-            position: fixed;
-            min-width: 210px;
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
-            border: 1px solid #d1fae5;
-            z-index: 99999;
-            padding: 0.5rem 0;
-            animation: slideInLeft 0.15s ease-out;
-        }
-        .floating-submenu.visible {
-            display: block;
-        }
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(8px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-        .has-submenu:hover,
-        .has-submenu.active {
-            background-color: #f0fdf4;
-        }
-        .has-submenu {
-            cursor: pointer;
-        }
-
-  /* ── Responsive fix: detalles de producto ── */
-  @media (max-width: 768px) {
-        .left-card {
-        position: static !important;
-        top: unset !important;
-        max-width: 100% !important;
-      }
-      /* Quitar sticky en móvil para que el layout fluya */
-      .container-details .content > div:first-child {
-          position: static !important;
-          top: unset !important;
-          max-width: 100% !important;
-      }
-
-      /* Reducir padding del contenedor principal */
-      .container-details {
-          padding: 0.75rem !important;
-          margin-top: 0.5rem !important;
-      }
-
-      /* Imagen más compacta en móvil */
-      .container-details .content > div:first-child > div:first-child {
-          aspect-ratio: 4/3 !important;
-          max-height: 280px;
-      }
-
-      /* Precio más compacto */
-      #product-price {
-          font-size: 1.6rem !important;
-      }
-
-      /* El grid ya es 1 columna, asegurar gap correcto */
-      .container-details .content {
-          gap: 1rem !important;
-      }
-
-      /* Details (acordeones) más compactos */
-      .container-details details summary {
-          padding: 0.75rem 1rem !important;
-          font-size: 0.9rem !important;
-      }
-
-      .container-details details > div {
-          padding: 0 1rem 1rem !important;
-          font-size: 0.875rem !important;
-      }
-
-      /* Título del producto */
-      #product-title {
-          font-size: 1.4rem !important;
-      }
-  }
-
-    </style>
-</head>
-<body class="bg-gray-50 font-sans antialiased">
-    
-<!-- Header/Navegación -->
-    <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
-        <nav class="navegation mx-auto px-4 py-4" style="max-width:100%; box-sizing:border-box;">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center text-2xl font-bold">
-                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
-                        class="w-12 h-12 rounded-full object-cover mr-4">
-                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
-                </div>
-
-                <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html"
-                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                        Inicio
-                        <span
-                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                    <a href="productos.html"
-                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                        Productos
-                        <span
-                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                    <a href="index.html#categorias"
-                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                        Categorías
-                        <span
-                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                    <a href="index.html#contacto"
-                        class="text-gray-700 hover:text-green-800 font-medium transition-colors duration-200 relative group">
-                        Contacto
-                        <span
-                            class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                </div>
-                <!-- Acciones (solo admin login) -->
-                <div class="flex items-center space-x-4">
-                    <!-- Mobile menu button -->
-                    <button class="md:hidden text-gray-700 hover:text-green-800 transition-colors duration-200"
-                        id="mobile-menu-button">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                    <a href="login.html" class="px-6 py-2.5 font-medium text-green-800 border border-green-900 rounded-full bg-white/60 backdrop-blur-sm hover:bg-gray-50 hover:border-green-900 transition-all duration-300 shadow-sm hover:shadow-md">
-                        Admin
-                    </a>
-                </div>
-            </div>
-            <!-- Mobile Menu -->
-            <div class="md:hidden mt-4 hidden" id="mobile-menu">
-                <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
-                    <a href="index.html" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Inicio</a>
-                    <a href="productos.html" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Productos</a>
-                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Categorías</a>
-                    <a href="index.html#contacto" class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all duration-200 font-medium">Contacto</a>
-                    <div class="pt-3 mt-2 border-t border-green-100 flex flex-col gap-2">
-                        <a href="login.html" class="w-full text-center py-2.5 px-4 font-medium text-green-800 border border-green-900 rounded-full hover:bg-green-50 transition-all duration-300">Admin</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <!-- Breadcrumb / Volver -->
-    <div style="max-width:1200px; margin:1.5rem auto 0; padding: 0 clamp(1rem,4vw,2.5rem);">
-        <a href="productos.html"
-            style="display:inline-flex; align-items:center; gap:0.4rem; color:#207719; font-size:0.9rem; font-weight:500; text-decoration:none; transition: gap 0.2s;"
-            onmouseover="this.style.gap='0.7rem'" onmouseout="this.style.gap='0.4rem'">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Volver a productos
-        </a>
-    </div>
-
-    <!-- Contenedor de detalles del producto -->
-    <div class="container-details" style="max-width:1200px; margin:1rem auto 2rem; padding: clamp(1rem,4vw,2.5rem)">
-        <div class="content grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-            
-            <!-- LEFT CARD - Imagen y precio -->
-            <div class="left-card w-full mx-auto flex flex-col gap-4"
-                style="background:white; border-radius:1.25rem; border:1px solid #e5e7eb;
-                    box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: clamp(1rem,3vw,1.5rem);
-                    max-width: 480px; align-self: start; position: sticky; top: 90px;">
-
-                <!-- Imagen principal -->
-                <div class="w-full overflow-hidden bg-gray-100"
-                    style="border-radius:1rem; aspect-ratio: 1/1; position:relative;">
-                    <img id="product-image"
-                        src=""
-                        alt="Producto"
-                        style="width:100%; height:100%; object-fit:cover; display:block;">
-                </div>
-
-                <!-- Precio -->
-                <div id="price-container" class="flex flex-col gap-1">
-                    <span class="font-bold text-green-800" id="product-price"
-                        style="font-size: clamp(1.5rem, 4vw, 2.25rem);">$0</span>
-                </div>
-
-                <!-- Calificación -->
-                <div id="stars-container" style="border-top:1px solid #e5e7eb; padding-top:0.75rem;">
-                    <!-- Las estrellas se renderizan con rating.js -->
-                </div>
+<header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
+    <nav class="mx-auto px-4 py-4" style="max-width:100%;">
+        <div class="flex justify-between items-center">
+            <div class="flex items-center text-2xl font-bold">
+                <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
+                    class="w-12 h-12 rounded-full object-cover mr-4">
+                <a href="index.html" class="text-green-800 font-bold">Grow House</a>
             </div>
 
-            <!-- RIGHT INFO - Información y detalles -->
-            <div style="display:flex; flex-direction:column; gap:1rem;">
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    Inicio
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    Productos
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    Categorías
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+                <a href="#contacto" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    Contacto
+                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                </a>
+            </div>
 
-                <!-- Título -->
-                <h2 id="product-title" class="font-bold text-gray-900"
-                    style="font-size: clamp(1.5rem, 4vw, 2.5rem); word-break:break-word; margin:0; line-height:1.2;">
-                    Cargando...
-                </h2>
-
-                <!-- Divisor -->
-                <hr style="border:none; border-top:1px solid #e5e7eb; margin:0;">
-
-                <!-- Información del producto -->
-                <details open class="group" style="background:white; border-radius:0.75rem; border:1px solid #e5e7eb; overflow:hidden; transition: box-shadow 0.2s;">
-                    <summary style="display:flex; align-items:center; justify-content:space-between; font-size:1rem; font-weight:600; cursor:pointer; padding:1rem 1.25rem; color:#207719; list-style:none;">
-                        <span>Información</span>
-                        <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </summary>
-                    <div style="padding:0 1.25rem 1.25rem; font-size:0.95rem; line-height:1.7; color:#374151;">
-                        Cargando descripción del producto...
-                    </div>
-                </details>
-
-                <!-- Guía de cuidado -->
-                <details class="group" style="background:white; border-radius:0.75rem; border:1px solid #e5e7eb; overflow:hidden;">
-                    <summary style="display:flex; align-items:center; justify-content:space-between; font-size:1rem; font-weight:600; cursor:pointer; padding:1rem 1.25rem; color:#207719; list-style:none;">
-                        <span>Guía de cuidado</span>
-                        <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </summary>
-                    <div style="padding:0 1.25rem 1.25rem; font-size:0.95rem; line-height:1.8; color:#374151;">
-                        <p><strong>Luz:</strong> Información disponible próximamente</p>
-                        <p><strong>Riego:</strong> Información disponible próximamente</p>
-                        <p><strong>Suelo:</strong> Información disponible próximamente</p>
-                    </div>
-                </details>
-
+            <div class="flex items-center">
+                <button class="md:hidden text-gray-700 hover:text-green-800 transition-colors" id="mobile-menu-button">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-                <!-- Logo y descripción -->
-                <div class="col-span-1 md:col-span-2">
-                    <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
-                    <p class="text-gray-900 mb-6 leading-relaxed">
-                        Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y
-                        naturaleza.
-                    </p>
-                    <!-- Redes sociales -->
-                    <div class="flex space-x-4 mt-5">
-<!-- FB -->
-<a href="#" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"
-   class="w-14 h-14 flex items-center justify-center rounded-full 
-          shadow-lg hover:scale-125 transition-all duration-300">
-    <i class="fab fa-facebook-f text-2xl text-white"></i>
-</a>
-
-<!-- IG -->
-<a href="#" style="background: linear-gradient(135deg, #ec4899, #a855f7, #eab308);"
-   class="w-14 h-14 flex items-center justify-center rounded-full 
-          shadow-lg hover:scale-125 transition-all duration-300">
-    <i class="fab fa-instagram text-2xl text-white"></i>
-</a>
-
-<!-- WhatsApp -->
-<a href="#" style="background: linear-gradient(135deg, #4ade80, #16a34a);"
-   class="w-14 h-14 flex items-center justify-center rounded-full 
-          shadow-lg hover:scale-125 transition-all duration-300">
-    <i class="fab fa-whatsapp text-2xl text-white"></i>
-</a>
-                    </div>
-                </div>
-
-                <!-- Enlaces rápidos -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
-                    <ul class="space-y-2">
-                        <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
-                        <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contacto -->
-                <div>
-                    <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
-                    <ul class="space-y-2 text-gray-900">
-                        <li>📧 info@growhouse.com</li>
-                        <li>📱 +57 301 234 5678</li>
-                        <li>📍 Pital-Huila, Colombia</li>
-                        <li>🕒 Lun - Sáb: 9AM - 9PM</li>
-                    </ul>
-                </div>
+        <div class="md:hidden mt-4 hidden" id="mobile-menu">
+            <div class="flex flex-col space-y-2 pb-4 bg-white rounded-xl p-4 border border-green-100">
+                <a href="index.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition font-medium">Inicio</a>
+                <a href="productos.html" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition font-medium">Productos</a>
+                <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition font-medium">Categorías</a>
+                <a href="index.html#contacto" class="text-gray-700 hover:text-green-800 py-2 px-3 rounded-lg hover:bg-green-50 transition font-medium">Contacto</a>
             </div>
+        </div>
+    </nav>
+</header>
 
-            <!-- Línea final -->
-            <div class="border-t border-green-800 pt-2 text-center">
-                <p class="text-gray-900">
-                    © 2024 Grow House. Todos los derechos reservados |
-                    <a href="#" class="hover:text-green-700 transition">Política de Privacidad</a> |
-                    <a href="#" class="hover:text-green-700 transition">Términos de Servicio</a>
+<div style="max-width:1200px; margin:1.5rem auto 0; padding: 0 1.5rem;">
+    <a href="productos.html" class="flex items-center gap-2 text-green-700 font-medium hover:gap-3 transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+        </svg>
+        Volver a productos
+    </a>
+</div>
+
+<div class="container-details" style="max-width:1200px; margin:1rem auto 4rem; padding: 1.5rem;">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        
+        <div class="left-card bg-white rounded-3xl border border-gray-200 shadow-lg p-6 self-start md:sticky md:top-24">
+            <div class="w-full overflow-hidden bg-gray-100 rounded-2xl aspect-square relative mb-4">
+                <img id="product-image" src="" alt="Producto" class="w-full h-full object-cover">
+            </div>
+            <div id="price-container" class="mb-4">
+                <span class="font-bold text-green-800 text-4xl" id="product-price">$0</span>
+            </div>
+            <div id="stars-container" class="border-t border-gray-100 pt-4">
+                </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+            <h2 id="product-title" class="text-4xl font-bold text-gray-900 leading-tight">Cargando...</h2>
+            <hr class="border-gray-200">
+
+            <details open class="group bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <summary class="flex items-center justify-between font-semibold cursor-pointer p-4 text-green-800 list-none">
+                    <span>Información del Producto</span>
+                    <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+                </summary>
+                <div class="px-4 pb-4 text-gray-600 leading-relaxed">Cargando descripción...</div>
+            </details>
+
+            <details class="group bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <summary class="flex items-center justify-between font-semibold cursor-pointer p-4 text-green-800 list-none">
+                    <span>Guía de cuidado</span>
+                    <svg class="w-5 h-5 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+                </summary>
+                <div class="px-4 pb-4 text-gray-600 space-y-2">
+                    <p><strong>Luz:</strong> Información en camino...</p>
+                    <p><strong>Riego:</strong> Información en camino...</p>
+                </div>
+            </details>
+        </div>
+    </div>
+</div>
+
+<footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
+    <div class="container mx-auto px-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+
+            <!-- Logo y descripción -->
+            <div class="col-span-1 md:col-span-2">
+                <h3 class="text-3xl font-bold mb-4 text-green-800">Grow House</h3>
+
+                <p class="text-gray-900 mb-6 leading-relaxed">
+                    Tu destino para productos de cultivo indoor de alta calidad. Cultiva tu pasión con tecnología y naturaleza.
                 </p>
+
+                <!-- Redes sociales -->
+                <div class="flex space-x-4 mt-5">
+
+                    <!-- FB -->
+                    <a href="#" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"
+                    class="w-14 h-14 flex items-center justify-center rounded-full 
+                            shadow-lg hover:scale-125 transition-all duration-300">
+                        <i class="fab fa-facebook-f text-2xl text-white"></i>
+                    </a>
+
+                    <!-- IG -->
+                    <a href="#" style="background: linear-gradient(135deg, #ec4899, #a855f7, #eab308);"
+                    class="w-14 h-14 flex items-center justify-center rounded-full 
+                            shadow-lg hover:scale-125 transition-all duration-300">
+                        <i class="fab fa-instagram text-2xl text-white"></i>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="#" style="background: linear-gradient(135deg, #4ade80, #16a34a);"
+                    class="w-14 h-14 flex items-center justify-center rounded-full 
+                            shadow-lg hover:scale-125 transition-all duration-300">
+                        <i class="fab fa-whatsapp text-2xl text-white"></i>
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- Enlaces rápidos -->
+            <div>
+                <h4 class="text-lg font-semibold mb-6 text-green-800">Enlaces Rápidos</h4>
+                <ul class="space-y-2">
+                    <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
+                    <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div>
+                <h4 class="text-lg font-semibold mb-6 text-green-800">Contacto</h4>
+                <ul class="space-y-2 text-gray-900">
+                    <li>📧 info@growhouse.com</li>
+                    <li>📱 +57 301 234 5678</li>
+                    <li>📍 Pital-Huila, Colombia</li>
+                    <li>🕒 Lun - Sáb: 9AM - 9PM</li>
+                </ul>
             </div>
         </div>
-    </footer>
 
-    <!-- Scripts principales en el orden correcto -->
+        <!-- Línea final -->
+        <div class="border-t border-green-800 pt-2 text-center">
+            <p class="text-gray-900">
+                © 2024 Grow House. Todos los derechos reservados |
+                <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
+                <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+            </p>
+        </div>
+    </div>
+
+</footer>
+
 <script src="../scripts/config.js"></script>
 <script src="../scripts/api.js"></script>
 <script src="../scripts/Rating.js"></script>

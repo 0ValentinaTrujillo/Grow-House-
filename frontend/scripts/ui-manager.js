@@ -1,241 +1,90 @@
 // ================================================================
-// UI-MANAGER.JS - GESTOR DE INTERFAZ DE USUARIO
-// ================================================================
-// Maneja la actualización del header según el estado de autenticación
+// UI-MANAGER.JS - GESTOR DE INTERFAZ (SOLO ADMIN)
 // ================================================================
 
-console.log('🎨 ui-manager.js cargando...');
+console.log('🎨 ui-manager.js optimizado para Admin');
 
 const UIManager = {
     
     /**
-     * 🔄 Actualizar la interfaz del header según el estado de autenticación
+     * 🔄 Actualizar el Header
+     * Solo muestra el menú si el Admin ha iniciado sesión.
      */
     updateHeader: function() {
-        console.log('🔄 Actualizando interfaz del header...');
+        if (typeof api === 'undefined') return;
 
-        if (typeof authAPI === 'undefined') {
-            console.warn('authAPI no disponible');
-            return;
-        }
-
-        // Verificar si el usuario está autenticado
-        const isAuth = authAPI.isAuthenticated();
-        const user = authAPI.getUser();
+        const isAuth = api.isAuthenticated();
+        const user = api.getCurrentUser();
         
-        console.log('Usuario autenticado:', isAuth);
-        console.log('Datos del usuario:', user);
-        
-        // Obtener elementos del DOM
-        const authButtons = document.getElementById('auth-buttons');
-        const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
+        // Elementos del DOM (Asegúrate de que estos IDs existan en tu Navbar)
         const userMenuContainer = document.getElementById('user-menu-container');
-        const userMenuButton = document.getElementById('user-menu-button');
         const userDropdown = document.getElementById('user-dropdown');
 
-        if (isAuth && user) {
-            // ✅ USUARIO LOGUEADO
-            console.log('✅ Mostrando menú de usuario');
-
-            // Ocultar botones de login (desktop y móvil)
-            if (authButtons) {
-                authButtons.style.display = 'none';
-            }
-            if (mobileAuthButtons) {
-                mobileAuthButtons.style.display = 'none';
-            }
-            
-            // Mostrar menú de usuario
-            if (userMenuContainer) {
-                userMenuContainer.style.display = 'block';
-            }
-            
-            // Actualizar datos del usuario en el menú
-            this.updateUserMenu(user);
-
-            const esAdmin = user.role === 'admin';
-
-            document.querySelectorAll('a[href="carrito.html"], a[href*="carrito"]').forEach(link => {
-                link.style.display = esAdmin ? 'none' : '';
-            });
-
-            const cartIcon = document.querySelector('a[href="carrito.html"]');
-            if (cartIcon) cartIcon.style.display = esAdmin ? 'none' : 'flex';
-            
+        if (isAuth && user && user.role === 'admin') {
+            // ✅ ADMIN LOGUEADO
+            if (userMenuContainer) userMenuContainer.style.display = 'block';
+            this.updateAdminUI(user);
         } else {
-            // ❌ USUARIO NO LOGUEADO
-            console.log('❌ Mostrando botones de autenticación');
-            
-            // Mostrar botón de login (solo en md+, el CSS hidden md:flex lo maneja)
-            if (authButtons) {
-                authButtons.style.display = '';
-            }
-            
-            // Ocultar menú de usuario
-            if (userMenuContainer) {
-                userMenuContainer.style.display = 'none';
-            }
-            
-            // Cerrar dropdown si estaba abierto
-            if (userDropdown) {
-                userDropdown.classList.add('hidden');
-            }
+            // ❌ VISITANTE NORMAL
+            if (userMenuContainer) userMenuContainer.style.display = 'none';
+            if (userDropdown) userDropdown.classList.add('hidden');
         }
     },
     
     /**
-     * 👤 Actualizar información del usuario en el menú
+     * 👤 Datos visuales del Admin
      */
-    updateUserMenu: function(user) {
-        console.log('👤 Actualizando datos del menú de usuario');
-        
-        // Elementos del menú
-        const userInitials = document.getElementById('user-initials');
-        const userName = document.getElementById('user-name');
+    updateAdminUI: function(user) {
         const dropdownUserName = document.getElementById('dropdown-user-name');
         const dropdownUserEmail = document.getElementById('dropdown-user-email');
-        const dropdownUserRole = document.getElementById('dropdown-user-role');
-        const adminOptions = document.getElementById('admin-options');
-        const clientOptions = document.getElementById('client-options');
         
-        // Actualizar iniciales (primera letra del nombre)
-        if (userInitials && user.firstName) {
-            userInitials.textContent = user.firstName.charAt(0).toUpperCase();
-        }
-        
-        // Actualizar nombre completo
-        if (userName && user.firstName) {
-            userName.textContent = user.firstName;
-        }
-        
-        // Actualizar nombre en dropdown
-        if (dropdownUserName && user.firstName && user.lastName) {
-            dropdownUserName.textContent = `${user.firstName} ${user.lastName}`;
-        }
-        
-        // Actualizar email en dropdown
-        if (dropdownUserEmail && user.email) {
-            dropdownUserEmail.textContent = user.email;
-        }
-        
-        // Actualizar rol en dropdown
-        if (dropdownUserRole && user.role) {
-            const roleText = user.role === 'admin' ? 'Administrador' : 'Cliente';
-            dropdownUserRole.textContent = roleText;
-            
-            // Cambiar color según el rol
-            if (user.role === 'admin') {
-                dropdownUserRole.classList.remove('bg-green-100', 'text-green-800');
-                dropdownUserRole.classList.add('bg-yellow-100', 'text-yellow-800');
-            }
-        }
-        
-        // Mostrar opciones según rol
-        if (user.role === 'admin') {
-            if (adminOptions) adminOptions.style.display = 'block';
-            if (clientOptions) clientOptions.style.display = 'none';
-        } else {
-            if (adminOptions) adminOptions.style.display = 'none';
-            if (clientOptions) clientOptions.style.display = 'block';
-        }
-        
-        console.log('✅ Menú de usuario actualizado');
+        if (dropdownUserName) dropdownUserName.textContent = "Administrador";
+        if (dropdownUserEmail) dropdownUserEmail.textContent = user.email;
     },
     
     /**
-     * 🎯 Configurar eventos del menú de usuario
+     * 🎯 Eventos (Click en avatar y Logout)
      */
     setupUserMenuEvents: function() {
-        console.log('🎯 Configurando eventos del menú de usuario');
-        
         const userMenuButton = document.getElementById('user-menu-button');
         const userDropdown = document.getElementById('user-dropdown');
         const logoutButton = document.getElementById('logout-button');
         
-        // Toggle dropdown al hacer clic en el botón
         if (userMenuButton && userDropdown) {
             userMenuButton.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const estabaOculto = userDropdown.classList.contains('hidden');
-                // Cerrar todos los menús antes de abrir este
-                // (Catálogo) Novedades/Notificaciones removidas
-                if (estabaOculto) {
-                    userDropdown.classList.remove('hidden');
-                }
-                console.log('Toggle dropdown');
+                userDropdown.classList.toggle('hidden');
             });
             
-            // Cerrar dropdown al hacer clic fuera
+            // Cerrar al hacer clic fuera
             document.addEventListener('click', (e) => {
-                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                if (!userMenuButton.contains(e.target)) {
                     userDropdown.classList.add('hidden');
                 }
             });
         }
         
-        // Evento de logout
         if (logoutButton) {
             logoutButton.addEventListener('click', () => {
-                try {
-                    authAPI.logout();
-                    if (window.showAuthNotification) {
-                        showAuthNotification('Sesión cerrada exitosamente', 'success');
-                    }
-                    this.updateHeader();
-                } catch (e) {
-                    console.error('Error en logout:', e);
-                } finally {
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 800);
-                }
+                api.logout(); // Esto ya redirige a index según nuestro api.js
             });
         }
-        
-        console.log('✅ Eventos del menú configurados');
     },
     
-    /**
-     * 🚀 Inicializar UIManager
-     */
     init: function() {
-        console.log('🚀 Inicializando UIManager...');
-        
-        // Actualizar header al cargar
         this.updateHeader();
-        
-        // Configurar eventos
         this.setupUserMenuEvents();
         
-        // Escuchar eventos de login/logout
-        window.addEventListener('userLoggedIn', () => {
-            console.log('📢 Evento userLoggedIn detectado');
-            this.updateHeader();
+        // Escuchar si el estado cambia (por si haces login en otra pestaña)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'growhouse_token') this.updateHeader();
         });
-        
-        window.addEventListener('userLoggedOut', () => {
-            console.log('📢 Evento userLoggedOut detectado');
-            this.updateHeader();
-        });
-        
-        console.log('✅ UIManager inicializado');
     }
 };
 
-// ================================================================
-// EJECUTAR AL CARGAR EL DOM
-// ================================================================
+// Inicialización
+document.readyState === 'loading' 
+    ? document.addEventListener('DOMContentLoaded', () => UIManager.init()) 
+    : UIManager.init();
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        UIManager.init();
-    });
-} else {
-    UIManager.init();
-}
-
-console.log('✅ ui-manager.js cargado correctamente');
-
-
-// Exponer UIManager globalmente para debugging
 window.UIManager = UIManager;

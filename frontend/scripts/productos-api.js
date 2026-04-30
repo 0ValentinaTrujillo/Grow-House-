@@ -1,6 +1,6 @@
 // =============================================
 // PRODUCTOS API - CARGAR DESDE MONGODB
-// Make-up Koral - Conexión Frontend con Backend
+// Grow House - Conexión Frontend con Backend
 // =============================================
 
 console.log('🛍️ Inicializando productos-api.js');

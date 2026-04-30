@@ -1,71 +1,60 @@
 // =============================================
-// NAVBAR-AVATAR.JS - Gestor de Avatar en Navbar
-// Grow House - Muestra la imagen de perfil en el navbar
+// NAVBAR-AVATAR.JS - Gestor de Avatar (SOLO ADMIN)
+// Grow House - Versión Catálogo Administrable 2026
 // =============================================
 
-console.log('👤 Navbar Avatar Manager cargando...');
+console.log('👤 Navbar Avatar Manager (Modo Admin) cargando...');
 
 const NavbarAvatarManager = {
     /**
      * Inicializar
      */
     init: function() {
-        console.log('🔧 Inicializando NavbarAvatarManager...');
+        console.log('🔧 Inicializando NavbarAvatarManager para Admin...');
         
-        // Cargar al documento listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                console.log('📄 DOMContentLoaded - Cargando avatar en navbar');
-                this.load();
-            });
-        } else {
-            // Si el DOM ya está cargado, cargar inmediatamente
-            console.log('📄 DOM ya cargado - Cargando avatar en navbar inmediatamente');
+        const loadHandler = () => {
+            console.log('📄 Cargando interfaz de usuario en navbar');
             this.load();
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadHandler);
+        } else {
+            loadHandler();
         }
         
-        // Escuchar cambios de perfil
-        window.addEventListener('userProfileUpdated', () => {
-            console.log('🔄 Evento userProfileUpdated - Actualizando navbar');
-            this.load();
-        });
+        // Escuchar solo eventos relevantes a la sesión del admin
+        window.addEventListener('sessionUpdated', () => this.load());
+        window.addEventListener('userAuthenticated', () => this.load());
         
-        // Escuchar cambios de avatar
-        window.addEventListener('avatarChanged', () => {
-            console.log('🔄 Evento avatarChanged - Actualizando navbar');
-            this.load();
-        });
-        
-        // Escuchar cuando el usuario se autentica
-        window.addEventListener('userAuthenticated', () => {
-            console.log('🔄 Evento userAuthenticated - Actualizando navbar');
-            this.load();
-        });
-        
-        // Escuchar cambios de sesión
-        window.addEventListener('sessionUpdated', () => {
-            console.log('🔄 Evento sessionUpdated - Actualizando navbar');
-            this.load();
-        });
-        
-        console.log('✅ NavbarAvatarManager inicializado');
+        // Evento personalizado para cuando el admin cierra sesión
+        window.addEventListener('adminLogout', () => this.clear());
     },
 
     /**
-     * Cargar y mostrar avatar
+     * Cargar y mostrar avatar de administrador
      */
     load: function () {
         try {
-            if (!window.authAPI || !window.authAPI.isAuthenticated()) return;
+            // Verificamos si existe la API de auth y si el usuario es ADMIN
+            if (!window.authAPI || !window.authAPI.isAuthenticated()) {
+                this.clear(); // Si no hay sesión, nos aseguramos de que esté limpio
+                return;
+            }
 
             const user = window.authAPI.getUser();
-            if (!user) return;
+            
+            // FILTRO CRÍTICO: Si no es admin, ocultamos cualquier rastro de avatar
+            if (!user || user.role !== 'admin') {
+                this.clear();
+                return;
+            }
 
             const imgElements = document.querySelectorAll('#user-avatar-menu-image');
             const initialsElements = document.querySelectorAll('#user-initials');
             const avatarDivs = document.querySelectorAll('#user-avatar-menu');
 
-            // Usar avatar guardado en el objeto user (sincronizado desde backend)
+            // Mostrar imagen del admin o sus iniciales
             if (user.avatar) {
                 imgElements.forEach(img => {
                     img.src = user.avatar;
@@ -77,41 +66,38 @@ const NavbarAvatarManager = {
                 this.showInitials(user);
             }
 
+            console.log('✅ Interfaz de Administrador activada en Navbar');
+
         } catch (error) {
-            console.error('❌ Error al cargar avatar en navbar:', error);
+            console.error('❌ Error al cargar avatar de admin:', error);
         }
     },
 
     /**
-     * Mostrar iniciales
+     * Mostrar iniciales del Administrador
      */
     showInitials: function(user) {
-        try {
-            const avatarDivs = document.querySelectorAll('#user-avatar-menu');
-            const imgElements = document.querySelectorAll('#user-avatar-menu-image');
-            const initialsElements = document.querySelectorAll('#user-initials');
+        const initialsElements = document.querySelectorAll('#user-initials');
+        const imgElements = document.querySelectorAll('#user-avatar-menu-image');
 
-            // Ocultar todas las imágenes
-            imgElements.forEach(img => {
-                img.classList.add('hidden');
-            });
+        imgElements.forEach(img => img.classList.add('hidden'));
 
-            // Mostrar iniciales en todos los lugares
-            initialsElements.forEach(span => {
-                const initial = `${user.firstName?.charAt(0) || 'U'}${user.lastName?.charAt(0) || ''}`.toUpperCase();
-                span.textContent = initial;
-                span.classList.remove('hidden');
-            });
+        initialsElements.forEach(span => {
+            // Usamos el nombre del admin o 'A' por defecto
+            const initial = (user.name?.charAt(0) || user.firstName?.charAt(0) || 'A').toUpperCase();
+            span.textContent = initial;
+            span.classList.remove('hidden');
+        });
+    },
 
-            // Restaurar color de fondo
-            avatarDivs.forEach(div => {
-                div.style.backgroundColor = null; // Usar clase CSS
-            });
-
-            console.log('📝 Mostrando iniciales en todos los navbars');
-        } catch (error) {
-            console.error('❌ Error al mostrar iniciales:', error);
-        }
+    /**
+     * Limpiar el navbar (para usuarios visitantes)
+     */
+    clear: function() {
+        const avatarDivs = document.querySelectorAll('#user-avatar-menu');
+        // Ocultamos el contenedor del avatar para que el público no lo vea
+        avatarDivs.forEach(div => div.classList.add('hidden'));
+        console.log('🌐 Modo visitante: Avatar oculto.');
     }
 };
 
