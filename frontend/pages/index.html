@@ -14,54 +14,101 @@
     
     <style>
         header { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Poppins', sans-serif; }
+        footer {font-family: 'Poppins', sans-serif ;}
         html { scroll-behavior: smooth; } /* Para que al darle a 'Categorías' baje suavemente */
     </style>
 </head>
 
 <body class="bg-white font-sans antialiased">
-    <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
-        <nav class="mx-auto px-4 py-4" style="max-width:100%;">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center text-2xl font-bold">
-                    <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
-                        class="w-12 h-12 rounded-full object-cover mr-4">
-                    <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+        <header class="bg-white backdrop-blur-md shadow-xl border-b border-green-100 sticky top-0 z-50">
+            <nav class="mx-auto px-4 py-4" style="max-width:100%;">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center text-2xl font-bold">
+                        <img src="../assets/images/Green and White Plants Organic Logo.png" alt="Logo"
+                            class="w-12 h-12 rounded-full object-cover mr-4">
+                        <a href="index.html" class="text-green-800 font-bold">Grow House</a>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-8 ml-auto mr-8">
+                        <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
+                            Inicio
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
+                        </a>
+                        <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
+                            Productos
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
+                        </a>
+                        <a href="#categorias" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
+                            Categorías
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
+                        </a>
+                        <a href="#contacto" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
+                            Contacto
+                            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
+                        </a>
+                        <!-- Mobile button -->
+                        <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-button">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <!-- Mobile Menu -->
+                        <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                            <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
+                                <a href="index.html"
+                                    class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Inicio</a>
+                                <a href="productos.html"
+                                    class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Productos</a>
+                                <a href="#categorias"
+                                    class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Categorías</a>
+                                <a href="#contacto"
+                                    class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Contacto</a>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
+            </nav>
+        </header>
 
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html" class="text-green-800 font-semibold relative group">
-                        Inicio
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-green-800"></span>
-                    </a>
-                    <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
-                        Productos
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                    <a href="#categorias" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
-                        Categorías
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                    <a href="#contacto" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
-                        Contacto
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                </div>
+        <section id="categorias" class="py-16 bg-white">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Nuestras <span class="text-yellow-500">Categorías</span></h2>
+                <div class="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <ul class="cards-container">
+                <li onclick="location.href='plantas.html?cat=Plantas'" class="cursor-pointer">
+                    <img src="https://cdn.agroempresario.com/images/posts/fb5c06964dc19ebc3052a82017083a0bff799d8451de76d2_840.jpg" alt="Plantas">
+                    <div class="content"><span><h2>Plantas</h2></span></div>
+                </li>
+                <li onclick="location.href='materas.html?cat=Materas'" class="cursor-pointer">
+                    <img src="https://alsolarvivero.com/cdn/shop/files/Imagen3_e2782426-21f6-4a14-9765-b24ebc363a94.jpg?v=1697228248&width=416" alt="Materas">
+                    <div class="content"><span><h2>Materas</h2></span></div>
+                </li>
+                <li onclick="location.href='decoraciones.html?cat=Decoraciones'" class="cursor-pointer">
+                    <img src="https://m.media-amazon.com/images/I/81bESfVXHbS._AC_UF894,1000_QL80_.jpg" alt="Decoraciones">
+                    <div class="content"><span><h2>Decoraciones</h2></span></div>
+                </li>
+                <li onclick="location.href='implementos.html?cat=Implementos'" class="cursor-pointer">
+                    <img src="https://www.verdeesvida.es/files/novelty/13072023121658_Epoca%20MMV.jpg" alt="Implementos">
+                    <div class="content"><span><h2>Implementos</h2></span></div>
+                </li>
+            </ul>
+        </section>
 
-                <div class="flex items-center space-x-4">
-                    <a href="login.html" class="px-6 py-2 font-medium text-green-800 border border-green-900 rounded-full hover:bg-gray-50 transition">
-                        Iniciar Sesión
-                    </a>
+        <section id="categorias" class="py-16 bg-white">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Nuestros Productos <span class="text-yellow-500">Destacados</span></h2>
+                <div class="w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <!-- Contenedor para los productos destacados -->
+            <div class="container mx-auto px-4">
+                <div id="productos-destacados-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Los productos se cargarán aquí -->
+                    <p class="text-center col-span-full text-gray-500">Cargando productos destacados...</p>
                 </div>
             </div>
-        </nav>
-    </header>
-
-    <section id="categorias" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-gray-900 mb-10">Nuestras Categorías</h2>
-            <p class="text-gray-600">Explora lo mejor para tu cultivo.</p>
-        </div>
-    </section>
+        </section>
 
     <footer id="contacto" class="border-t-2 border-green-800 pt-6 bg-white py-10 mt-2">
         <div class="container mx-auto px-6">
@@ -127,10 +174,7 @@
             <!-- Línea final -->
             <div class="border-t border-green-800 pt-2 text-center">
                 <p class="text-gray-900">
-                    © 2024 Grow House. Todos los derechos reservados |
-                    <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
-                    <a href="#" class="hover:text-white transition">Términos de Servicio</a>
-                </p>
+                    © 2024 Grow House. Catalogo de productos para tu vivero.
             </div>
         </div>
 
@@ -138,5 +182,57 @@
 
     <script src="../scripts/config.js"></script>
     <script src="../scripts/api.js"></script>
+    
+    <script>
+    async function cargarDestacados() {
+        const grid = document.getElementById('productos-destacados-grid');
+    
+        try {
+            const response = await fetch(`${window.GROW_HOUSE_API}/products?featured=true&limit=8`);
+            const data     = await response.json();
+            const productos = data.data || [];
+    
+            grid.innerHTML = '';
+    
+            if (!productos.length) {
+                grid.innerHTML = '<p class="text-center col-span-full text-gray-400 italic">No hay productos destacados por ahora.</p>';
+                return;
+            }
+    
+            productos.forEach(p => grid.appendChild(crearTarjeta(p)));
+    
+        } catch (error) {
+            grid.innerHTML = '<p class="text-center col-span-full text-red-500">Error al conectar con la tienda.</p>';
+        }
+    }
+    
+    function crearTarjeta(p) {
+        const div = document.createElement('div');
+        div.className = 'bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col h-full cursor-pointer';
+        div.onclick = () => window.location.href = `producto-detalle.html?id=${p.id || p._id}`;
+    
+        const precio = new Intl.NumberFormat('es-CO', {
+            style: 'currency', currency: 'COP', maximumFractionDigits: 0
+        }).format(p.price);
+    
+        div.innerHTML = `
+            <div class="relative h-56 overflow-hidden">
+                <img src="${p.mainImage || '../assets/images/placeholder.png'}"
+                     alt="${p.name}"
+                     class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            </div>
+            <div class="p-5 flex flex-col flex-grow">
+                <h3 class="font-bold text-gray-800 text-lg mb-1">${p.name}</h3>
+                <p class="text-gray-500 text-xs mb-4 line-clamp-2">${p.description || 'Sin descripción disponible.'}</p>
+                <div class="mt-auto">
+                    <span class="text-xl font-black text-green-800">${precio}</span>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+    
+    document.addEventListener('DOMContentLoaded', cargarDestacados);
+    </script>
     </body>
 </html>

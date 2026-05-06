@@ -1,5 +1,5 @@
 // =============================================
-// CLIENTE API - Grow House (Versión Admin Único)
+// CLIENTE API - Grow House
 // =============================================
 
 console.log('🔌 Inicializando cliente API Grow House');
@@ -7,44 +7,23 @@ console.log('🔌 Inicializando cliente API Grow House');
 const API_CONFIG = {
     baseURL: window.GROW_HOUSE_API,
     timeout: 10000,
-    headers: {
-        'Content-Type': 'application/json'
-    }
+    headers: { 'Content-Type': 'application/json' }
 };
-
-class APIError extends Error {
-    constructor(message, status, data = null) {
-        super(message);
-        this.name = 'APIError';
-        this.status = status;
-        this.data = data;
-    }
-}
-
-function isValidObjectId(id) {
-    return typeof id === 'string' && /^[a-fA-F0-9]{24}$/.test(id);
-}
 
 class APIClient {
     constructor(baseURL = API_CONFIG.baseURL) {
-        this.baseURL = baseURL;
-        this.timeout = API_CONFIG.timeout;
+        this.baseURL  = baseURL;
+        this.timeout  = API_CONFIG.timeout;
+        // ✅ Claves unificadas con auth-api.js y admin-auth.js
+        this.TOKEN_KEY = 'growhouse-auth-token';
+        this.USER_KEY  = 'growhouse-user-data';
     }
 
-    // --- GESTIÓN DE TOKENS ---
-
-    getToken() {
-        return localStorage.getItem('growhouse_token');
-    }
-
-    setToken(token) {
-        localStorage.setItem('growhouse_token', token);
-    }
-
+    getToken() { return localStorage.getItem(this.TOKEN_KEY); }
+    setToken(token) { localStorage.setItem(this.TOKEN_KEY, token); }
     removeToken() {
-        localStorage.removeItem('growhouse_token');
-        localStorage.removeItem('growhouse_user');
-        console.log('🚪 Sesión de Admin finalizada');
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.USER_KEY);
     }
 
     getHeaders(includeAuth = false) {
@@ -56,8 +35,6 @@ class APIClient {
         return headers;
     }
 
-    // --- NÚCLEO DE PETICIONES ---
-
     async request(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
         const config = {
@@ -67,29 +44,28 @@ class APIClient {
 
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-            const response = await fetch(url, {
-                ...config,
-                signal: controller.signal
-            });
-
+            const timeoutId  = setTimeout(() => controller.abort(), this.timeout);
+            const response   = await fetch(url, { ...config, signal: controller.signal });
             clearTimeout(timeoutId);
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new APIError(data.message || 'Error en la petición', response.status, data);
+                if (response.status === 401) {
+                    this.removeToken();
+                    window.location.href = 'login.html';
+                    return;
+                }
+                throw new Error(data.message || 'Error en la petición');
             }
 
             return data;
+
         } catch (error) {
-            if (error.name === 'AbortError') throw new APIError('Timeout de conexión', 408);
+            if (error.name === 'AbortError') throw new Error('Timeout de conexión');
             throw error;
         }
     }
-
-    // --- MÉTODOS HTTP ---
 
     async get(endpoint, params = {}, auth = false) {
         const queryString = new URLSearchParams(params).toString();
@@ -109,57 +85,44 @@ class APIClient {
         return this.request(endpoint, { method: 'DELETE', auth });
     }
 
-    // --- MÉTODOS DE PRODUCTOS (CATÁLOGO) ---
+    // ─── Productos públicos ───────────────────────────────────────────────────
+    async getProducts(filters = {}) { return this.get('/products', filters); }
+    async getProduct(id)            { return this.get(`/products/${id}`); }
 
-    async getProducts(filters = {}) {
-        return this.get('/products', filters);
-    }
+    // ─── Productos admin ──────────────────────────────────────────────────────
+    async createProduct(data)     { return this.post('/admin/products', data, true); }
+    async updateProduct(id, data) { return this.put(`/admin/products/${id}`, data, true); }
+    async deleteProduct(id)       { return this.delete(`/admin/products/${id}`, true); }
 
-    async getProduct(id) {
-        if (!id || !isValidObjectId(id)) throw new APIError('ID de producto no válido', 400);
-        return this.get(`/products/${id}`);
-    }
-
-    // Acciones exclusivas de Admin (requieren auth = true)
-    async createProduct(productData) {
-        return this.post('/products', productData, true);
-    }
-
-    async updateProduct(id, productData) {
-        return this.put(`/products/${id}`, productData, true);
-    }
-
-    async deleteProduct(id) {
-        return this.delete(`/products/${id}`, true);
-    }
-
-    // --- AUTENTICACIÓN ADMIN ---
-
+    // ─── Auth ─────────────────────────────────────────────────────────────────
     async login(email, password) {
         const response = await this.post('/auth/login', { email, password });
         if (response.token) {
             this.setToken(response.token);
-            localStorage.setItem('growhouse_user', JSON.stringify(response.user));
-            console.log('✅ Acceso Admin concedido');
+            localStorage.setItem(this.USER_KEY, JSON.stringify(response.data));
         }
         return response;
     }
 
     logout() {
         this.removeToken();
-        window.location.href = '../index.html';
+        window.location.href = 'index.html';
     }
 
     isAuthenticated() {
-        return !!this.getToken();
+        const token = this.getToken();
+        const user  = this.getCurrentUser();
+        return !!(token && user && user.role === 'admin');
     }
 
     getCurrentUser() {
-        const userStr = localStorage.getItem('growhouse_user');
-        return userStr ? JSON.parse(userStr) : null;
+        try {
+            const str = localStorage.getItem(this.USER_KEY);
+            return str ? JSON.parse(str) : null;
+        } catch { return null; }
     }
 }
 
-// Instancia única para toda la app
 const api = new APIClient();
 window.api = api;
+console.log('✅ APIClient inicializado:', api.baseURL);

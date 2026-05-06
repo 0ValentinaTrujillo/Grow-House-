@@ -3,189 +3,951 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Dashboard | Productos - Grow House</title> 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Grow House | Panel Administrador</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../scripts/config.js"></script>
+    <style>
+        :root {
+            --green-dark:   #03651f;
+            --green-mid:    #057a2b;
+            --green-light:  #e8f5e9;
+            --green-accent: #2ecc71;
+            --gold:         #ffb916;
+            --gold-light:   #fef9ec;
+            --red:          #e53e3e;
+            --red-light:    #fff5f5;
+            --blue:         #3182ce;
+            --blue-light:   #ebf8ff;
+            --gray-50:      #f9fafb;
+            --gray-100:     #f3f4f6;
+            --gray-200:     #e5e7eb;
+            --gray-400:     #9ca3af;
+            --gray-600:     #4b5563;
+            --gray-800:     #1f2937;
+            --white:        #ffffff;
+            --shadow-sm:    0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+            --radius:       12px;
+            --radius-sm:    8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--white);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* ── TOPBAR ──────────────────────────────────────────────────────── */
+        .topbar {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .topbar-brand img {
+            height: 36px;
+            width: auto;
+        }
+
+        .topbar-brand-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            line-height: 1.2;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-home {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-home:hover {
+            border-color: var(--green-dark);
+            color: var(--green-dark);
+            background: var(--green-light);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border: none;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--red);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-logout:hover { background: #c53030; }
+
+        /* ── TABS ────────────────────────────────────────────────────────── */
+        .tabs-bar {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 0 3rem;
+            display: flex;
+            gap: 0;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-400);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover { color: var(--green-dark); }
+
+        .tab-btn.active {
+            color: var(--green-dark);
+            border-bottom-color: var(--green-dark);
+            font-weight: 600;
+        }
+
+        /* ── MAIN ────────────────────────────────────────────────────────── */
+        .main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* ── SECTION HEADER ──────────────────────────────────────────────── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .section-sub {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-top: 0.2rem;
+        }
+
+        /* ── STATS GRID ──────────────────────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            font-family: 'Poppins', sans-serif ;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* ── FILTERS ─────────────────────────────────────────────────────── */
+        .filters-bar {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .filter-group label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            border-color: var(--green-dark);
+            background: var(--white);
+        }
+
+        /* ── BUTTONS ─────────────────────────────────────────────────────── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--green-dark);
+            color: var(--white);
+        }
+        .btn-primary:hover { background: var(--green-mid); }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border: 1px solid var(--gray-200);
+        }
+        .btn-secondary:hover { background: var(--gray-200); }
+
+        .btn-danger {
+            background: var(--red-light);
+            color: var(--red);
+            border: 1px solid #fed7d7;
+        }
+        .btn-danger:hover { background: #fed7d7; }
+
+        .btn-gold {
+            background: var(--gold-light);
+            color: #b7791f;
+            border: 1px solid #fbd38d;
+        }
+
+        /* ── TABLE ───────────────────────────────────────────────────────── */
+        .table-wrap {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-wrap thead {
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table-wrap th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        .table-wrap td {
+            padding: 0.9rem 1rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+
+        .table-wrap tr:last-child td { border-bottom: none; }
+        .table-wrap tr:hover td { background: var(--gray-50); }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .product-img {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--gray-200);
+            flex-shrink: 0;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .product-brand {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .badge-green  { background: var(--green-light); color: var(--green-dark); }
+        .badge-gray   { background: var(--gray-100); color: var(--gray-600); }
+        .badge-red    { background: var(--red-light); color: var(--red); }
+        .badge-blue   { background: var(--blue-light); color: var(--blue); }
+        .badge-orange { background: #fff7ed; color: #c05621; }
+        .badge-purple { background: #faf5ff; color: #6b46c1; }
+
+        .action-btns {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+
+        .icon-btn-edit  { background: var(--blue-light); color: var(--blue); }
+        .icon-btn-edit:hover { background: #bee3f8; }
+
+        .icon-btn-star  { background: var(--gold-light); color: #b7791f; }
+        .icon-btn-star:hover { background: #fbd38d; }
+        .icon-btn-star.starred { background: #fbd38d; color: #744210; }
+
+        .icon-btn-del   { background: var(--red-light); color: var(--red); }
+        .icon-btn-del:hover { background: #fed7d7; }
+
+        /* ── PAGINATION ──────────────────────────────────────────────────── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1rem;
+            border-top: 1px solid var(--gray-100);
+            background: var(--gray-50);
+        }
+
+        .pagination-info {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+        }
+
+        .pagination-btns {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .page-btn:hover:not(:disabled) { border-color: var(--green-dark); color: var(--green-dark); }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── MODAL ───────────────────────────────────────────────────────── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            z-index: 1;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: none;
+            background: var(--gray-100);
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover { background: var(--gray-200); }
+
+        .modal-body { padding: 1.5rem; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.55rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--gray-800);
+            outline: none;
+            transition: border-color 0.2s;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--green-dark);
+        }
+
+        .form-group textarea { resize: vertical; min-height: 80px; }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 0;
+        }
+
+        .checkbox-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--green-dark);
+        }
+
+        .checkbox-row label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        /* ── VENTAS ──────────────────────────────────────────────────────── */
+        .sale-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .sale-item-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 80px 32px;
+            gap: 0.5rem;
+            align-items: center;
+            background: var(--gray-50);
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-200);
+        }
+
+        .sale-item-row select,
+        .sale-item-row input {
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+        }
+
+        .sale-item-row select:focus,
+        .sale-item-row input:focus { border-color: var(--green-dark); }
+
+        .remove-item-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            background: var(--red-light);
+            color: var(--red);
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sale-total-bar {
+            background: var(--green-light);
+            border: 1px solid #c6f6d5;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .sale-total-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--green-dark);
+        }
+
+        .sale-total-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* ── STATS DASHBOARD ─────────────────────────────────────────────── */
+        .stats-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .summary-card .period {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-400);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-card .amount {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            font-family: 'Poppins', sans-serif ;
+        }
+
+        .summary-card .count {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            margin-top: 0.3rem;
+        }
+
+        .top-products-list {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .top-products-list .list-header {
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .top-product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .top-product-item:last-child { border-bottom: none; }
+
+        .top-product-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .top-product-qty {
+            font-size: 0.8rem;
+            color: var(--gray-400);
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* ── EMPTY / LOADING STATES ──────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray-400);
+        }
+
+        .empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+        .empty-state p { font-size: 0.9rem; }
+
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--gray-400);
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-200);
+            border-top-color: var(--green-dark);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── TOAST ───────────────────────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--white);
+            z-index: 9999;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .toast-success { background: var(--green-dark); }
+        .toast-error   { background: var(--red); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .stats-summary-grid { grid-template-columns: 1fr; }
+            .main { padding: 1rem; }
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-    <!-- Sidebar -->
-    <div class="fixed inset-y-0 left-0 w-64 text-white z-50
-    bg-gradient-to-b from-[#03651f] via-[#057a2b] to-[#045e1f] 
-    [transform:translateZ(0)] [backface-visibility:hidden]">
-        <div class="flex items-center gap-3 p-6 antialiased">
-            <img src="../assets/images/Logo-blanco-removebg-preview.png" alt="Logo"
-               class="h-10 w-auto">
-            <div href=index.html class="flex flex-col leading-tight">
-                <h1 class="text-white font-bold text-lg">
-                    Grow House
-                </h1>
-                <p class="text-white text-sm">
-                    Panel Administrador
-                </p>
-            </div>
-        </div>
-
-        <nav class="mt-6">
-            <a href="dashboard.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
-                <i class="fas fa-chart-bar"></i> Estadisticas
-            </a>
-            <a href="admin-products.html" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Productos</span>
-            </a>
-            <a href="#ventas" class="flex items-center gap-3 px-6 py-3 hover:bg-green-700 transition">
-                <i class="fas fa-cash-register"></i>
-                <span>Ventas físicas</span>
-            </a>
-        </nav>
-
-        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-green-700">
-            <a href="index.html" class="w-full bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-sm transition block text-center mb-2">
-                <i class="fas fa-home mr-2"></i>
-                Volver al inicio
-            </a>
-            <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
-                <i class="fas fa-sign-out-alt mr-2"></i>
-                Cerrar Sesión
-            </button>
+<!-- ── TOPBAR ─────────────────────────────────────────────────────────────── -->
+<header class="topbar">
+    <div class="topbar-brand">
+        <img src="../assets/images/Logo-blanco-removebg-preview.png" alt="Logo"
+             onerror="this.style.display='none'">
+        <div class="topbar-brand-text">
+            <h1>Grow House</h1>
         </div>
     </div>
+    <div class="topbar-actions">
+        <button class="btn-logout" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </div>
+</header>
 
-    <!-- Main Content -->
-    <div class="ml-64 p-8">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
+<!-- ── TABS ───────────────────────────────────────────────────────────────── -->
+<div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('productos')">
+        <i class="fas fa-box"></i> Productos
+    </button>
+    <button class="tab-btn" onclick="switchTab('ventas')">
+        <i class="fas fa-cash-register"></i> Ventas
+    </button>
+    <button class="tab-btn" onclick="switchTab('estadisticas')">
+        <i class="fas fa-chart-bar"></i> Estadísticas
+    </button>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────────────────────────────── -->
+<main class="main">
+
+    <!-- ═══ TAB: PRODUCTOS ════════════════════════════════════════════════ -->
+    <div id="tab-productos" class="tab-panel active">
+
+        <div class="section-header">
             <div>
-                <h2 class="text-3xl font-bold text-gray-800">Gestión de Productos</h2>
-                <p class="text-gray-600">Administra tu catálogo de plantas y productos</p>
+                <div class="section-title">Gestión de Productos</div>
+                <div class="section-sub">Administra el catálogo del vivero</div>
             </div>
-            <button onclick="openCreateModal()" class="bg-green-700 hover:bg-green-800 text-white px-5 py-3 rounded-xl shadow-lg transition-all hover:shadow-green-200 hover:scale-105 active:scale-95">
-            <i class="fas fa-plus"></i>
-                Nuevo Producto
+            <button class="btn btn-primary" onclick="openProductModal()">
+                <i class="fas fa-plus"></i> Nuevo Producto
             </button>
         </div>
 
-        <!-- Filters -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Stats productos -->
+        <div class="stats-grid">
+            <div class="stat-card">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
-                    <input type="text" id="searchInput" placeholder="Nombre, marca..." 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800 focus:border-transparent">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value" id="st-total">—</div>
                 </div>
+                <div class="stat-icon" style="background:var(--blue-light);color:var(--blue)">
+                    <i class="fas fa-box"></i>
+                </div>
+            </div>
+            <div class="stat-card">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-                    <select id="categoryFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
-                        <option value="">Todas</option>
-                        <option value="plantas">Plantas</option>
-                        <option value="materas">Materas</option>
-                        <option value="decoraciones">Decoraciones</option>
-                        <option value="implementos">Implementos</option>
-                    </select>
+                    <div class="stat-label">Activos</div>
+                    <div class="stat-value" id="st-active">—</div>
                 </div>
+                <div class="stat-icon" style="background:var(--green-light);color:var(--green-dark)">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <div class="stat-card">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                    <select id="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-800">
-                        <option value="">Todos</option>
-                        <option value="active">Activo</option>
-                        <option value="inactive">Inactivo</option>
-                        <option value="discontinued">Descontinuado</option>
-                    </select>
+                    <div class="stat-label">Stock Bajo</div>
+                    <div class="stat-value" id="st-low">—</div>
                 </div>
-                <div class="flex items-end">
-                    <button onclick="loadProducts()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
-                        <i class="fas fa-search mr-2"></i>
-                        Buscar
-                    </button>
+                <div class="stat-icon" style="background:#fff7ed;color:#ffd20b">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Sin Stock</div>
+                    <div class="stat-value" id="st-out">—</div>
+                </div>
+                <div class="stat-icon" style="background:var(--red-light);color:var(--red)">
+                    <i class="fas fa-times-circle"></i>
                 </div>
             </div>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Total Productos</p>
-                        <h3 class="text-2xl font-bold text-gray-800" id="totalProducts">0</h3>
-                    </div>
-                    <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center">
-                        <i class="fas fa-box text-xl text-blue-600"></i>
-                    </div>
-                </div>
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <div class="filter-group" style="flex:2">
+                <label>Buscar</label>
+                <input type="text" id="p-search" placeholder="Nombre del producto...">
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Activos</p>
-                        <h3 class="text-2xl font-bold text-green-600" id="activeProducts">0</h3>
-                    </div>
-                    <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center">
-                        <i class="fas fa-check-circle text-xl text-green-600"></i>
-                    </div>
-                </div>
+            <div class="filter-group">
+                <label>Categoría</label>
+                <select id="p-category">
+                    <option value="">Todas</option>
+                    <option value="plantas">Plantas</option>
+                    <option value="materas">Materas</option>
+                    <option value="decoraciones">Decoraciones</option>
+                    <option value="implementos">Implementos</option>
+                </select>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Stock Bajo</p>
-                        <h3 class="text-2xl font-bold text-yellow-600" id="lowStockProducts">0</h3>
-                    </div>
-                    <div class="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center">
-                        <i class="fas fa-exclamation-triangle text-xl text-yellow-600"></i>
-                    </div>
-                </div>
+            <div class="filter-group">
+                <label>Estado</label>
+                <select id="p-status">
+                    <option value="">Todos</option>
+                    <option value="active">Activo</option>
+                    <option value="inactive">Inactivo</option>
+                    <option value="discontinued">Descontinuado</option>
+                </select>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-500 text-sm">Sin Stock</p>
-                        <h3 class="text-2xl font-bold text-red-600" id="outOfStockProducts">0</h3>
-                    </div>
-                    <div class="bg-red-100 w-12 h-12 rounded-full flex items-center justify-center">
-                        <i class="fas fa-times-circle text-xl text-red-600"></i>
-                    </div>
-                </div>
-            </div>
+            <button class="btn btn-primary" onclick="loadProducts()">
+                <i class="fas fa-search"></i> Buscar
+            </button>
         </div>
 
-        <!-- Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoría</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ventas</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Filled by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="bg-gray-50 px-6 py-4 flex items-center justify-between border-t">
-                <div class="text-sm text-gray-700">
-                    Mostrando pagina<span id="showingFrom">1</span> de <span id="showingTo">20</span>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="previousPage()" id="prevBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+        <!-- Tabla -->
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                        <th>Ventas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="products-tbody">
+                    <tr><td colspan="7">
+                        <div class="loading-spinner">
+                            <div class="spinner"></div> Cargando productos...
+                        </div>
+                    </td></tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <span class="pagination-info" id="p-info">—</span>
+                <div class="pagination-btns">
+                    <button class="page-btn" id="p-prev" onclick="loadProducts(pPage-1)" disabled>
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <span class="px-4 py-2 border border-gray-300 rounded-lg bg-white">
-                        Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
-                    </span>
-                    <button onclick="nextPage()" id="nextBtn" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span style="padding:0 0.5rem;font-size:0.8rem;color:var(--gray-600);line-height:32px" id="p-pages">1/1</span>
+                    <button class="page-btn" id="p-next" onclick="loadProducts(pPage+1)" disabled>
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -193,34 +955,144 @@
         </div>
     </div>
 
-    <!-- Create/Edit Product Modal -->
-    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-gray-800" id="modalTitle">Nuevo Producto</h3>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
+    <!-- ═══ TAB: VENTAS ═══════════════════════════════════════════════════ -->
+    <div id="tab-ventas" class="tab-panel">
+
+        <div class="section-header">
+            <div>
+                <div class="section-title">Ventas Físicas</div>
+                <div class="section-sub">Registra y gestiona las ventas en tienda</div>
+            </div>
+            <button class="btn btn-primary" onclick="openSaleModal()">
+                <i class="fas fa-plus"></i> Nueva Venta
+            </button>
+        </div>
+
+        <!-- Filtros ventas -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label>Desde</label>
+                <input type="date" id="v-start">
+            </div>
+            <div class="filter-group">
+                <label>Hasta</label>
+                <input type="date" id="v-end">
+            </div>
+            <div class="filter-group">
+                <label>Método de pago</label>
+                <select id="v-payment">
+                    <option value="">Todos</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="transferencia">Transferencia</option>
+                    <option value="nequi">Nequi</option>
+                    <option value="daviplata">Daviplata</option>
+                    <option value="tarjeta">Tarjeta</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="loadSales()">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Productos</th>
+                        <th>Método</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="sales-tbody">
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>No hay ventas registradas aún</p>
+                        </div>
+                    </td></tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <span class="pagination-info" id="v-info">—</span>
+                <div class="pagination-btns">
+                    <button class="page-btn" id="v-prev" onclick="loadSales(vPage-1)" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span style="padding:0 0.5rem;font-size:0.8rem;color:var(--gray-600);line-height:32px" id="v-pages">1/1</span>
+                    <button class="page-btn" id="v-next" onclick="loadSales(vPage+1)" disabled>
+                        <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <form id="productForm" class="p-6">
-                <input type="hidden" id="productId">
+    <!-- ═══ TAB: ESTADÍSTICAS ═════════════════════════════════════════════ -->
+    <div id="tab-estadisticas" class="tab-panel">
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Nombre -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre del Producto *</label>
-                        <input type="text" id="productName" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Estadísticas de Ventas</div>
+                <div class="section-sub">Resumen del rendimiento del negocio</div>
+            </div>
+            <button class="btn btn-secondary" onclick="loadStats()">
+                <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+        </div>
+
+        <div class="stats-summary-grid">
+            <div class="summary-card">
+                <div class="period">Hoy</div>
+                <div class="amount" id="s-today-total">$0</div>
+                <div class="count" id="s-today-count">0 ventas</div>
+            </div>
+            <div class="summary-card">
+                <div class="period">Última semana</div>
+                <div class="amount" id="s-week-total">$0</div>
+                <div class="count" id="s-week-count">0 ventas</div>
+            </div>
+            <div class="summary-card">
+                <div class="period">Último mes</div>
+                <div class="amount" id="s-month-total">$0</div>
+                <div class="count" id="s-month-count">0 ventas</div>
+            </div>
+        </div>
+
+        <div class="top-products-list">
+            <div class="list-header">Productos más vendidos</div>
+            <div id="top-products-list">
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>No hay datos disponibles</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══ MODAL: PRODUCTO ═══════════════════════════════════════════════════ -->
+<div id="product-modal" class="modal-overlay" onclick="if(event.target===this)closeProductModal()">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title" id="pm-title">Nuevo Producto</span>
+            <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <form id="product-form">
+                <input type="hidden" id="pm-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Nombre *</label>
+                        <input type="text" id="pm-name" required placeholder="Ej: Suculenta Echeveria">
                     </div>
-
-                    <!-- Categoría -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
-                        <select id="productCategory" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Categoría *</label>
+                        <select id="pm-category" required>
                             <option value="">Seleccionar...</option>
                             <option value="plantas">Plantas</option>
                             <option value="materas">Materas</option>
@@ -228,450 +1100,607 @@
                             <option value="implementos">Implementos</option>
                         </select>
                     </div>
-
-                    <!-- Marca -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Marca</label>
-                        <input type="text" id="productBrand"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" id="pm-brand" placeholder="Opcional">
                     </div>
-
-                    <!-- Precio -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
-                        <input type="number" id="productPrice" required min="0" step="0.01"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Precio *</label>
+                        <input type="number" id="pm-price" required min="0" placeholder="15000">
                     </div>
-
-                    <!-- Precio Original -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Precio Original</label>
-                        <input type="number" id="productOriginalPrice" min="0" step="0.01"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Precio Original</label>
+                        <input type="number" id="pm-original-price" min="0" placeholder="Dejar vacío si no hay descuento">
                     </div>
-
-                    <!-- Cantidad Inicial -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Cantidad Inicial *</label>
-                        <input type="number" id="productQuantity" required min="0" value="0"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Cantidad *</label>
+                        <input type="number" id="pm-quantity" required min="0" value="0">
                     </div>
-
-                    <!-- Alerta de Stock Bajo -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Alerta Stock Bajo</label>
-                        <input type="number" id="productLowStockAlert" min="0" value="10"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Alerta stock bajo</label>
+                        <input type="number" id="pm-low-stock" min="0" value="10">
                     </div>
-
-                    <!-- Descripción -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
-                        <textarea id="productDescription" required rows="3"
-                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
+                    <div class="form-group full">
+                        <label>Descripción *</label>
+                        <textarea id="pm-description" required placeholder="Descripción del producto..."></textarea>
                     </div>
-
-                    <!-- URL de Imagen -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen Principal *</label>
-                        <input type="url" id="productMainImage" required
-                               placeholder="https://images.unsplash.com/..."
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-                        <p class="text-xs text-gray-500 mt-1">Usa URLs de Unsplash, Imgur o similares</p>
+                    <div class="form-group full">
+                        <label>URL Imagen Principal *</label>
+                        <input type="url" id="pm-image" required placeholder="https://images.unsplash.com/...">
                     </div>
-
-                    <!-- Estado -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
-                        <select id="productStatus"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="pm-status">
                             <option value="active">Activo</option>
                             <option value="inactive">Inactivo</option>
                             <option value="discontinued">Descontinuado</option>
                             <option value="coming-soon">Próximamente</option>
                         </select>
                     </div>
-
-                    <!-- Destacado -->
-                    <div class="flex flex-col items-center justify-start mt-8">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" id="productFeatured" class="w-5 h-5 accent-[#207719]">
-                            <span class="ml-2 text-sm font-medium text-gray-700">
-                                Producto Destacado
-                            </span>
-                        </label>
+                    <div class="form-group">
+                        <label>Etiquetas (separadas por comas)</label>
+                        <input type="text" id="pm-tags" placeholder="interior, fácil cuidado">
                     </div>
-
-                    <!-- Tags -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Etiquetas (separadas por comas)</label>
-                        <input type="text" id="productTags" placeholder="interior, fácil cuidado, popular"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <div class="form-group full">
+                        <div class="checkbox-row">
+                            <input type="checkbox" id="pm-featured">
+                            <label for="pm-featured">Marcar como producto destacado</label>
+                        </div>
                     </div>
-                </div>
-
-                <div class="flex gap-4 mt-6">
-                    <button type="button" onclick="closeModal()" 
-                            class="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                        Cancelar
-                    </button>
-                    <button type="submit" 
-                            class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
-                        <i class="fas fa-save mr-2"></i>
-                        Guardar Producto
-                    </button>
                 </div>
             </form>
         </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeProductModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="submitProduct()">
+                <i class="fas fa-save"></i> Guardar
+            </button>
+        </div>
     </div>
+</div>
 
-<!-- 1. Axios (ya lo tienes en <head>) -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- ═══ MODAL: VENTA ══════════════════════════════════════════════════════ -->
+<div id="sale-modal" class="modal-overlay" onclick="if(event.target===this)closeSaleModal()">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="modal-title">Nueva Venta Física</span>
+            <button class="modal-close" onclick="closeSaleModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
 
-<!-- 2. Admin Auth -->
+            <div class="form-grid" style="margin-bottom:1.25rem">
+                <div class="form-group">
+                    <label>Nombre del cliente</label>
+                    <input type="text" id="sm-client-name" placeholder="Opcional">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="sm-client-phone" placeholder="Opcional">
+                </div>
+                <div class="form-group full">
+                    <label>Método de pago *</label>
+                    <select id="sm-payment" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="nequi">Nequi</option>
+                        <option value="daviplata">Daviplata</option>
+                        <option value="tarjeta">Tarjeta</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom:0.75rem">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+                    <label style="font-size:0.75rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.05em">
+                        Productos *
+                    </label>
+                    <button class="btn btn-secondary" onclick="addSaleItem()" style="font-size:0.78rem;padding:0.3rem 0.7rem">
+                        <i class="fas fa-plus"></i> Agregar
+                    </button>
+                </div>
+                <div id="sale-items-container" class="sale-items-list"></div>
+            </div>
+
+            <div class="sale-total-bar">
+                <span class="sale-total-label">Total de la venta</span>
+                <span class="sale-total-value" id="sm-total">$0</span>
+            </div>
+
+            <div class="form-group" style="margin-top:1rem">
+                <label>Notas</label>
+                <textarea id="sm-notes" rows="2" placeholder="Observaciones opcionales..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeSaleModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="submitSale()">
+                <i class="fas fa-check"></i> Registrar Venta
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══════════════════════════════════════════════════════════ -->
+<script src="../scripts/auth-api.js"></script>
 <script src="../scripts/admin-auth.js"></script>
+<script>
+// ── Axios interceptor ──────────────────────────────────────────────────────
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem('growhouse-auth-token');
+    if (token) config.headers['Authorization'] = `Bearer ${token}`;
+    return config;
+});
 
-    <script>
-        const API_URL = window.GROW_HOUSE_API + '/admin/products';
-        let currentPage = 1;
-        let totalPages = 1;
-        let currentEditingId = null;
+axios.interceptors.response.use(
+    r => r,
+    err => {
+        if (err.response?.status === 401) window.location.href = 'login.html';
+        return Promise.reject(err);
+    }
+);
 
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0
-            }).format(amount);
+// ── URLs ───────────────────────────────────────────────────────────────────
+const PRODUCTS_URL = window.GROW_HOUSE_API + '/admin/products';
+const SALES_URL    = window.GROW_HOUSE_API + '/sales';
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    if (name === 'ventas' && !vLoaded) loadSales();
+    if (name === 'estadisticas') loadStats();
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function fmt(n) {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency', currency: 'COP', maximumFractionDigits: 0
+    }).format(n || 0);
+}
+
+function toast(msg, type = 'success') {
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+function catBadge(c) {
+    const map = {
+        plantas:      'badge-green',
+        materas:      'badge-orange',
+        decoraciones: 'badge-purple',
+        implementos:  'badge-blue'
+    };
+    const labels = {
+        plantas: 'Plantas', materas: 'Materas',
+        decoraciones: 'Decoraciones', implementos: 'Implementos'
+    };
+    return `<span class="badge ${map[c]||'badge-gray'}">${labels[c]||c}</span>`;
+}
+
+function statusBadge(s) {
+    const map = {
+        active: ['badge-green','Activo'],
+        inactive: ['badge-gray','Inactivo'],
+        discontinued: ['badge-red','Descontinuado'],
+        'coming-soon': ['badge-blue','Próximamente']
+    };
+    const [cls, label] = map[s] || ['badge-gray', s];
+    return `<span class="badge ${cls}">${label}</span>`;
+}
+
+function stockColor(q, alert) {
+    if (q === 0) return 'color:var(--red)';
+    if (q <= alert) return 'color:#c05621';
+    return 'color:var(--green-dark)';
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// PRODUCTOS
+// ══════════════════════════════════════════════════════════════════════════
+let pPage = 1, pTotal = 1;
+
+async function loadProducts(page = 1) {
+    pPage = page;
+    const tbody = document.getElementById('products-tbody');
+    tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div> Cargando...</div></td></tr>';
+
+    try {
+        const search   = document.getElementById('p-search').value;
+        const category = document.getElementById('p-category').value;
+        const status   = document.getElementById('p-status').value;
+
+        let url = `${PRODUCTS_URL}?page=${page}&limit=20`;
+        if (search)   url += `&search=${encodeURIComponent(search)}`;
+        if (category) url += `&category=${category}`;
+        if (status)   url += `&status=${status}`;
+
+        const { data: res } = await axios.get(url);
+        const products = res.data || [];
+        const pag      = res.pagination || {};
+
+        pTotal = pag.pages || 1;
+        document.getElementById('p-info').textContent   = `${products.length} de ${pag.total || 0} productos`;
+        document.getElementById('p-pages').textContent  = `${pag.page || 1} / ${pTotal}`;
+        document.getElementById('p-prev').disabled      = page <= 1;
+        document.getElementById('p-next').disabled      = page >= pTotal;
+
+        // Stats
+        const active = products.filter(p => p.status === 'active').length;
+        const low    = products.filter(p => p.quantity <= p.lowStockAlert && p.quantity > 0).length;
+        const out    = products.filter(p => p.quantity === 0).length;
+        document.getElementById('st-total').textContent  = pag.total || products.length;
+        document.getElementById('st-active').textContent = active;
+        document.getElementById('st-low').textContent    = low;
+        document.getElementById('st-out').textContent    = out;
+
+        if (!products.length) {
+            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-box-open"></i><p>No se encontraron productos</p></div></td></tr>';
+            return;
         }
 
-        async function loadProducts(page = 1) {
-            try {
-                currentPage = page;
-                const search = document.getElementById('searchInput').value;
-                const category = document.getElementById('categoryFilter').value;
-                const status = document.getElementById('statusFilter').value;
+        tbody.innerHTML = products.map(p => `
+            <tr>
+                <td>
+                    <div class="product-cell">
+                        <img class="product-img" src="${p.mainImage}" alt="${p.name}"
+                             onerror="this.src='https://via.placeholder.com/44'">
+                        <div>
+                            <div class="product-name">${p.name}</div>
+                            <div class="product-brand">${p.brand || 'Sin marca'}</div>
+                        </div>
+                    </div>
+                </td>
+                <td>${catBadge(p.category)}</td>
+                <td>
+                    <div style="font-weight:600">${fmt(p.price)}</div>
+                    ${p.originalPrice ? `<div style="font-size:0.75rem;color:var(--gray-400);text-decoration:line-through">${fmt(p.originalPrice)}</div>` : ''}
+                </td>
+                <td>
+                    <span style="font-weight:600;${stockColor(p.quantity, p.lowStockAlert)}">${p.quantity}</span>
+                    ${p.quantity <= p.lowStockAlert && p.quantity > 0 ? ' <i class="fas fa-exclamation-triangle" style="color:#c05621;font-size:0.75rem"></i>' : ''}
+                    ${p.quantity === 0 ? ' <i class="fas fa-times-circle" style="color:var(--red);font-size:0.75rem"></i>' : ''}
+                </td>
+                <td>${statusBadge(p.status)}</td>
+                <td style="font-family:'Poppins',monospace;font-size:0.82rem">${p.salesCount || 0}</td>
+                <td>
+                    <div class="action-btns">
+                        <button class="icon-btn icon-btn-edit" onclick="editProduct('${p.id}')" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="icon-btn icon-btn-star ${p.featured ? 'starred' : ''}"
+                                onclick="toggleFeatured('${p.id}')" title="${p.featured ? 'Quitar destacado' : 'Destacar'}">
+                            <i class="${p.featured ? 'fas' : 'far'} fa-star"></i>
+                        </button>
+                        <button class="icon-btn icon-btn-del" onclick="deleteProduct('${p.id}','${p.name}')" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
 
-                let url = `${API_URL}?page=${page}&limit=20`;
-                if (search) url += `&search=${search}`;
-                if (category) url += `&category=${category}`;
-                if (status) url += `&status=${status}`;
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>Error al cargar productos</p></div></td></tr>';
+    }
+}
 
+// ── Producto modal ─────────────────────────────────────────────────────────
+function openProductModal(product = null) {
+    document.getElementById('product-form').reset();
+    document.getElementById('pm-id').value = '';
+    document.getElementById('pm-title').textContent = 'Nuevo Producto';
 
-                const response = await axios.get(url);
-                const { data, pagination } = response.data;
+    if (product) {
+        document.getElementById('pm-title').textContent      = 'Editar Producto';
+        document.getElementById('pm-id').value               = product.id;
+        document.getElementById('pm-name').value             = product.name;
+        document.getElementById('pm-category').value         = product.category;
+        document.getElementById('pm-brand').value            = product.brand || '';
+        document.getElementById('pm-price').value            = product.price;
+        document.getElementById('pm-original-price').value   = product.originalPrice || '';
+        document.getElementById('pm-quantity').value         = product.quantity;
+        document.getElementById('pm-low-stock').value        = product.lowStockAlert || 10;
+        document.getElementById('pm-description').value      = product.description;
+        document.getElementById('pm-image').value            = product.mainImage;
+        document.getElementById('pm-status').value           = product.status;
+        document.getElementById('pm-featured').checked       = product.featured;
+        document.getElementById('pm-tags').value             = (product.tags || []).join(', ');
+    }
 
-                displayProducts(data);
-                updatePagination(pagination);
-                updateStats(data);
+    document.getElementById('product-modal').classList.add('open');
+}
 
-            } catch (error) {
-                console.error('Error loading products:', error);
-                if (error.response?.status === 401) {
-                    adminAuth.redirectToLogin('Tu sesión ha expirado');
-                } else {
-                    alert('Error al cargar productos');
-                }
-            }
+function closeProductModal() {
+    document.getElementById('product-modal').classList.remove('open');
+}
+
+async function editProduct(id) {
+    try {
+        const { data: res } = await axios.get(`${PRODUCTS_URL}/${id}`);
+        openProductModal(res.data);
+    } catch { toast('Error al cargar producto', 'error'); }
+}
+
+async function submitProduct() {
+    const id = document.getElementById('pm-id').value;
+    const payload = {
+        name:          document.getElementById('pm-name').value,
+        category:      document.getElementById('pm-category').value,
+        brand:         document.getElementById('pm-brand').value || null,
+        price:         parseInt(document.getElementById('pm-price').value),
+        originalPrice: document.getElementById('pm-original-price').value
+                       ? parseInt(document.getElementById('pm-original-price').value) : null,
+        quantity:      parseInt(document.getElementById('pm-quantity').value),
+        lowStockAlert: parseInt(document.getElementById('pm-low-stock').value),
+        description:   document.getElementById('pm-description').value,
+        mainImage:     document.getElementById('pm-image').value,
+        status:        document.getElementById('pm-status').value,
+        featured:      document.getElementById('pm-featured').checked,
+        tags:          document.getElementById('pm-tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+    };
+
+    try {
+        if (id) {
+            await axios.put(`${PRODUCTS_URL}/${id}`, payload);
+            toast('Producto actualizado ✓');
+        } else {
+            await axios.post(PRODUCTS_URL, payload);
+            toast('Producto creado ✓');
+        }
+        closeProductModal();
+        loadProducts(pPage);
+    } catch (err) {
+        toast(err.response?.data?.message || 'Error al guardar', 'error');
+    }
+}
+
+async function toggleFeatured(id) {
+    try {
+        await axios.post(`${PRODUCTS_URL}/${id}/featured`);
+        loadProducts(pPage);
+    } catch { toast('Error al cambiar destacado', 'error'); }
+}
+
+async function deleteProduct(id, name) {
+    if (!confirm(`¿Eliminar "${name}"?`)) return;
+    try {
+        await axios.delete(`${PRODUCTS_URL}/${id}`);
+        toast('Producto eliminado');
+        loadProducts(pPage);
+    } catch { toast('Error al eliminar', 'error'); }
+}
+
+document.getElementById('p-search').addEventListener('keydown', e => {
+    if (e.key === 'Enter') loadProducts();
+});
+
+// ══════════════════════════════════════════════════════════════════════════
+// VENTAS
+// ══════════════════════════════════════════════════════════════════════════
+let vPage = 1, vTotal = 1, vLoaded = false;
+let allProducts = [];
+
+async function loadAllProducts() {
+    if (allProducts.length) return;
+    try {
+        const { data: res } = await axios.get(`${PRODUCTS_URL}?limit=200&status=active`);
+        allProducts = res.data || [];
+    } catch {}
+}
+
+async function loadSales(page = 1) {
+    vPage   = page;
+    vLoaded = true;
+    const tbody = document.getElementById('sales-tbody');
+    tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div> Cargando...</div></td></tr>';
+
+    try {
+        const start   = document.getElementById('v-start').value;
+        const end     = document.getElementById('v-end').value;
+        const payment = document.getElementById('v-payment').value;
+
+        let url = `${SALES_URL}?page=${page}&limit=20`;
+        if (start)   url += `&startDate=${start}`;
+        if (end)     url += `&endDate=${end}`;
+        if (payment) url += `&paymentMethod=${payment}`;
+
+        const { data: res } = await axios.get(url);
+        const sales = res.data?.sales || [];
+        const pag   = res.data?.pagination || {};
+
+        vTotal = pag.totalPages || 1;
+        document.getElementById('v-info').textContent  = `${sales.length} de ${pag.total || 0} ventas`;
+        document.getElementById('v-pages').textContent = `${pag.page || 1} / ${vTotal}`;
+        document.getElementById('v-prev').disabled     = page <= 1;
+        document.getElementById('v-next').disabled     = page >= vTotal;
+
+        if (!sales.length) {
+            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-receipt"></i><p>No hay ventas en este período</p></div></td></tr>';
+            return;
         }
 
-        function displayProducts(products) {
-            const tbody = document.getElementById('productsTableBody');
-            
-            if (products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No se encontraron productos</td></tr>';
-                return;
-            }
+        tbody.innerHTML = sales.map(s => `
+            <tr>
+                <td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gray-400)">${s._id.slice(-6).toUpperCase()}</td>
+                <td style="font-size:0.82rem">${new Date(s.createdAt).toLocaleDateString('es-CO', {day:'2-digit',month:'short',year:'numeric'})}</td>
+                <td style="font-size:0.82rem">${s.client?.name || 'Cliente ocasional'}</td>
+                <td style="font-size:0.82rem">${s.items?.length || 0} ítem(s)</td>
+                <td><span class="badge badge-blue">${s.paymentMethod || '—'}</span></td>
+                <td style="font-weight:700;color:var(--green-dark);font-family:'DM Mono',monospace">${fmt(s.total)}</td>
+                <td>
+                    <button class="icon-btn icon-btn-del" onclick="deleteSale('${s._id}')" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
 
-            tbody.innerHTML = products.map(product => `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-3">
-                            <img src="${product.mainImage}" alt="${product.name}" 
-                                 class="w-12 h-12 object-cover rounded-lg">
-                            <div>
-                                <div class="font-medium text-gray-900">${product.name}</div>
-                                <div class="text-sm text-gray-500">${product.brand || 'Sin marca'}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(product.category)}">
-                            ${getCategoryName(product.category)}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="font-medium text-gray-900">${formatCurrency(product.price)}</div>
-                        ${product.originalPrice ? `<div class="text-sm text-gray-500 line-through">${formatCurrency(product.originalPrice)}</div>` : ''}
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium ${getStockColor(product.quantity, product.lowStockAlert)}">${product.quantity}</span>
-                            ${product.quantity <= product.lowStockAlert ? '<i class="fas fa-exclamation-triangle text-yellow-500"></i>' : ''}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(product.status)}">
-                            ${getStatusText(product.status)}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-gray-900">${product.salesCount || 0}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <button onclick="editProduct('${product.id}')" 
-                                    class="text-blue-600 hover:text-blue-800" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="toggleFeatured('${product.id}', ${product.featured})" 
-                                    class="text-yellow-600 hover:text-yellow-800" title="Destacar">
-                                <i class="${product.featured ? 'fas' : 'far'} fa-star"></i>
-                            </button>
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>Error al cargar ventas</p></div></td></tr>';
+    }
+}
 
-                            <button onclick="deleteProduct('${product.id}')" 
-                                    class="text-red-600 hover:text-red-800" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
+// ── Sale modal ─────────────────────────────────────────────────────────────
+async function openSaleModal() {
+    await loadAllProducts();
+    document.getElementById('sale-items-container').innerHTML = '';
+    document.getElementById('sm-client-name').value  = '';
+    document.getElementById('sm-client-phone').value = '';
+    document.getElementById('sm-payment').value      = '';
+    document.getElementById('sm-notes').value        = '';
+    document.getElementById('sm-total').textContent  = '$0';
+    addSaleItem();
+    document.getElementById('sale-modal').classList.add('open');
+}
+
+function closeSaleModal() {
+    document.getElementById('sale-modal').classList.remove('open');
+}
+
+function addSaleItem() {
+    const container = document.getElementById('sale-items-container');
+    const div = document.createElement('div');
+    div.className = 'sale-item-row';
+
+    const options = allProducts.map(p =>
+        `<option value="${p.id}" data-price="${p.price}" data-stock="${p.quantity}">${p.name} (stock: ${p.quantity})</option>`
+    ).join('');
+
+    div.innerHTML = `
+        <select onchange="calcSaleTotal()">
+            <option value="">Seleccionar producto...</option>
+            ${options}
+        </select>
+        <input type="number" min="1" value="1" placeholder="Cant." oninput="calcSaleTotal()">
+        <input type="text" readonly placeholder="Subtotal" style="background:var(--gray-50);color:var(--gray-600)">
+        <button class="remove-item-btn" onclick="this.parentElement.remove();calcSaleTotal()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+function calcSaleTotal() {
+    let total = 0;
+    document.querySelectorAll('#sale-items-container .sale-item-row').forEach(row => {
+        const select = row.querySelector('select');
+        const qty    = parseInt(row.querySelector('input[type=number]')?.value) || 0;
+        const opt    = select?.selectedOptions[0];
+        const price  = parseFloat(opt?.dataset?.price) || 0;
+        const sub    = price * qty;
+        const subInput = row.querySelector('input[readonly]');
+        if (subInput) subInput.value = sub > 0 ? fmt(sub) : '';
+        total += sub;
+    });
+    document.getElementById('sm-total').textContent = fmt(total);
+}
+
+async function submitSale() {
+    const rows = document.querySelectorAll('#sale-items-container .sale-item-row');
+    const items = [];
+
+    for (const row of rows) {
+        const productId = row.querySelector('select')?.value;
+        const quantity  = parseInt(row.querySelector('input[type=number]')?.value) || 0;
+        if (!productId || quantity < 1) continue;
+        items.push({ productId, quantity });
+    }
+
+    if (!items.length) { toast('Agrega al menos un producto', 'error'); return; }
+
+    const paymentMethod = document.getElementById('sm-payment').value;
+    if (!paymentMethod) { toast('Selecciona el método de pago', 'error'); return; }
+
+    const payload = {
+        items,
+        paymentMethod,
+        client: {
+            name:  document.getElementById('sm-client-name').value  || undefined,
+            phone: document.getElementById('sm-client-phone').value || undefined
+        },
+        notes: document.getElementById('sm-notes').value || undefined
+    };
+
+    try {
+        await axios.post(SALES_URL, payload);
+        toast('¡Venta registrada exitosamente! ✓');
+        closeSaleModal();
+        loadSales(1);
+        loadProducts(pPage); // Actualiza stock
+    } catch (err) {
+        toast(err.response?.data?.message || 'Error al registrar venta', 'error');
+    }
+}
+
+async function deleteSale(id) {
+    if (!confirm('¿Eliminar esta venta? Se restaurará el inventario.')) return;
+    try {
+        await axios.delete(`${SALES_URL}/${id}`);
+        toast('Venta eliminada y stock restaurado');
+        loadSales(vPage);
+    } catch { toast('Error al eliminar venta', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// ESTADÍSTICAS
+// ══════════════════════════════════════════════════════════════════════════
+async function loadStats() {
+    try {
+        const { data: res } = await axios.get(`${SALES_URL}/stats`);
+        const d = res.data;
+
+        document.getElementById('s-today-total').textContent = fmt(d.summary?.today?.total);
+        document.getElementById('s-today-count').textContent = `${d.summary?.today?.count || 0} ventas`;
+        document.getElementById('s-week-total').textContent  = fmt(d.summary?.week?.total);
+        document.getElementById('s-week-count').textContent  = `${d.summary?.week?.count || 0} ventas`;
+        document.getElementById('s-month-total').textContent = fmt(d.summary?.month?.total);
+        document.getElementById('s-month-count').textContent = `${d.summary?.month?.count || 0} ventas`;
+
+        const topList = document.getElementById('top-products-list');
+        if (d.topProducts?.length) {
+            topList.innerHTML = d.topProducts.map((p, i) => `
+                <div class="top-product-item">
+                    <div style="display:flex;align-items:center;gap:0.75rem">
+                        <span style="font-size:1rem">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'•'}</span>
+                        <div>
+                            <div class="top-product-name">${p.name}</div>
+                            <div style="font-size:0.75rem;color:var(--gray-400)">${fmt(p.revenue)} en ingresos</div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
+                    <span class="top-product-qty">${p.quantity} uds</span>
+                </div>
             `).join('');
+        } else {
+            topList.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Sin datos de ventas aún</p></div>';
         }
 
-        function updatePagination(pagination) {
-            totalPages = pagination.pages;
-            document.getElementById('currentPage').textContent = pagination.page;
-            document.getElementById('totalPages').textContent = totalPages;
-            //document.getElementById('totalCount').textContent = pagination.total;
-            document.getElementById('showingFrom').textContent = ((pagination.page - 1) * 20) + 1;
-            document.getElementById('showingTo').textContent = Math.min(pagination.page * 20, pagination.total);
+    } catch (err) {
+        console.error(err);
+        toast('Error al cargar estadísticas', 'error');
+    }
+}
 
-            document.getElementById('prevBtn').disabled = pagination.page === 1;
-            document.getElementById('nextBtn').disabled = pagination.page === totalPages;
-        }
+// ── Logout ─────────────────────────────────────────────────────────────────
+function logout() {
+    if (adminAuth) adminAuth.logout();
+    else {
+        localStorage.removeItem('growhouse-auth-token');
+        localStorage.removeItem('growhouse-user-data');
+        window.location.href = 'index.html';
+    }
+}
 
-        function updateStats(products) {
-            const active = products.filter(p => p.status === 'active').length;
-            const lowStock = products.filter(p => p.quantity <= p.lowStockAlert).length;
-            const outOfStock = products.filter(p => p.quantity === 0).length;
-
-            document.getElementById('totalProducts').textContent = products.length;
-            document.getElementById('activeProducts').textContent = active;
-            document.getElementById('lowStockProducts').textContent = lowStock;
-            document.getElementById('outOfStockProducts').textContent = outOfStock;
-        }
-
-        function getCategoryColor(category) {
-            const colors = {
-                'plantas': 'bg-green-100 text-green-800',
-                'materas': 'bg-orange-100 text-orange-800',
-                'decoraciones': 'bg-purple-100 text-purple-800',
-                'implementos': 'bg-blue-100 text-blue-800'
-            };
-            return colors[category] || 'bg-gray-100 text-gray-800';
-        }
-
-        function getCategoryName(category) {
-            const names = {
-                'plantas': 'Plantas',
-                'materas': 'Materas',
-                'decoraciones': 'Decoraciones',
-                'implementos': 'Implementos'
-            };
-            return names[category] || category;
-        }
-
-        function getStockColor(quantity, alert) {
-            if (quantity === 0) return 'text-red-600';
-            if (quantity <= alert) return 'text-yellow-600';
-            return 'text-green-600';
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                'active': 'bg-green-100 text-green-800',
-                'inactive': 'bg-gray-100 text-gray-800',
-                'discontinued': 'bg-red-100 text-red-800',
-                'coming-soon': 'bg-blue-100 text-blue-800'
-            };
-            return colors[status] || 'bg-gray-100 text-gray-800';
-        }
-
-        function getStatusText(status) {
-            const texts = {
-                'active': 'Activo',
-                'inactive': 'Inactivo',
-                'discontinued': 'Descontinuado',
-                'coming-soon': 'Próximamente'
-            };
-            return texts[status] || status;
-        }
-
-        function openCreateModal() {
-            currentEditingId = null;
-            document.getElementById('modalTitle').textContent = 'Nuevo Producto';
-            document.getElementById('productForm').reset();
-            document.getElementById('productId').value = '';
-            document.getElementById('productModal').classList.remove('hidden');
-        }
-
-        async function editProduct(id) {
-            try {
-                const response = await axios.get(`${API_URL}/${id}`);
-                const product = response.data.data;
-
-                currentEditingId = id;
-                document.getElementById('modalTitle').textContent = 'Editar Producto';
-                document.getElementById('productId').value = product.id;
-                document.getElementById('productName').value = product.name;
-                document.getElementById('productCategory').value = product.category;
-                document.getElementById('productBrand').value = product.brand || '';
-                document.getElementById('productPrice').value = product.price;
-                document.getElementById('productOriginalPrice').value = product.originalPrice || '';
-                document.getElementById('productQuantity').value = product.quantity;
-                document.getElementById('productLowStockAlert').value = product.lowStockAlert;
-                document.getElementById('productDescription').value = product.description;
-                document.getElementById('productMainImage').value = product.mainImage;
-                document.getElementById('productStatus').value = product.status;
-                document.getElementById('productFeatured').checked = product.featured;
-                document.getElementById('productTags').value = (product.tags || []).join(', ');
-
-                document.getElementById('productModal').classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Error loading product:', error);
-                alert('Error al cargar producto');
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('productModal').classList.add('hidden');
-            currentEditingId = null;
-        }
-
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const productData = {
-                name: document.getElementById('productName').value,
-                category: document.getElementById('productCategory').value,
-                brand: document.getElementById('productBrand').value || null,
-                price: parseFloat(document.getElementById('productPrice').value),
-                originalPrice: document.getElementById('productOriginalPrice').value ? parseFloat(document.getElementById('productOriginalPrice').value) : null,
-                quantity: parseInt(document.getElementById('productQuantity').value),
-                lowStockAlert: parseInt(document.getElementById('productLowStockAlert').value),
-                description: document.getElementById('productDescription').value,
-                mainImage: document.getElementById('productMainImage').value,
-                status: document.getElementById('productStatus').value,
-                featured: document.getElementById('productFeatured').checked,
-                tags: document.getElementById('productTags').value.split(',').map(t => t.trim()).filter(t => t)
-            };
-
-            try {
-                if (currentEditingId) {
-                    await axios.put(`${API_URL}/${currentEditingId}`, productData);
-                    alert('Producto actualizado exitosamente');
-                } else {
-                    await axios.post(API_URL, productData);
-                    alert('Producto creado exitosamente');
-                }
-
-                closeModal();
-                loadProducts(currentPage);
-
-            } catch (error) {
-                console.error('Error saving product:', error);
-                alert(error.response?.data?.message || 'Error al guardar producto');
-            }
-        });
-
-        async function toggleFeatured(id, currentStatus) {
-            try {
-                await axios.post(`${API_URL}/${id}/featured`);
-                loadProducts(currentPage);
-            } catch (error) {
-                console.error('Error toggling featured:', error);
-                alert('Error al cambiar estado destacado');
-            }
-        }
-
-        async function deleteProduct(id) {
-            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
-
-            try {
-                await axios.delete(`${API_URL}/${id}`); 
-                alert('Producto eliminado exitosamente');
-                loadProducts(currentPage);
-            } catch (error) {
-                console.error('Error deleting product:', error);
-                alert('Error al eliminar producto');
-            }
-        }
-
-        function previousPage() {
-            if (currentPage > 1) {
-                loadProducts(currentPage - 1);
-            }
-        }
-
-        function nextPage() {
-            if (currentPage < totalPages) {
-                loadProducts(currentPage + 1);
-            }
-        }
-
-        function logout() {
-            adminAuth.logout();
-        }
-
-        // Load products on page load
-        loadProducts();
-
-        // Search on enter
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') loadProducts();
-        });
-
-        document.getElementById('productModal').addEventListener('click', function(e) {
-            if (e.target === this) {closeModal();}
-        });
-
-        // Abrir modal directo si viene con ?edit=ID desde otra página
-        const editParam = new URLSearchParams(window.location.search).get('edit');
-        if (editParam) {
-            // Esperar a que los productos carguen antes de abrir el modal
-            const waitAndEdit = setInterval(async () => {
-                if (document.getElementById('productModal')) {
-                    clearInterval(waitAndEdit);
-                    try {
-                        const token = localStorage.getItem('growhouse-auth-token');
-                        const res = await axios.get(`${window.GROW_HOUSE_API}/products/${editParam}`, {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        const product = res.data.data;
-                        currentEditingId = editParam;
-                        document.getElementById('modalTitle').textContent = 'Editar Producto';
-                        document.getElementById('productId').value = product.id || product._id;
-                        document.getElementById('productName').value = product.name;
-                        document.getElementById('productCategory').value = product.category;
-                        document.getElementById('productBrand').value = product.brand || '';
-                        document.getElementById('productPrice').value = product.price;
-                        document.getElementById('productOriginalPrice').value = product.originalPrice || '';
-                        document.getElementById('productQuantity').value = product.quantity;
-                        document.getElementById('productLowStockAlert').value = product.lowStockAlert || 5;
-                        document.getElementById('productDescription').value = product.description;
-                        document.getElementById('productMainImage').value = product.mainImage;
-                        document.getElementById('productStatus').value = product.status || 'active';
-                        document.getElementById('productFeatured').checked = product.featured || false;
-                        document.getElementById('productTags').value = (product.tags || []).join(', ');
-                        document.getElementById('productModal').classList.remove('hidden');
-                        // Limpiar el parámetro de la URL sin recargar
-                        window.history.replaceState({}, '', 'admin-products.html');
-                    } catch (err) {
-                        console.error('Error abriendo producto para editar:', err);
-                    }
-                }
-            }, 300);
-        }
-    </script>
+// ── Init ───────────────────────────────────────────────────────────────────
+loadProducts();
+</script>
 </body>
 </html>

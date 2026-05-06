@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
                         url("../assets/images/fondo-paginacion.jpg") no-repeat center center/cover;
             min-height: 100vh;
             display: flex;
@@ -36,7 +36,7 @@
 
     <div class="w-full max-w-md p-4">
         <div class="glass-card rounded-3xl shadow-2xl p-8 md:p-10">
-            
+
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-700 mb-4">
                     <i class="fas fa-user-shield text-2xl"></i>
@@ -67,18 +67,21 @@
                         <input type="password" id="password" required
                             class="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all"
                             placeholder="••••••••">
-                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                        <button type="button" id="toggle-password"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
                             <i id="eye-icon" class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <div id="login-error" class="hidden animate-pulse bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-sm flex items-center gap-2">
+                <div id="login-error"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-sm flex items-center gap-2">
                     <i class="fas fa-exclamation-circle"></i>
                     <span id="login-error-message"></span>
                 </div>
 
-                <button type="submit" id="login-btn" class="btn-admin w-full text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-3">
+                <button type="submit" id="login-btn"
+                    class="btn-admin w-full text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-3">
                     <span>Entrar al Sistema</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -88,7 +91,7 @@
                 <p class="text-gray-400 text-xs italic">
                     Acceso exclusivo para el administrador de Grow House.
                 </p>
-                <a href="../index.html" class="inline-block mt-4 text-green-700 text-sm font-medium hover:underline">
+                <a href="index.html" class="inline-block mt-4 text-green-700 text-sm font-medium hover:underline">
                     <i class="fas fa-chevron-left mr-1"></i> Volver a la web
                 </a>
             </div>
@@ -99,59 +102,58 @@
     <script src="../scripts/auth-api.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('login-form');
-            const loginBtn = document.getElementById('login-btn');
-            const passwordInput = document.getElementById('password');
-            const togglePasswordBtn = document.getElementById('toggle-password');
-            const eyeIcon = document.getElementById('eye-icon');
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm       = document.getElementById('login-form');
+        const loginBtn        = document.getElementById('login-btn');
+        const passwordInput   = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const eyeIcon         = document.getElementById('eye-icon');
 
-            // 1. Redirección si ya está logueado
-            if (window.authAPI && authAPI.isAuthenticated()) {
-                window.location.replace('productos.html');
-            }
+        // 1. Redirección si ya está logueado
+        if (window.authAPI && authAPI.isAuthenticated()) {
+            window.location.replace('dashboard.html');
+        }
 
-            // 2. Mostrar/Ocultar Contraseña
-            togglePasswordBtn.addEventListener('click', () => {
-                const isPass = passwordInput.type === 'password';
-                passwordInput.type = isPass ? 'text' : 'password';
-                eyeIcon.className = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
-            });
-
-            // 3. Lógica de Login
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const errorBox = document.getElementById('login-error');
-                errorBox.classList.add('hidden');
-
-                const email = document.getElementById('email').value.trim();
-                const password = passwordInput.value;
-
-                // Estado de carga
-                const originalText = loginBtn.innerHTML;
-                loginBtn.disabled = true;
-                loginBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Autenticando...`;
-
-                try {
-                    const result = await window.authAPI.login(email, password);
-                    
-                    if (result.success) {
-                        window.showAuthNotification('¡Hola de nuevo, Admin!', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'productos.html'; // Tu página de gestión
-                        }, 800);
-                    } else {
-                        throw new Error(result.error || 'Credenciales no válidas');
-                    }
-                } catch (error) {
-                    document.getElementById('login-error-message').textContent = error.message;
-                    errorBox.classList.remove('hidden');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = originalText;
-                }
-            });
+        // 2. Mostrar/Ocultar Contraseña
+        togglePasswordBtn.addEventListener('click', () => {
+            const isPass = passwordInput.type === 'password';
+            passwordInput.type  = isPass ? 'text' : 'password';
+            eyeIcon.className   = isPass ? 'fas fa-eye-slash' : 'fas fa-eye';
         });
+
+        // 3. Lógica de Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const errorBox = document.getElementById('login-error');
+            errorBox.classList.add('hidden');
+
+            const email    = document.getElementById('email').value.trim();
+            const password = passwordInput.value;
+
+            const originalText  = loginBtn.innerHTML;
+            loginBtn.disabled   = true;
+            loginBtn.innerHTML  = `<i class="fas fa-circle-notch fa-spin"></i> Autenticando...`;
+
+            try {
+                const result = await window.authAPI.login(email, password);
+
+                if (result.success) {
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                } else {
+                    throw new Error(result.error || 'Credenciales no válidas');
+                }
+
+            } catch (error) {
+                document.getElementById('login-error-message').textContent = error.message;
+                errorBox.classList.remove('hidden');
+                loginBtn.disabled  = false;
+                loginBtn.innerHTML = originalText;
+            }
+        });
+    });
     </script>
 </body>
 </html>

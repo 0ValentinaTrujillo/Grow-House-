@@ -14,6 +14,9 @@
     
     <style>
         header { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Poppins', sans-serif; }
+        footer {font-family: 'Poppins', sans-serif;}
+
         .product-card {
             background: linear-gradient(145deg, #ffffff, #f8fafc);
             border: 1px solid rgba(184, 253, 181, 0.63);
@@ -23,6 +26,59 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
         }
+
+        /* ===============================
+        ICONO - RESPONSIVE
+        ================================ */
+        .icon {
+            width: 90px;   /* ✅ Más grande en móvil */
+            height: 90px;
+            display: block;
+            border-radius: 50%;
+        }
+
+        /* Tablets */
+        @media (min-width: 640px) {
+            .icon {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .chat-btn {
+                bottom: 50px;
+                right: 100px;
+            }
+            .icon {
+                width: 130px;
+                height: 130px;
+            }
+        }
+
+        /* Tablets */
+        @media (min-width: 640px) {
+            .emergency-screen {
+                bottom: 20px;
+                right: 20px;
+                left: auto;
+                width: 400px;
+                height: 500px;
+                border-radius: 18px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .emergency-screen {
+                bottom: 50px;
+                right: 250px;
+                width: 550px;
+                height: 550px;
+            }
+        }
+
     </style>
 </head>
 
@@ -35,29 +91,48 @@
                         class="w-12 h-12 rounded-full object-cover mr-4">
                     <a href="index.html" class="text-green-800 font-bold">Grow House</a>
                 </div>
-
-                <div class="hidden md:flex space-x-8">
-                    <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                <div class="hidden md:flex items-center space-x-8 ml-auto mr-8">
+                    <a href="index.html" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
                         Inicio
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="productos.html" class="text-green-800 font-semibold relative group">
+                    <a href="productos.html" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
                         Productos
-                        <span class="absolute bottom-0 left-0 w-full h-0.5 bg-green-800"></span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    <a href="index.html#categorias" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
                         Categorías
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
-                    <a href="#contacto" class="text-gray-700 hover:text-green-800 font-medium transition relative group">
+                    <a href="#contacto" class="text-gray-700 hover:text-green-800 font-medium transition group relative">
                         Contacto
-                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
-                </div>
-                
+                    <!-- Mobile button -->
+                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-button">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                    <!-- Mobile Menu -->
+                    <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                        <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
+                            <a href="index.html"
+                                class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Inicio</a>
+                            <a href="productos.html"
+                                class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Productos</a>
+                            <a href="index.html#categorias"
+                                class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Categorías</a>
+                            <a href="#contacto"
+                                class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Contacto</a>
+                        </div>
+                    </div>
+                </div> 
             </div>
         </nav>
     </header>
+
 
     <section style="width:100%; padding: 3rem 1rem;">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 mb-8">
@@ -134,22 +209,17 @@
                     </ul>
                 </div>
             </div>
-
             <!-- Línea final -->
             <div class="border-t border-green-800 pt-2 text-center">
                 <p class="text-gray-900">
-                    © 2024 Grow House. Todos los derechos reservados |
-                    <a href="#" class="hover:text-white transition">Política de Privacidad</a> |
-                    <a href="#" class="hover:text-white transition">Términos de Servicio</a>
+                    © 2024 Grow House. Catalogo de productos para tu vivero.
                 </p>
             </div>
         </div>
-
     </footer>
 
     <script src="../scripts/config.js"></script>
     <script src="../scripts/api.js"></script>
-    <script src="../scripts/Rating.js"></script>
     <script src="../scripts/productos-api.js"></script>
     
     <script>
