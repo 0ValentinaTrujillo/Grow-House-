@@ -42,7 +42,7 @@ exports.login = async (req, res) => {
             data: {
                 id:    admin._id,
                 name:  admin.name,
-                email: admin.email
+                email: admin.email,
             }
         });
 

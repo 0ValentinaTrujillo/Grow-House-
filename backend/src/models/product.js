@@ -105,49 +105,17 @@ const productSchema = new mongoose.Schema({
     // =============================================
 
     mainImage: {
-    type: String,
-    required: [true, 'La imagen principal es obligatoria'],
-    validate: {
-        validator: function(url) {
-            try {
-                const urlObj = new URL(url);
-                
-                // Dominios confiables que NO requieren extensión
-                const trustedDomains = [
-                    'images.unsplash.com',
-                    'unsplash.com',
-                    'cdn.shopify.com',
-                    'cloudinary.com',
-                    'imgur.com',
-                    'amazonaws.com',
-                    'googleusercontent.com',
-                    'pixabay.com',
-                    'pinterest.com'
-                ];
-                
-                // Validar extensión de imagen
-                const hasImageExtension = /^https?:\/\/.+\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/i.test(url);
-                
-                // Validar dominio confiable
-                const isTrustedDomain = trustedDomains.some(domain => 
-                    urlObj.hostname.includes(domain)
-                );
-                
-                // ACEPTAR SI: Es dominio confiable o tiene extensión de imagen
-                const isValid = isTrustedDomain || hasImageExtension;
-                
-                if (isValid) {
-                    return true;
-                }
-
-                return false;
-
-            } catch (error) {
-                return false;
-            }
-        },
-        message: 'La URL de la imagen no es válida o no pertenece a un dominio permitido'
-    }
+        type: String,
+        required: [true, 'La imagen principal es obligatoria'],
+        validate: {
+            validator: function(value) {
+                // Acepta Base64 o URL válida
+                const isBase64 = /^data:image\/(jpeg|png|webp);base64,/.test(value);
+                const isURL    = /^https?:\/\/.+/i.test(value);
+                return isBase64 || isURL;
+            },
+            message: 'La imagen debe ser una URL válida o una imagen en formato Base64'
+        }
 },
   
     lowStockAlert: {
