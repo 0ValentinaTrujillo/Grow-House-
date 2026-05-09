@@ -1125,8 +1125,66 @@
                         <textarea id="pm-description" required placeholder="Descripción del producto..."></textarea>
                     </div>
                     <div class="form-group full">
-                        <label>URL Imagen Principal *</label>
-                        <input type="url" id="pm-image" required placeholder="https://images.unsplash.com/...">
+                        <label>Imagen Principal *</label>
+                        <div id="image-upload-area"
+                             onclick="document.getElementById('pm-image-file').click()"
+                             style="
+                                border: 2px dashed var(--gray-200);
+                                border-radius: var(--radius-sm);
+                                padding: 1.5rem;
+                                text-align: center;
+                                cursor: pointer;
+                                transition: all 0.2s;
+                                background: var(--gray-50);
+                                position: relative;
+                             "
+                             onmouseover="this.style.borderColor='var(--green-dark)'"
+                             onmouseout="this.style.borderColor='var(--gray-200)'">
+                    
+                            <!-- Preview -->
+                            <img id="pm-image-preview"
+                                 src=""
+                                 alt="Preview"
+                                 style="
+                                    display: none;
+                                    width: 120px;
+                                    height: 120px;
+                                    object-fit: cover;
+                                    border-radius: 8px;
+                                    margin: 0 auto 0.75rem;
+                                    border: 1px solid var(--gray-200);
+                                 ">
+                    
+                            <!-- Ícono y texto -->
+                            <div id="pm-image-placeholder">
+                                <i class="fas fa-cloud-upload-alt"
+                                   style="font-size:2rem;color:var(--gray-400);margin-bottom:0.5rem;display:block"></i>
+                                <p style="font-size:0.85rem;color:var(--gray-600);font-weight:500">
+                                    Haz clic para seleccionar una imagen
+                                </p>
+                                <p style="font-size:0.75rem;color:var(--gray-400);margin-top:0.25rem">
+                                    JPG, PNG o WEBP — Máx. 5MB
+                                </p>
+                            </div>
+                    
+                            <!-- Botón cambiar (visible cuando hay imagen) -->
+                            <div id="pm-image-change"
+                                 style="display:none;margin-top:0.5rem">
+                                <span style="font-size:0.78rem;color:var(--green-dark);font-weight:600">
+                                    <i class="fas fa-edit"></i> Cambiar imagen
+                                </span>
+                            </div>
+                        </div>
+                    
+                        <!-- Input oculto -->
+                        <input type="file"
+                               id="pm-image-file"
+                               accept="image/jpeg,image/png,image/webp"
+                               style="display:none"
+                               onchange="handleImageUpload(event)">
+                    
+                        <!-- Base64 oculto que se envía al backend -->
+                        <input type="hidden" id="pm-image">
                     </div>
                     <div class="form-group">
                         <label>Estado</label>
@@ -1232,10 +1290,14 @@ axios.interceptors.request.use(config => {
     return config;
 });
 
+let redirecting = false;
 axios.interceptors.response.use(
     r => r,
     err => {
-        if (err.response?.status === 401) window.location.href = 'login.html';
+        if (err.response?.status === 401 && !redirecting) {
+            redirecting = true;
+            window.location.href = 'login.html';
+        }
         return Promise.reject(err);
     }
 );
@@ -1409,7 +1471,13 @@ function openProductModal(product = null) {
         document.getElementById('pm-quantity').value         = product.quantity;
         document.getElementById('pm-low-stock').value        = product.lowStockAlert || 10;
         document.getElementById('pm-description').value      = product.description;
-        document.getElementById('pm-image').value            = product.mainImage;
+                // Mostrar imagen existente en el preview
+        const preview = document.getElementById('pm-image-preview');
+        preview.src   = product.mainImage;
+        preview.style.display = 'block';
+        document.getElementById('pm-image-placeholder').style.display = 'none';
+        document.getElementById('pm-image-change').style.display      = 'block';
+        document.getElementById('pm-image').value = product.mainImage;
         document.getElementById('pm-status').value           = product.status;
         document.getElementById('pm-featured').checked       = product.featured;
         document.getElementById('pm-tags').value             = (product.tags || []).join(', ');
@@ -1570,33 +1638,127 @@ function addSaleItem() {
     const container = document.getElementById('sale-items-container');
     const div = document.createElement('div');
     div.className = 'sale-item-row';
-
-    const options = allProducts.map(p =>
-        `<option value="${p.id}" data-price="${p.price}" data-stock="${p.quantity}">${p.name} (stock: ${p.quantity})</option>`
-    ).join('');
+    div.style.cssText = 'display:grid;grid-template-columns:1fr 80px 100px 32px;gap:0.5rem;align-items:center;background:var(--gray-50);padding:0.6rem 0.75rem;border-radius:var(--radius-sm);border:1px solid var(--gray-200);position:relative';
 
     div.innerHTML = `
-        <select onchange="calcSaleTotal()">
-            <option value="">Seleccionar producto...</option>
-            ${options}
-        </select>
-        <input type="number" min="1" value="1" placeholder="Cant." oninput="calcSaleTotal()">
-        <input type="text" readonly placeholder="Subtotal" style="background:var(--gray-50);color:var(--gray-600)">
-        <button class="remove-item-btn" onclick="this.parentElement.remove();calcSaleTotal()">
+        <!-- Búsqueda de producto -->
+        <div style="position:relative">
+            <input type="text"
+                   placeholder=" Buscar producto..."
+                   autocomplete="off"
+                   style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--gray-200);border-radius:6px;font-size:0.82rem;font-family:'DM Sans',sans-serif;outline:none;"
+                   oninput="searchProduct(this)"
+                   onfocus="showDropdown(this)"
+                   onblur="setTimeout(()=>hideDropdown(this),200)">
+            <input type="hidden" class="product-id-input">
+            <input type="hidden" class="product-price-input">
+
+            <!-- Dropdown resultados -->
+            <div class="product-dropdown"
+                 style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--gray-200);border-radius:6px;box-shadow:var(--shadow-md);z-index:50;max-height:200px;overflow-y:auto;margin-top:2px">
+            </div>
+        </div>
+
+        <!-- Cantidad -->
+        <input type="number" min="1" value="1"
+               style="padding:0.4rem 0.6rem;border:1px solid var(--gray-200);border-radius:6px;font-size:0.82rem;font-family:'DM Sans',sans-serif;outline:none;text-align:center;"
+               oninput="calcSaleTotal()"
+               placeholder="Cant.">
+
+        <!-- Subtotal -->
+        <input type="text" readonly placeholder="Subtotal"
+               style="padding:0.4rem 0.6rem;border:1px solid var(--gray-200);border-radius:6px;font-size:0.82rem;background:var(--gray-50);color:var(--gray-600);font-family:'DM Mono',monospace;outline:none;">
+
+        <!-- Eliminar -->
+        <button class="remove-item-btn" onclick="this.closest('.sale-item-row').remove();calcSaleTotal()"
+                style="width:28px;height:28px;border-radius:6px;border:none;background:var(--red-light);color:var(--red);cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;">
             <i class="fas fa-times"></i>
         </button>
     `;
     container.appendChild(div);
 }
 
+function searchProduct(input) {
+    const query    = input.value.toLowerCase().trim();
+    const dropdown = input.parentElement.querySelector('.product-dropdown');
+
+    if (!query) { dropdown.style.display = 'none'; return; }
+
+    const results = allProducts.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        (p.brand && p.brand.toLowerCase().includes(query)) ||
+        (p.category && p.category.toLowerCase().includes(query))
+    ).slice(0, 8);
+
+    if (!results.length) {
+        dropdown.innerHTML = `
+            <div style="padding:0.75rem;text-align:center;font-size:0.82rem;color:var(--gray-400)">
+                No se encontraron productos
+            </div>`;
+        dropdown.style.display = 'block';
+        return;
+    }
+
+    dropdown.innerHTML = results.map(p => `
+        <div onclick="selectProduct(this, '${p.id}', ${p.price}, '${p.name.replace(/'/g,"\\'")}', ${p.quantity})"
+             style="padding:0.6rem 0.75rem;cursor:pointer;border-bottom:1px solid var(--gray-100);transition:background 0.15s;"
+             onmouseover="this.style.background='var(--gray-50)'"
+             onmouseout="this.style.background='white'">
+            <div style="font-weight:600;font-size:0.83rem;color:var(--gray-800)">${p.name}</div>
+            <div style="display:flex;gap:1rem;margin-top:0.2rem">
+                <span style="font-size:0.75rem;color:var(--green-dark);font-weight:600">${fmt(p.price)}</span>
+                <span style="font-size:0.75rem;color:${p.quantity <= 5 ? 'var(--red)' : 'var(--gray-400)'}">
+                    Stock: ${p.quantity}
+                </span>
+                ${p.brand ? `<span style="font-size:0.75rem;color:var(--gray-400)">${p.brand}</span>` : ''}
+            </div>
+        </div>
+    `).join('');
+
+    dropdown.style.display = 'block';
+}
+
+function selectProduct(el, id, price, name, stock) {
+    const row      = el.closest('.sale-item-row');
+    const input    = row.querySelector('input[type=text]:not([readonly])');
+    const idInput  = row.querySelector('.product-id-input');
+    const priceInput = row.querySelector('.product-price-input');
+    const dropdown = row.querySelector('.product-dropdown');
+    const qtyInput = row.querySelector('input[type=number]');
+
+    // Validar stock
+    if (stock === 0) {
+        toast(`"${name}" no tiene stock disponible`, 'error');
+        return;
+    }
+
+    input.value       = name;
+    idInput.value     = id;
+    priceInput.value  = price;
+    qtyInput.max      = stock;
+    dropdown.style.display = 'none';
+
+    // Mostrar stock disponible junto a la cantidad
+    qtyInput.title = `Máx: ${stock} unidades`;
+
+    calcSaleTotal();
+}
+
+function showDropdown(input) {
+    if (input.value.trim()) searchProduct(input);
+}
+
+function hideDropdown(input) {
+    const dropdown = input.parentElement.querySelector('.product-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+}
+
 function calcSaleTotal() {
     let total = 0;
     document.querySelectorAll('#sale-items-container .sale-item-row').forEach(row => {
-        const select = row.querySelector('select');
-        const qty    = parseInt(row.querySelector('input[type=number]')?.value) || 0;
-        const opt    = select?.selectedOptions[0];
-        const price  = parseFloat(opt?.dataset?.price) || 0;
-        const sub    = price * qty;
+        const price    = parseFloat(row.querySelector('.product-price-input')?.value) || 0;
+        const qty      = parseInt(row.querySelector('input[type=number]')?.value) || 0;
+        const sub      = price * qty;
         const subInput = row.querySelector('input[readonly]');
         if (subInput) subInput.value = sub > 0 ? fmt(sub) : '';
         total += sub;
@@ -1605,11 +1767,11 @@ function calcSaleTotal() {
 }
 
 async function submitSale() {
-    const rows = document.querySelectorAll('#sale-items-container .sale-item-row');
+    const rows  = document.querySelectorAll('#sale-items-container .sale-item-row');
     const items = [];
 
     for (const row of rows) {
-        const productId = row.querySelector('select')?.value;
+        const productId = row.querySelector('.product-id-input')?.value;
         const quantity  = parseInt(row.querySelector('input[type=number]')?.value) || 0;
         if (!productId || quantity < 1) continue;
         items.push({ productId, quantity });
@@ -1635,7 +1797,7 @@ async function submitSale() {
         toast('¡Venta registrada exitosamente! ✓');
         closeSaleModal();
         loadSales(1);
-        loadProducts(pPage); // Actualiza stock
+        loadProducts(pPage);
     } catch (err) {
         toast(err.response?.data?.message || 'Error al registrar venta', 'error');
     }
@@ -1697,6 +1859,64 @@ function logout() {
         localStorage.removeItem('growhouse-user-data');
         window.location.href = 'index.html';
     }
+}
+// ── Manejo de imagen ────────────────────────────────────────────────────────
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validar tamaño (5MB máx)
+    if (file.size > 5 * 1024 * 1024) {
+        toast('La imagen no puede superar 5MB', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // Comprimir y redimensionar
+            const canvas  = document.createElement('canvas');
+            const MAX     = 800;
+            let { width, height } = img;
+
+            if (width > height && width > MAX) {
+                height = Math.round(height * MAX / width);
+                width  = MAX;
+            } else if (height > MAX) {
+                width  = Math.round(width * MAX / height);
+                height = MAX;
+            }
+
+            canvas.width  = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+            const base64 = canvas.toDataURL('image/jpeg', 0.8);
+
+            // Guardar en el input hidden
+            document.getElementById('pm-image').value = base64;
+
+            // Mostrar preview
+            const preview = document.getElementById('pm-image-preview');
+            preview.src   = base64;
+            preview.style.display = 'block';
+
+            document.getElementById('pm-image-placeholder').style.display = 'none';
+            document.getElementById('pm-image-change').style.display      = 'block';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function resetImageUpload() {
+    document.getElementById('pm-image').value           = '';
+    document.getElementById('pm-image-file').value      = '';
+    document.getElementById('pm-image-preview').src     = '';
+    document.getElementById('pm-image-preview').style.display   = 'none';
+    document.getElementById('pm-image-placeholder').style.display = 'block';
+    document.getElementById('pm-image-change').style.display     = 'none';
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────

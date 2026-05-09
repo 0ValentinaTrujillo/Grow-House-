@@ -125,7 +125,7 @@ class AuthAPI {
         const token = this.getToken();
         const user = this.getUser();
         // Solo es auténtico si existe el token Y el usuario tiene rol 'admin'
-        return !!(token && user && user.role === 'admin');
+        return !!(token && user); 
     }
 }
 

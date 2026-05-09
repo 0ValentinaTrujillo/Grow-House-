@@ -24,7 +24,8 @@ class AdminAuth {
             console.error('Error al leer datos de usuario');
         }
 
-        if (!token || !user || user.role !== 'admin') {
+        // ✅ Solo verifica que existan token y datos de sesión
+        if (!token || !user) {
             console.warn('⛔ Acceso no autorizado. Redirigiendo a login...');
             this.redirectToLogin();
             return;
