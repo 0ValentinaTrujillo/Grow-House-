@@ -72,7 +72,8 @@ const saleSchema = new mongoose.Schema({
     total: {
         type: Number,
         required: true,
-        min: [0, 'El total no puede ser negativo']
+        min: [0, 'El total no puede ser negativo'],
+        default: 0 
     },
 
     // ── Notas opcionales ────────────────────────────────────────────────────

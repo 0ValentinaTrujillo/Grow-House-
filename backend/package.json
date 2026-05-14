@@ -1,7 +1,7 @@
 {
   "name": "ecommerce-backend-with-ai",
   "version": "1.0.0",
-  "description": "Backend Ecommerce con IA integrada (Chatbot OpenAI/Groq)",
+  "description": "Backend Ecommerce con IA integrada (OpenAI/Groq)",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

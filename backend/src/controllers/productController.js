@@ -26,6 +26,7 @@ Responde ÚNICAMENTE con un JSON válido con esta estructura exacta (sin markdow
 {
   "generalInfo": "Párrafo de 3-4 oraciones con información general interesante y útil sobre este producto para el comprador colombiano. Menciona sus beneficios, usos principales y por qué es una buena elección.",
   "careGuide": {
+  "En productos diferentes a plantas di cuidados basicos de cada elementos para su buena vida util no dejes esto basio, has reomendaciones si nos productos distintos a plantas"
     "luz": "Requisitos de luz (solo si aplica a plantas o productos relacionados, si no aplica escribe 'No aplica para este producto')",
     "riego": "Frecuencia y forma de riego (solo si aplica, si no escribe 'No aplica para este producto')",
     "suelo": "Tipo de suelo o sustrato recomendado (solo si aplica, si no escribe 'No aplica para este producto')",
