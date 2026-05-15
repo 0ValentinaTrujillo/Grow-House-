@@ -26,59 +26,6 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
         }
-
-        /* ===============================
-        ICONO - RESPONSIVE
-        ================================ */
-        .icon {
-            width: 90px;   /* ✅ Más grande en móvil */
-            height: 90px;
-            display: block;
-            border-radius: 50%;
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .icon {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .chat-btn {
-                bottom: 50px;
-                right: 100px;
-            }
-            .icon {
-                width: 130px;
-                height: 130px;
-            }
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .emergency-screen {
-                bottom: 20px;
-                right: 20px;
-                left: auto;
-                width: 400px;
-                height: 500px;
-                border-radius: 18px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .emergency-screen {
-                bottom: 50px;
-                right: 250px;
-                width: 550px;
-                height: 550px;
-            }
-        }
-
     </style>
 </head>
 
@@ -109,7 +56,7 @@
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
                     <!-- Mobile button -->
-                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-button">
+                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16"/>
@@ -221,17 +168,26 @@
     <script src="../scripts/config.js"></script>
     <script src="../scripts/api.js"></script>
     <script src="../scripts/productos-api.js"></script>
+    <script src="../scripts/mobile-menú.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            cargarProductos();
             const input = document.getElementById('search-input');
             input.addEventListener('input', () => {
                 clearTimeout(searchTimeout);
-                searchQuery = input.value;
-                searchTimeout = setTimeout(() => cargarProductos(1), 400);
+                currentFilters.search = input.value.trim();
+                currentFilters.page   = 1;
+                searchTimeout = setTimeout(() => loadProductsFromAPI(), 400);
+            });
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    clearTimeout(searchTimeout);
+                    currentFilters.search = input.value.trim();
+                    currentFilters.page   = 1;
+                    loadProductsFromAPI();
+                }
             });
         });
-    </script>
+        </script>
 </body>
 </html>

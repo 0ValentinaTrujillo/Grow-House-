@@ -24,63 +24,6 @@
             border-color: rgba(184, 253, 181, 0.63);
             box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
         }
-        
-        /* ===============================
-        ICONO - RESPONSIVE
-        ================================ */
-        .icon {
-            width: 90px;   /* ✅ Más grande en móvil */
-            height: 90px;
-            display: block;
-            border-radius: 50%;
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .icon {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .chat-btn {
-                bottom: 50px;
-                right: 100px;
-            }
-            .icon {
-                width: 130px;
-                height: 130px;
-            }
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .emergency-screen {
-                bottom: 20px;
-                right: 20px;
-                left: auto;
-                width: 400px;
-                height: 500px;
-                border-radius: 18px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .emergency-screen {
-                bottom: 50px;
-                right: 250px;
-                width: 550px;
-                height: 550px;
-            }
-        }
-
-        .emergency-screen.active {
-            display: block;
-        }
-
     </style>
 </head>
 <body class="bg-white font-sans antialiased">
@@ -110,7 +53,7 @@
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
                     <!-- Mobile button -->
-                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-button">
+                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-btn">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16"/>
@@ -148,6 +91,7 @@
                         rounded-full px-4 py-1.5
                         w-[450px] md:w-[550px] lg:w-[650px]">
                 <input 
+                    id="search-input"
                     type="text" 
                     placeholder="¡Busca aqui!"
                     class="w-full bg-transparent focus:outline-none text-gray-700 text-sm">
@@ -212,7 +156,6 @@
                         <ul class="space-y-2">
                             <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
                             <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                            <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
                         </ul>
                     </div>
 
@@ -236,344 +179,138 @@
             </div>
         </footer>
 
-<script src="../scripts/config.js"></script>
-<script src="../scripts/api.js"></script>
-<script src="../scripts/productos-api.js"></script>
-
-<script>
-// =============================================
-// CONFIGURACIÓN DE ESTA PÁGINA
-// =============================================
-const CATEGORY = 'implementos'; // 🔧 Cambiar según la página
-const LIMIT = 12;
-let currentPage = 1;
-let totalPages = 1;
-let searchQuery = '';      
-let searchTimeout = null;
-
-// =============================================
-// PALABRAS CLAVE DE OTRAS CATEGORÍAS
-// =============================================
-const KEYWORDS_OTRAS_CATEGORIAS = [
-    // Macetas
-    'maceta', 'macetas', 'tiesto', 'tiestos', 'jardinera', 'jardineras', 'pot', 'pots',
-    // Fertilizantes
-    'fertilizante', 'fertilizantes', 'abono', 'abonos', 'nutriente', 'nutrientes',
-    'sustrato', 'sustratos', 'compost',
-    // Herramientas
-    'herramienta', 'herramientas', 'pala', 'palin', 'tijera', 'tijeras',
-    'rastrillo', 'regadera', 'manguera', 'guante', 'guantes',
-    // Iluminación
-    'luz', 'luces', 'lampara', 'lamparas', 'led', 'foco', 'focos', 'iluminacion',
-    'bombilla', 'bombillas', 'reflector',
-    // Semillas
-    'semilla', 'semillas', 'bulbo', 'bulbos',
-    // Agrega aquí más palabras clave de tus otras categorías 🔧
-];
-
-// =============================================
-// CARGAR PRODUCTOS POR CATEGORÍA
-// =============================================
-async function cargarCategoria(page = 1) {
-    const grid = document.getElementById('category-grid');
-    currentPage = page;
-
-    grid.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-16">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
-            <p class="text-gray-600">Cargando productos...</p>
-        </div>`;
-
-    try {
-        const searchParam = searchQuery.trim() ? `&search=${encodeURIComponent(searchQuery.trim())}` : '';
-        const res = await fetch(
-            `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&status=active&limit=${LIMIT}&page=${page}${searchParam}`
-        );
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-
-        const json = await res.json();
-        const productos = json.data || [];
-        totalPages = json.pagination?.totalPages || 1;
-
-        if (!productos.length) {
-            grid.innerHTML = `
-                <div class="col-span-full text-center py-16">
-                    <p class="text-gray-500 text-lg">No hay productos en esta categoría por el momento.</p>
-                </div>`;
-            document.getElementById('pagination-container').innerHTML = '';
-            return;
-        }
-
-        grid.innerHTML = '';
-        productos.forEach(p => {
-            const card = createProductCard(p);
-            grid.appendChild(card);
-        });
-
-        renderPagination();
-
-    } catch (error) {
-        console.error('❌ Error cargando categoría:', error);
-        grid.innerHTML = `
-            <div class="col-span-full text-center py-16">
-                <p class="text-gray-500 text-lg mb-4">Error al cargar productos.</p>
-                <button onclick="cargarCategoria()" 
-                    class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
-                    Reintentar
-                </button>
-            </div>`;
-    }
-}
-
-// =============================================
-// BÚSQUEDA CON VALIDACIÓN DE CATEGORÍA
-// =============================================
-async function buscarConValidacion() {
-    const query = searchQuery.trim();
-
-    if (!query) {
-        cargarCategoria(1);
-        return;
-    }
-
-    const grid = document.getElementById('category-grid');
-
-    grid.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-16">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
-            <p class="text-gray-600">Buscando...</p>
-        </div>`;
-
-    try {
-        // 1️⃣ Buscar dentro de ESTA categoría
-        const resCat = await fetch(
-            `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&status=active&limit=${LIMIT}&page=1&search=${encodeURIComponent(query)}`
-        );
-        const jsonCat = await resCat.json();
-        const enEstaCategoria = jsonCat.data || [];
-
-        // ✅ Encontró resultados → renderizar normal
-        if (enEstaCategoria.length > 0) {
-            totalPages = jsonCat.pagination?.totalPages || 1;
-            grid.innerHTML = '';
-            enEstaCategoria.forEach(p => grid.appendChild(createProductCard(p)));
-            renderPagination();
-            return;
-        }
-
-        // 2️⃣ No encontró nada → revisar si el término es de otra categoría
-        const queryLower = query.toLowerCase();
-        const esOtraCategoria = KEYWORDS_OTRAS_CATEGORIAS.some(kw =>
-            queryLower.includes(kw) || kw.includes(queryLower)
-        );
-
-        if (esOtraCategoria) {
-            // 🚫 El término pertenece a otra categoría
+        <script src="../scripts/config.js"></script>
+        <script src="../scripts/api.js"></script>
+        <script src="../scripts/productos-api.js"></script>
+        <script src="../scripts/mobile-menú.js"></script>
+        
+        <script>
+        // ══ CONFIGURACIÓN — solo cambia estas 2 variables ══════════════════════════
+        const CATEGORY      = 'implementos';     // plantas | materas | decoraciones | implementos
+        const CATEGORY_NAME = 'Implementos';     // Plantas | Materas | Decoraciones | Implementos
+        // ══════════════════════════════════════════════════════════════════════════
+        
+        const ITEMS_PER_PAGE = 12;
+        let catPage    = 1;
+        let catSearch  = '';
+        let catTimeout = null;
+        
+        async function fetchCategoria(page = 1, search = '') {
+            catPage   = page;
+            catSearch = search;
+            const grid = document.getElementById('category-grid');
+        
             grid.innerHTML = `
                 <div class="col-span-full flex flex-col items-center justify-center py-16">
-                    <p class="text-gray-700 text-lg font-medium">Este producto no pertenece a esta categoría</p>
-                    <p class="text-gray-500 text-sm mt-2">Intenta buscarlo en la sección correcta</p>
-                    <button onclick="limpiarBusqueda()" 
-                        class="mt-6 bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition">
-                        Ver todos los implementos
-                    </button>
+                    <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+                    <p class="text-gray-600">Cargando ${CATEGORY_NAME.toLowerCase()}...</p>
                 </div>`;
-        } else {
-            // 🔍 No existe en ningún lado → mensaje original
-            grid.innerHTML = `
-                <div class="col-span-full text-center py-16">
-                    <p class="text-gray-500 text-lg">No se encuentra el producto.</p>
-                </div>`;
-        }
-
-        document.getElementById('pagination-container').innerHTML = '';
-
-    } catch (error) {
-        console.error('❌ Error en búsqueda:', error);
-        grid.innerHTML = `
-            <div class="col-span-full text-center py-16">
-                <p class="text-gray-500 text-lg mb-4">Error al buscar productos.</p>
-                <button onclick="limpiarBusqueda()" 
-                    class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-lg">
-                    Reintentar
-                </button>
-            </div>`;
-    }
-}
-
-function limpiarBusqueda() {
-    searchQuery = '';
-    document.getElementById('search-input').value = '';
-    cargarCategoria(1);
-}
-
-// =============================================
-// PAGINACIÓN
-// =============================================
-function renderPagination() {
-    const container = document.getElementById('pagination-container');
-    if (totalPages <= 1) { container.innerHTML = ''; return; }
-
-    let html = `<nav class="flex space-x-2">`;
-
-    html += `<button onclick="cargarCategoria(${currentPage - 1})"
-        ${currentPage === 1 ? 'disabled' : ''}
-        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
-        Anterior
-    </button>`;
-
-    for (let i = 1; i <= totalPages; i++) {
-        html += `<button onclick="cargarCategoria(${i})"
-            class="px-4 py-2 rounded-lg ${i === currentPage
-                ? 'bg-green-800 text-white'
-                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}">
-            ${i}
-        </button>`;
-    }
-
-    html += `<button onclick="cargarCategoria(${currentPage + 1})"
-        ${currentPage === totalPages ? 'disabled' : ''}
-        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed">
-        Siguiente
-    </button>`;
-
-    html += `</nav>`;
-    container.innerHTML = html;
-}
-
-// =============================================
-// INICIALIZAR
-// =============================================
-document.addEventListener('DOMContentLoaded', () => {
-    cargarCategoria();
-
-    const input = document.getElementById('search-input');
-
-    input.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        searchQuery = input.value;
-        searchTimeout = setTimeout(() => buscarConValidacion(), 400);
-    });
-
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            clearTimeout(searchTimeout);
-            searchQuery = input.value;
-            buscarConValidacion();
-        }
-    });
-});
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const container = document.getElementById('user-menu-container');
-    let hideTimeout = null;
-
-    function hideAllSubmenus() {
-        document.querySelectorAll('.floating-submenu').forEach(s => s.classList.remove('visible'));
-        document.querySelectorAll('.has-submenu').forEach(r => r.classList.remove('active'));
-    }
-
-    function positionAndShow(triggerEl, submenuId) {
-        clearTimeout(hideTimeout);
-        hideAllSubmenus();
-        const submenu = document.getElementById(submenuId);
-        if (!submenu) return;
-
-        submenu.classList.add('visible');
-        triggerEl.classList.add('active');
-
-        const rect = triggerEl.getBoundingClientRect();
-        const smW  = submenu.offsetWidth;
-        const smH  = submenu.offsetHeight;
-        const winH = window.innerHeight;
-
-        let left = rect.left - smW - 6;
-        if (left < 6) left = rect.right + 6;
-        if (left + smW > window.innerWidth - 6) left = Math.max(6, rect.left - smW - 6);
-
-        let top = rect.top;
-        if (top + smH > winH - 8) top = winH - smH - 8;
-        if (top < 8) top = 8;
-
-        submenu.style.left = left + 'px';
-        submenu.style.top  = top  + 'px';
-    }
-
-    document.querySelectorAll('.has-submenu').forEach(trigger => {
-        const submenuId = trigger.dataset.submenu;
-        const submenu   = document.getElementById(submenuId);
-
-        trigger.addEventListener('mouseenter', () => positionAndShow(trigger, submenuId));
-
-        trigger.addEventListener('click', (e) => { e.stopPropagation(); positionAndShow(trigger, submenuId); });
-        trigger.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(() => {
-                if (submenu && !submenu.matches(':hover')) hideAllSubmenus();
-            }, 100);
-        });
-    });
-
-    document.querySelectorAll('.floating-submenu').forEach(submenu => {
-        submenu.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-        submenu.addEventListener('mouseleave', () => {
-            hideTimeout = setTimeout(hideAllSubmenus, 100);
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (container && !container.contains(e.target) && !e.target.closest('.floating-submenu')) {
-            hideAllSubmenus();
-        }
-    });
-});
-</script>
-<script>
-    // Cerrar chat al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            const chatPanel = document.getElementById('emergency-screen');
-            const chatBtn = document.getElementById('chat-toggle');
-
-            if (
-                chatPanel.classList.contains('active') &&
-                !chatPanel.contains(e.target) &&
-                !chatBtn.contains(e.target)
-            ) {
-                chatPanel.classList.remove('active');
-                chatBtn.classList.remove('blur');
-                chatBtn.style.bottom = '';   // ✅ Resetea la posición al original del CSS
-                chatBtn.style.right = '';    // ✅ Por si acaso también resetea right
-            }
-        });
-        // Ajustar posición del botón en móvil cuando el chat está abierto
-        function ajustarBotonMobile() {
-            const chatBtn = document.getElementById('chat-toggle');
-            const isMobile = window.innerWidth < 640;
-            
-            if (isMobile && document.getElementById('emergency-screen').classList.contains('active')) {
-                chatBtn.style.bottom = 'calc(85vh + 10px)';
-            } else {
-                chatBtn.style.bottom = '';
+        
+            try {
+                const url = `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&page=${page}&limit=${ITEMS_PER_PAGE}&status=active${search ? '&search=' + encodeURIComponent(search) : ''}`;
+                const res    = await fetch(url);
+                const result = await res.json();
+                const items  = result.data || [];
+                const pag    = result.pagination || {};
+        
+                grid.innerHTML = '';
+        
+                if (!items.length) {
+                    grid.innerHTML = search ? `
+                        <div class="col-span-full flex flex-col items-center justify-center py-16">
+                            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <p class="text-gray-600 font-medium mb-1">
+                                No encontramos "<strong>${search}</strong>" en ${CATEGORY_NAME}
+                            </p>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Este producto podría estar en otra categoría.
+                                <a href="productos.html?search=${encodeURIComponent(search)}"
+                                   class="text-green-700 font-semibold hover:underline">
+                                   Buscar en todos los productos
+                                </a>
+                            </p>
+                            <button onclick="limpiarCategoria()"
+                                class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition">
+                                Ver todas las ${CATEGORY_NAME}
+                            </button>
+                        </div>` : `
+                        <div class="col-span-full text-center py-16">
+                            <i class="fas fa-box-open text-4xl text-gray-200 mb-4 block"></i>
+                            <p class="text-gray-400">No hay ${CATEGORY_NAME.toLowerCase()} disponibles por el momento.</p>
+                        </div>`;
+                    document.getElementById('pagination-container').innerHTML = '';
+                    return;
+                }
+        
+                items.forEach(item => grid.appendChild(createProductCard(item)));
+                renderCatPagination(pag);
+        
+            } catch (error) {
+                console.error('❌ Error:', error);
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <p class="text-red-500 mb-4">Error al cargar productos.</p>
+                        <button onclick="fetchCategoria()"
+                            class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg">
+                            Reintentar
+                        </button>
+                    </div>`;
             }
         }
-
-        document.getElementById('chat-toggle').addEventListener('click', function() {
-            setTimeout(ajustarBotonMobile, 50);
-        });
-
-        document.addEventListener('click', function(e) {
-            const chatPanel = document.getElementById('emergency-screen');
-            const chatBtn = document.getElementById('chat-toggle');
-
-            if (
-                chatPanel.classList.contains('active') &&
-                !chatPanel.contains(e.target) &&
-                !chatBtn.contains(e.target)
-            ) {
-                chatPanel.classList.remove('active');
-                chatBtn.classList.remove('blur');
+        
+        function renderCatPagination(pag) {
+            const container = document.getElementById('pagination-container');
+            const { page = 1, pages = 1 } = pag;
+        
+            if (pages <= 1) { container.innerHTML = ''; return; }
+        
+            let html = `<nav class="flex items-center gap-2">`;
+        
+            html += `<button onclick="fetchCategoria(${page-1}, catSearch)" ${page<=1?'disabled':''}
+                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-800 hover:text-white
+                       disabled:opacity-40 disabled:cursor-not-allowed transition">
+                Anterior</button>`;
+        
+            for (let i = 1; i <= pages; i++) {
+                html += `<button onclick="fetchCategoria(${i}, catSearch)"
+                    class="px-4 py-2 rounded-lg transition ${i === page
+                        ? 'bg-green-800 text-white'
+                        : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+                    ${i}</button>`;
             }
+        
+            html += `<button onclick="fetchCategoria(${page+1}, catSearch)" ${page>=pages?'disabled':''}
+                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-800 hover:text-white
+                       disabled:opacity-40 disabled:cursor-not-allowed transition">
+                Siguiente</button></nav>`;
+        
+            container.innerHTML = html;
+        }
+        
+        function limpiarCategoria() {
+            catSearch = '';
+            document.getElementById('search-input').value = '';
+            fetchCategoria(1, '');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCategoria(1);
+        
+            const input = document.getElementById('search-input');
+            input.addEventListener('input', () => {
+                clearTimeout(catTimeout);
+                catTimeout = setTimeout(() => fetchCategoria(1, input.value.trim()), 400);
+            });
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    clearTimeout(catTimeout);
+                    fetchCategoria(1, input.value.trim());
+                }
+            });
         });
-</script>
+        </script>
 </body>
 </html>

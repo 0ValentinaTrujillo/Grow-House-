@@ -298,60 +298,12 @@ cursor: pointer;
 margin-top: 10px;
 }
 
-
 details p {
 padding: 10px 5px;
 line-height: 1.6;
 color: #444;
 }
 
-
-.fav {
-margin-top: 20px;
-display: flex;
-align-items: center;
-gap: 8px;
-cursor: pointer;
-}
-
-/*-------CARRITO-----------*/
-.product-card-list{
-    max-width: 1200px;
-    margin: 30px auto;
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    border: 1px solid #dcdcdc;
-}
-
-
-/* ── Submenús flotantes del navbar ── */
-.floating-submenu {
-    display: none !important;
-    position: fixed;
-    min-width: 210px;
-    background: white;
-    border-radius: 0.75rem;
-    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.22);
-    border: 1px solid #d1fae5;
-    z-index: 99999;
-    padding: 0.5rem 0;
-    animation: slideInLeft 0.15s ease-out;
-}
-.floating-submenu.visible {
-    display: block !important;
-}
-@keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(8px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-.has-submenu:hover,
-.has-submenu.active {
-    background-color: #f0fdf4;
-}
-.has-submenu {
-    cursor: pointer;
-}
 
 /* -------- CLASES TAILWIND JIT ARBITRARIAS — necesarias para páginas de usuario -------- */
 /* El CDN de Tailwind 2.x no soporta valores arbitrarios como min-w-[18px] ni h-[18px].  */

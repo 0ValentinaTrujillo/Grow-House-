@@ -5,11 +5,8 @@
 
 console.log('🛍️ Inicializando productos-api.js');
 
-// =============================================
-// ESTADO GLOBAL
-// =============================================
-
 let allProductsFromAPI = [];
+let searchTimeout = null;
 let currentFilters = {
     category: '',
     search:   '',
@@ -18,10 +15,13 @@ let currentFilters = {
     limit:    12
 };
 
-// =============================================
-// FUNCIÓN PRINCIPAL: CARGAR PRODUCTOS
-// =============================================
+// ── Alias para compatibilidad con productos.html ───────────────────────────
+function cargarProducts(page = 1) {
+    currentFilters.page = page;
+    loadProductsFromAPI();
+}
 
+// ── Cargar productos ───────────────────────────────────────────────────────
 async function loadProductsFromAPI() {
     console.log('📡 Cargando productos desde MongoDB...');
 
@@ -35,12 +35,13 @@ async function loadProductsFromAPI() {
         console.log('✅ Productos cargados:', response);
 
         allProductsFromAPI = response.data || [];
+        const pagination   = response.pagination || {};
 
         if (allProductsFromAPI.length === 0) {
-            showEmptyState(productsGrid);
+            showEmptyState(productsGrid, currentFilters.search, currentFilters.category);
         } else {
             renderProducts(allProductsFromAPI, productsGrid);
-            updatePaginationInfo(response.pagination);
+            renderPagination(pagination);
         }
 
     } catch (error) {
@@ -49,106 +50,99 @@ async function loadProductsFromAPI() {
     }
 }
 
-// =============================================
-// RENDERIZAR PRODUCTOS
-// =============================================
-
+// ── Renderizar productos ───────────────────────────────────────────────────
 function renderProducts(products, container) {
     container.innerHTML = '';
     products.forEach(producto => container.appendChild(createProductCard(producto)));
-    console.log(`✅ ${products.length} productos renderizados`);
 }
 
-// =============================================
-// CREAR TARJETA DE PRODUCTO
-// =============================================
-
+// ── Crear tarjeta ──────────────────────────────────────────────────────────
 function createProductCard(producto) {
     const card = document.createElement('div');
-    card.className = 'product-card hover-lift rounded-2xl overflow-hidden shadow-lg group flex flex-col h-full';
+    card.className = 'bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col h-full cursor-pointer';
     card.setAttribute('data-product-id', producto.id || producto._id);
+    card.onclick = () => window.location.href = `producto-detalle.html?id=${producto.id || producto._id}`;
 
     const hasDiscount    = producto.originalPrice && producto.originalPrice > producto.price;
     const discountPercent = hasDiscount
-        ? Math.round(((producto.originalPrice - producto.price) / producto.originalPrice) * 100)
-        : 0;
+        ? Math.round(((producto.originalPrice - producto.price) / producto.originalPrice) * 100) : 0;
 
     const shortDescription = producto.description && producto.description.length > 80
         ? producto.description.substring(0, 80) + '...'
         : producto.description || 'Sin descripción';
 
-    const imagen = producto.mainImage || 'https://via.placeholder.com/400';
+    const imagen = producto.mainImage || '../assets/images/placeholder.png';
 
     card.innerHTML = `
-        <div class="relative flex-shrink-0">
-            <div class="bg-white relative overflow-hidden" style="height: 280px;">
-                <img src="${imagen}" alt="${producto.name}"
-                     class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105">
-                ${hasDiscount ? `
-                    <div class="absolute top-3 right-3">
-                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
-                            -${discountPercent}%
-                        </span>
-                    </div>` : ''}
-                ${producto.featured ? `
-                    <div class="absolute top-3 left-3">
-                        <span class="bg-yellow-400 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
-                            ⭐ Popular
-                        </span>
-                    </div>` : ''}
-                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
-            </div>
+        <div class="relative h-56 overflow-hidden">
+            <img src="${imagen}" alt="${producto.name}"
+                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+            ${hasDiscount ? `
+                <div class="absolute top-3 right-3">
+                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
+                        -${discountPercent}%
+                    </span>
+                </div>` : ''}
+            ${producto.featured ? `
+                <div class="absolute top-3 left-3">
+                    <span class="bg-yellow-400 text-white text-xs px-2 py-1 rounded-full font-semibold shadow">
+                        ⭐ Popular
+                    </span>
+                </div>` : ''}
         </div>
-
-        <div class="p-5 flex flex-col flex-1">
-            <h3 class="text-base font-bold mb-2 text-gray-800 group-hover:text-green-800 transition-colors duration-300 leading-snug"
-                style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6rem;">
-                ${producto.name}
-            </h3>
-
-            <p class="text-gray-500 text-sm leading-relaxed mb-3"
-               style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5rem;">
-                ${shortDescription}
-            </p>
-
-            <div class="flex items-center justify-between mb-4 mt-auto">
-                <div class="price-highlight text-xl font-bold">
+        <div class="p-5 flex flex-col flex-grow" style="font-family:'Poppins',sans-serif;">
+            <h3 class="font-bold text-gray-800 text-lg mb-1">${producto.name}</h3>
+            <p class="text-gray-500 text-xs mb-4 line-clamp-2">${shortDescription}</p>
+            <div class="mt-auto">
+                <span class="text-xl font-black text-green-800">
                     ${producto.formattedPrice || formatPrice(producto.price)}
-                </div>
+                </span>
                 ${hasDiscount ? `
-                    <div class="text-sm text-gray-400 line-through">
+                    <span class="text-sm text-gray-400 line-through ml-2">
                         ${formatPrice(producto.originalPrice)}
-                    </div>` : ''}
+                    </span>` : ''}
             </div>
-
-            <button onclick="viewProductDetail('${producto.id || producto._id}')"
-                class="border border-green-700 text-green-700 bg-transparent px-3 py-2 rounded-lg
-                       hover:bg-green-50 transition duration-300 text-sm text-center w-full font-medium">
-                Ver Detalles
-            </button>
         </div>
     `;
-
     return card;
 }
 
-// =============================================
-// UTILIDADES
-// =============================================
+// ── Paginación ─────────────────────────────────────────────────────────────
+function renderPagination(pagination) {
+    const container = document.getElementById('pagination-container');
+    if (!container) return;
 
-function formatPrice(price) {
-    return new Intl.NumberFormat('es-CO', {
-        style:                 'currency',
-        currency:              'COP',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(price);
+    const { page = 1, pages = 1, total = 0 } = pagination;
+
+    if (pages <= 1) { container.innerHTML = ''; return; }
+
+    let html = `<nav class="flex items-center gap-2">`;
+
+    html += `<button onclick="cargarProducts(${page - 1})" ${page <= 1 ? 'disabled' : ''}
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white
+               disabled:opacity-40 disabled:cursor-not-allowed transition">
+        Anterior
+    </button>`;
+
+    for (let i = 1; i <= pages; i++) {
+        html += `<button onclick="cargarProducts(${i})"
+            class="px-4 py-2 rounded-lg transition ${i === page
+                ? 'bg-green-800 text-white'
+                : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+            ${i}
+        </button>`;
+    }
+
+    html += `<button onclick="cargarProducts(${page + 1})" ${page >= pages ? 'disabled' : ''}
+        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-green-800 hover:text-white
+               disabled:opacity-40 disabled:cursor-not-allowed transition">
+        Siguiente
+    </button></nav>`;
+
+    container.innerHTML = html;
 }
 
-// =============================================
-// ESTADOS DE UI
-// =============================================
-
+// ── Estados UI ─────────────────────────────────────────────────────────────
 function showLoadingState(container) {
     container.innerHTML = `
         <div class="col-span-full flex flex-col items-center justify-center py-16">
@@ -157,14 +151,24 @@ function showLoadingState(container) {
         </div>`;
 }
 
-function showEmptyState(container) {
+function showEmptyState(container, search = '', category = '') {
+    // Mensaje diferente según si hay búsqueda o categoría activa
+    const msg = search
+        ? category
+            ? `No encontramos "<strong>${search}</strong>" en esta categoría.`
+            : `No encontramos resultados para "<strong>${search}</strong>".`
+        : 'No hay productos disponibles.';
+
     container.innerHTML = `
         <div class="col-span-full flex flex-col items-center justify-center py-16">
-            <h3 class="text-xl font-bold text-gray-900 mb-2">No se encontraron productos</h3>
-            <p class="text-gray-600 mb-4">Intenta con otros filtros</p>
-            <button onclick="resetFilters()"
-                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg">
-                Limpiar filtros
+            <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <p class="text-gray-500 text-lg mb-4">${msg}</p>
+            <button onclick="limpiarBusqueda()"
+                class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition">
+                Ver todos los productos
             </button>
         </div>`;
 }
@@ -172,12 +176,7 @@ function showEmptyState(container) {
 function showErrorState(container, errorMessage) {
     container.innerHTML = `
         <div class="col-span-full flex flex-col items-center justify-center py-16">
-            <svg class="w-24 h-24 text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <h3 class="text-xl font-bold text-gray-900 mb-2">Error al cargar productos</h3>
-            <p class="text-gray-600 mb-4">${errorMessage}</p>
+            <p class="text-gray-500 text-lg mb-4">Error al cargar productos.</p>
             <button onclick="loadProductsFromAPI()"
                 class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg">
                 Reintentar
@@ -185,57 +184,34 @@ function showErrorState(container, errorMessage) {
         </div>`;
 }
 
-function updatePaginationInfo(pagination) {
-    console.log('📄 Paginación:', pagination);
-}
-
-// =============================================
-// VER DETALLE DE PRODUCTO
-// =============================================
-
-async function viewProductDetail(productId) {
-    if (!productId || productId === 'undefined') {
-        console.error('❌ ID de producto inválido:', productId);
-        return;
-    }
-    window.location.href = `producto-detalle.html?id=${productId}`;
-}
-
-// =============================================
-// NOTIFICACIÓN TOAST
-// =============================================
-
-function showNotification(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 ${
-        type === 'success' ? 'bg-green-500' :
-        type === 'error'   ? 'bg-red-500'   :
-        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-700'
-    } text-white`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-}
-
-// =============================================
-// RESETEAR FILTROS
-// =============================================
-
-function resetFilters() {
-    currentFilters = {
-        category: '',
-        search:   '',
-        sortBy:   'newest',
-        page:     1,
-        limit:    12
-    };
+// ── Limpiar búsqueda ───────────────────────────────────────────────────────
+function limpiarBusqueda() {
+    currentFilters.search = '';
+    currentFilters.page   = 1;
+    const input = document.getElementById('search-input');
+    if (input) input.value = '';
     loadProductsFromAPI();
 }
 
-// =============================================
-// INICIALIZACIÓN
-// =============================================
+// ── Utilidades ─────────────────────────────────────────────────────────────
+function formatPrice(price) {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency', currency: 'COP',
+        minimumFractionDigits: 0, maximumFractionDigits: 0
+    }).format(price);
+}
 
+function resetFilters() {
+    currentFilters = { category: '', search: '', sortBy: 'newest', page: 1, limit: 12 };
+    loadProductsFromAPI();
+}
+
+function viewProductDetail(productId) {
+    if (!productId || productId === 'undefined') return;
+    window.location.href = `producto-detalle.html?id=${productId}`;
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadProductsFromAPI);
 } else {

@@ -23,63 +23,6 @@
             border-color: rgba(184, 253, 181, 0.63);
             box-shadow: 0 20px 40px rgba(184, 253, 181, 0.63);
         }
-        
-        /* ===============================
-        ICONO - RESPONSIVE
-        ================================ */
-        .icon {
-            width: 90px;   /* ✅ Más grande en móvil */
-            height: 90px;
-            display: block;
-            border-radius: 50%;
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .icon {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .chat-btn {
-                bottom: 50px;
-                right: 100px;
-            }
-            .icon {
-                width: 130px;
-                height: 130px;
-            }
-        }
-
-        /* Tablets */
-        @media (min-width: 640px) {
-            .emergency-screen {
-                bottom: 20px;
-                right: 20px;
-                left: auto;
-                width: 400px;
-                height: 500px;
-                border-radius: 18px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .emergency-screen {
-                bottom: 50px;
-                right: 250px;
-                width: 550px;
-                height: 550px;
-            }
-        }
-
-        .emergency-screen.active {
-            display: block;
-        }
-
     </style>
 </head>
 <body class="bg-white font-sans antialiased">
@@ -109,7 +52,7 @@
                         <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-green-800 transition-all group-hover:w-full"></span>
                     </a>
                     <!-- Mobile button -->
-                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-button">
+                    <button class="md:hidden text-gray-700 hover:text-green-800" id="mobile-menu-btn"
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 6h16M4 12h16M4 18h16"/>
@@ -146,7 +89,8 @@
                         bg-white border border-gray-500 
                         rounded-full px-4 py-1.5
                         w-[450px] md:w-[550px] lg:w-[650px]">
-                <input 
+                <input
+                    id="search-input"
                     type="text" 
                     placeholder="¡Busca aqui!"
                     class="w-full bg-transparent focus:outline-none text-gray-700 text-sm">
@@ -211,7 +155,6 @@
                     <ul class="space-y-2">
                         <li><a href="productos.html" class="text-gray-900 hover:text-green-700 transition">Productos</a></li>
                         <li><a href="index.html#categorias" class="text-gray-900 hover:text-green-700 transition">Categorías</a></li>
-                        <li><a href="carrito.html" class="text-gray-900 hover:text-green-700 transition">Carrito</a></li>
                     </ul>
                 </div>
 
@@ -238,49 +181,135 @@
     <script src="../scripts/config.js"></script>
     <script src="../scripts/api.js"></script>
     <script src="../scripts/productos-api.js"></script>
-
+    <script src="../scripts/mobile-menú.js"></script>
+    
     <script>
-        // Configuración específica de la vista de categoría
-        const CATEGORY = 'materas';
-        const ITEMS_PER_PAGE = 12;
-
-        async function fetchMateras(page = 1, filter = '') {
-            const grid = document.getElementById('category-grid');
-            
-            try {
-                // Endpoint unificado siguiendo la lógica de sistemas
-                const url = `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&page=${page}&limit=${ITEMS_PER_PAGE}&search=${encodeURIComponent(filter)}`;
-                const response = await fetch(url);
-                const result = await response.json();
-                
-                grid.innerHTML = '';
-
-                if (result.data && result.data.length > 0) {
-                    result.data.forEach(item => {
-                        // Se delega la creación del componente a productos-api.js para mantener modularidad
-                        // Esta función utiliza la IA para renderizar detalles si están disponibles
-                        grid.appendChild(createProductCard(item));
-                    });
-                } else {
-                    grid.innerHTML = `
-                        <div class="col-span-full text-center py-20">
-                            <i class="fas fa-box-open text-4xl text-gray-200 mb-4"></i>
-                            <p class="text-gray-400">No hay existencias para este filtro en la categoría materas.</p>
-                        </div>`;
-                }
-            } catch (error) {
-                grid.innerHTML = '<p class="col-span-full text-center text-red-500">Error de comunicación con el servicio de inventario.</p>';
-                console.error("API Error:", error);
+    // ══ CONFIGURACIÓN — solo cambia estas 2 variables ══════════════════════════
+    const CATEGORY      = 'materas';     // plantas | materas | decoraciones | implementos
+    const CATEGORY_NAME = 'Materas';     // Plantas | Materas | Decoraciones | Implementos
+    // ══════════════════════════════════════════════════════════════════════════
+    
+    const ITEMS_PER_PAGE = 12;
+    let catPage    = 1;
+    let catSearch  = '';
+    let catTimeout = null;
+    
+    async function fetchCategoria(page = 1, search = '') {
+        catPage   = page;
+        catSearch = search;
+        const grid = document.getElementById('category-grid');
+    
+        grid.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-16">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-green-800 mb-4"></div>
+                <p class="text-gray-600">Cargando ${CATEGORY_NAME.toLowerCase()}...</p>
+            </div>`;
+    
+        try {
+            const url = `${window.GROW_HOUSE_API}/products?category=${CATEGORY}&page=${page}&limit=${ITEMS_PER_PAGE}&status=active${search ? '&search=' + encodeURIComponent(search) : ''}`;
+            const res    = await fetch(url);
+            const result = await res.json();
+            const items  = result.data || [];
+            const pag    = result.pagination || {};
+    
+            grid.innerHTML = '';
+    
+            if (!items.length) {
+                grid.innerHTML = search ? `
+                    <div class="col-span-full flex flex-col items-center justify-center py-16">
+                        <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <p class="text-gray-600 font-medium mb-1">
+                            No encontramos "<strong>${search}</strong>" en ${CATEGORY_NAME}
+                        </p>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Este producto podría estar en otra categoría.
+                            <a href="productos.html?search=${encodeURIComponent(search)}"
+                               class="text-green-700 font-semibold hover:underline">
+                               Buscar en todos los productos
+                            </a>
+                        </p>
+                        <button onclick="limpiarCategoria()"
+                            class="bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-6 rounded-full transition">
+                            Ver todas las ${CATEGORY_NAME}
+                        </button>
+                    </div>` : `
+                    <div class="col-span-full text-center py-16">
+                        <i class="fas fa-box-open text-4xl text-gray-200 mb-4 block"></i>
+                        <p class="text-gray-400">No hay ${CATEGORY_NAME.toLowerCase()} disponibles por el momento.</p>
+                    </div>`;
+                document.getElementById('pagination-container').innerHTML = '';
+                return;
             }
+    
+            items.forEach(item => grid.appendChild(createProductCard(item)));
+            renderCatPagination(pag);
+    
+        } catch (error) {
+            console.error('❌ Error:', error);
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <p class="text-red-500 mb-4">Error al cargar productos.</p>
+                    <button onclick="fetchCategoria()"
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg">
+                        Reintentar
+                    </button>
+                </div>`;
         }
-
-        function ejecutarBusqueda() {
-            const term = document.getElementById('search-input').value;
-            fetchMateras(1, term);
+    }
+    
+    function renderCatPagination(pag) {
+        const container = document.getElementById('pagination-container');
+        const { page = 1, pages = 1 } = pag;
+    
+        if (pages <= 1) { container.innerHTML = ''; return; }
+    
+        let html = `<nav class="flex items-center gap-2">`;
+    
+        html += `<button onclick="fetchCategoria(${page-1}, catSearch)" ${page<=1?'disabled':''}
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-800 hover:text-white
+                   disabled:opacity-40 disabled:cursor-not-allowed transition">
+            Anterior</button>`;
+    
+        for (let i = 1; i <= pages; i++) {
+            html += `<button onclick="fetchCategoria(${i}, catSearch)"
+                class="px-4 py-2 rounded-lg transition ${i === page
+                    ? 'bg-green-800 text-white'
+                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'}">
+                ${i}</button>`;
         }
-
-        // Carga inicial al completar el DOM
-        document.addEventListener('DOMContentLoaded', () => fetchMateras(1));
+    
+        html += `<button onclick="fetchCategoria(${page+1}, catSearch)" ${page>=pages?'disabled':''}
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-800 hover:text-white
+                   disabled:opacity-40 disabled:cursor-not-allowed transition">
+            Siguiente</button></nav>`;
+    
+        container.innerHTML = html;
+    }
+    
+    function limpiarCategoria() {
+        catSearch = '';
+        document.getElementById('search-input').value = '';
+        fetchCategoria(1, '');
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchCategoria(1);
+    
+        const input = document.getElementById('search-input');
+        input.addEventListener('input', () => {
+            clearTimeout(catTimeout);
+            catTimeout = setTimeout(() => fetchCategoria(1, input.value.trim()), 400);
+        });
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                clearTimeout(catTimeout);
+                fetchCategoria(1, input.value.trim());
+            }
+        });
+    });
     </script>
 </body>
 </html>
