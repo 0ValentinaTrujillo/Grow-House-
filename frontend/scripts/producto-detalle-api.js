@@ -78,16 +78,23 @@ function renderIASections(product) {
             content.innerHTML = `<p class="text-gray-700">${product.aiInfo?.generalInfo || product.description || 'Sin descripción disponible.'}</p>`;
         }
 
-        if (title.includes('cuidado') && product.aiInfo?.careGuide) {
-            const care = product.aiInfo.careGuide;
+        if (title.includes('cuidado')) {
+            const care = product.aiInfo?.careGuide;
+            if (!care) {
+                content.innerHTML = `<p class="text-gray-400">Información de cuidado no disponible.</p>`;
+                return;
+            }
+
             const careItems = [
-                { icon: '☀️', label: 'Luz', val: care.luz },
-                { icon: '💧', label: 'Riego', val: care.riego },
-                { icon: '🌡️', label: 'Clima', val: care.temperatura }
-            ].filter(item => item.val && !item.val.toLowerCase().includes('no aplica'));
+                { icon: '☀️', label: 'Luz',         val: care.luz },
+                { icon: '💧', label: 'Riego',       val: care.riego },
+                { icon: '🌱', label: 'Suelo',       val: care.suelo },
+                { icon: '🌡️', label: 'Temperatura', val: care.temperatura },
+                { icon: '💡', label: 'Consejos',    val: care.consejos }
+            ].filter(item => item.val && item.val !== 'null' && item.val !== null);
 
             content.innerHTML = careItems.map(item => `
-                <div class="flex items-start gap-3 mb-2">
+                <div class="flex items-start gap-3 mb-3">
                     <span>${item.icon}</span>
                     <p><strong>${item.label}:</strong> ${item.val}</p>
                 </div>
