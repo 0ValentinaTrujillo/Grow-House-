@@ -70,14 +70,16 @@
             </button>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" style="display:none; margin-top:1rem;">
-            <div style="display:flex; flex-direction:column; gap:0.25rem; padding:1rem; background:white; border-radius:0.75rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #d1fae5;">
-                <a href="index.html" style="color:#374151; padding:0.625rem 0.75rem; border-radius:0.5rem; font-weight:500; text-decoration:none;">Inicio</a>
-                <a href="productos.html" style="color:#374151; padding:0.625rem 0.75rem; border-radius:0.5rem; font-weight:500; text-decoration:none;">Productos</a>
-                <a href="#categorias" style="color:#374151; padding:0.625rem 0.75rem; border-radius:0.5rem; font-weight:500; text-decoration:none;">Categorías</a>
-                <a href="#contacto" style="color:#374151; padding:0.625rem 0.75rem; border-radius:0.5rem; font-weight:500; text-decoration:none;">Contacto</a>
-            </div>
+        <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                    <div class="flex flex-col space-y-1 pb-4 bg-white rounded-xl shadow-lg p-4 border border-green-100">
+                        <a href="index.html"
+                            class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Inicio</a>
+                        <a href="productos.html"
+                            class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Productos</a>
+                        <a href="index.html#categorias"
+                            class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Categorías</a>
+                        <a href="#contacto"
+                            class="text-gray-700 hover:text-green-800 py-2.5 px-3 rounded-lg hover:bg-green-50 transition-all font-medium">Contacto</a></div>
         </div>
     </nav>
 </header>
