@@ -13,27 +13,28 @@ async function generateProductAIInfo(product) {
     console.log(`🤖 Generando información para: ${product.name}`);
 
     const prompt = `Eres un experto en plantas, jardinería y productos para el hogar verde. 
-Dado el siguiente producto de una tienda colombiana llamada "Grow House", genera información útil para el comprador.
-
-PRODUCTO:
-- Nombre: ${product.name}
-- Categoría: ${product.category}
-- Descripción: ${product.description}
-${product.brand ? `- Marca: ${product.brand}` : ''}
-${product.tags && product.tags.length > 0 ? `- Etiquetas: ${product.tags.join(', ')}` : ''}
-
-Responde ÚNICAMENTE con un JSON válido con esta estructura exacta (sin markdown, sin texto extra):
-{
-  "generalInfo": "Párrafo de 3-4 oraciones con información general interesante y útil sobre este producto para el comprador colombiano. Menciona sus beneficios, usos principales y por qué es una buena elección.",
-  "careGuide": {
-  "En productos diferentes a plantas di cuidados basicos de cada elementos para su buena vida util no dejes esto basio, has reomendaciones si nos productos distintos a plantas"
-    "luz": "Requisitos de luz (solo si aplica a plantas o productos relacionados, si no aplica escribe 'No aplica para este producto')",
-    "riego": "Frecuencia y forma de riego (solo si aplica, si no escribe 'No aplica para este producto')",
-    "suelo": "Tipo de suelo o sustrato recomendado (solo si aplica, si no escribe 'No aplica para este producto')",
-    "temperatura": "Rango de temperatura ideal (solo si aplica, si no escribe 'No aplica para este producto')",
-    "consejos": "2-3 consejos prácticos de uso, mantenimiento o cuidado específicos para este producto"
-  }
-}`;
+    Dado el siguiente producto de una tienda colombiana llamada "Grow House", genera información útil para el comprador.
+    
+    PRODUCTO:
+    - Nombre: ${product.name}
+    - Categoría: ${product.category}
+    - Descripción: ${product.description}
+    ${product.brand ? `- Marca: ${product.brand}` : ''}
+    ${product.tags && product.tags.length > 0 ? `- Etiquetas: ${product.tags.join(', ')}` : ''}
+    
+    IMPORTANTE: Para productos que NO son plantas (materas, decoraciones, implementos), genera consejos prácticos de uso, mantenimiento y vida útil del producto. No dejes ningún campo vacío.
+    
+    Responde ÚNICAMENTE con un JSON válido con esta estructura exacta (sin markdown, sin texto extra):
+    {
+      "generalInfo": "Párrafo de 3-4 oraciones con información general interesante y útil sobre este producto para el comprador colombiano.",
+      "careGuide": {
+        "luz": "Requisitos de luz si aplica a plantas, si no escribe 'No aplica para este producto'",
+        "riego": "Frecuencia de riego si aplica, si no escribe 'No aplica para este producto'",
+        "suelo": "Tipo de suelo si aplica, si no escribe 'No aplica para este producto'",
+        "temperatura": "Rango de temperatura si aplica, si no escribe 'No aplica para este producto'",
+        "consejos": "2-3 consejos prácticos de uso, mantenimiento o cuidado específicos para este producto"
+      }
+    }`;
 
 try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
