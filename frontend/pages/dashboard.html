@@ -800,6 +800,142 @@
             .stats-summary-grid { grid-template-columns: 1fr; }
             .main { padding: 1rem; }
         }
+        
+        /* ── RESPONSIVE MOBILE ───────────────────────────────────────────────────── */
+
+        /* Topbar */
+        @media (max-width: 600px) {
+            .topbar {
+                padding: 0 1rem;
+                height: auto;
+                min-height: 56px;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+
+            .topbar-brand-text h1 { font-size: 1.2rem; }
+            .btn-logout { font-size: 0.75rem; padding: 0.35rem 0.75rem; }
+        }
+
+        /* Tabs */
+        @media (max-width: 600px) {
+            .tabs-bar {
+                padding: 0 0.5rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .tabs-bar::-webkit-scrollbar { display: none; }
+
+            .tab-btn {
+                font-size: 0.78rem;
+                padding: 0.75rem 0.9rem;
+                white-space: nowrap;
+                gap: 0.3rem;
+            }
+        }
+
+        /* Main */
+        @media (max-width: 600px) {
+            .main { padding: 1rem 0.75rem; }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .section-title { font-size: 1.1rem; }
+        }
+
+        /* Stats grid */
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+
+            .stat-card { padding: 0.9rem 1rem; }
+            .stat-value { font-size: 1.3rem; }
+            .stat-icon { width: 36px; height: 36px; font-size: 0.9rem; }
+
+            .stats-summary-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Filters */
+        @media (max-width: 600px) {
+            .filters-bar {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .filter-group { min-width: 100%; }
+        }
+
+        /* Tablas — scroll horizontal */
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-wrap table {
+            min-width: 700px; /* fuerza scroll en mobile */
+        }
+
+        @media (max-width: 600px) {
+            .table-wrap th,
+            .table-wrap td {
+                padding: 0.65rem 0.75rem;
+                font-size: 0.78rem;
+            }
+
+            .product-img { width: 36px; height: 36px; }
+            .product-name { font-size: 0.8rem; }
+            .product-brand { font-size: 0.7rem; }
+
+            .pagination {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        /* Modal */
+        @media (max-width: 600px) {
+            .modal-overlay { padding: 0; align-items: flex-end; }
+
+            .modal {
+                max-width: 100%;
+                max-height: 95vh;
+                border-radius: 16px 16px 0 0;
+            }
+
+            .form-grid { grid-template-columns: 1fr; }
+
+            .modal-footer {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .modal-footer .btn { width: 100%; justify-content: center; }
+        }
+
+        /* Venta modal — items */
+        @media (max-width: 600px) {
+            .sale-total-bar {
+                flex-direction: column;
+                gap: 0.25rem;
+                text-align: center;
+            }
+        }
+
+        /* Top products */
+        @media (max-width: 600px) {
+            .top-product-item { flex-wrap: wrap; gap: 0.4rem; }
+        }
     </style>
 </head>
 <body>
