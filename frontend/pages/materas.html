@@ -77,12 +77,25 @@
     </header>
 
     <!-- Grip de productos -->
-    <section style="width:100%; padding: 3rem 1rem;">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 mb-8">
-            <h2 class="text-3xl font-bold text-gray-900">Materas</h2>
-            <div class="flex items-center bg-white border border-gray-400 rounded-full px-4 py-2 flex-1 max-w-md">
-                <input type="text" id="search-input" placeholder="Buscar..." class="w-full outline-none text-sm">
-                <i class="fas fa-search text-gray-500"></i>
+    <section id="productsventa" class="container mx-auto px-6 py-16">
+        <!-- Contenedor de título y barra de búsqueda -->
+        <div class="flex items-center justify-between mb-12 ml-20 pr-20">
+            <!-- Título -->
+            <h2 class="text-4xl font-bold text-gray-900">
+                Materas
+            </h2> 
+            <!-- Barra de búsqueda -->
+            <div class="flex items-center 
+                        bg-white border border-gray-500 
+                        rounded-full px-4 py-1.5
+                        w-[450px] md:w-[550px] lg:w-[650px]">
+                <input
+                    id="search-input"
+                    type="text" 
+                    placeholder="¡Busca aqui!"
+                    class="w-full bg-transparent focus:outline-none text-gray-700 text-sm">
+
+                <i class="fas fa-search text-gray-500 text-lg"></i>
             </div>
         </div>
         <div id="category-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
