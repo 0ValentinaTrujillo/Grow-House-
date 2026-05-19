@@ -191,7 +191,7 @@ const getProductById = async (req, res, next) => {
         await Product.findByIdAndUpdate(id, { $inc: { viewCount: 1 } });
 
         // ✅ GENERAR INFORMACIÓN SI NO EXISTE TODAVÍA
-        if (!product.aiInfo || !product.aiInfo.generatedAt) {
+        if (!product.aiInfo?.generatedAt || !product.aiInfo?.careGuide?.consejos) {
             console.log(`🤖 Producto sin informacón, generando...`);
 
             const aiData = await generateProductAIInfo(product);
