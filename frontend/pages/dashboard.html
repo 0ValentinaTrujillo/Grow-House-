@@ -800,7 +800,7 @@
             .stats-summary-grid { grid-template-columns: 1fr; }
             .main { padding: 1rem; }
         }
-        
+
         /* ── RESPONSIVE MOBILE ───────────────────────────────────────────────────── */
 
         /* Topbar */
@@ -1466,6 +1466,13 @@
 </div>
 
 <!-- ═══ SCRIPTS ═══════════════════════════════════════════════════════════ -->
+<!-- 1. Librerías externas -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- 2. Config (define window.GROW_HOUSE_API) -->
+<script src="../scripts/config.js"></script>
+
+<!-- 3. Auth (define authAPI y adminAuth) -->
 <script src="../scripts/auth-api.js"></script>
 <script src="../scripts/admin-auth.js"></script>
 <script>
