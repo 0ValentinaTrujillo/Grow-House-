@@ -11,6 +11,13 @@ body {
     box-sizing: border-box;
 }
 
+/* Header: enlaces desktop visibles (conflicto hidden + md:flex con doble Tailwind) */
+@media (min-width: 768px) {
+    header nav .hidden.md\:flex {
+        display: flex !important;
+    }
+}
+
 /* -------- POPUPS NOVEDADES Y NOTIFICACIONES — GLASS VERDE -------- */
 .popup-novedades,
 .popup-notificaciones {
