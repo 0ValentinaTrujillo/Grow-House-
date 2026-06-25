@@ -304,6 +304,12 @@
         }
         .btn-secondary:hover { background: var(--gray-200); }
 
+        .btn-destructive {
+            background: var(--red);
+            color: var(--white);
+        }
+        .btn-destructive:hover { background: #c53030; }
+
         .btn-danger {
             background: var(--red-light);
             color: var(--red);
@@ -1033,7 +1039,7 @@
             </div>
             <div class="filter-group">
                 <label>Categoría</label>
-                <select id="p-category">
+                <select id="p-category" onchange="loadProducts()">
                     <option value="">Todas</option>
                     <option value="plantas">Plantas</option>
                     <option value="materas">Materas</option>
@@ -1043,16 +1049,13 @@
             </div>
             <div class="filter-group">
                 <label>Estado</label>
-                <select id="p-status">
+                <select id="p-status" onchange="loadProducts()">
                     <option value="">Todos</option>
                     <option value="active">Activo</option>
                     <option value="inactive">Inactivo</option>
                     <option value="discontinued">Descontinuado</option>
                 </select>
             </div>
-            <button class="btn btn-primary" onclick="loadProducts()">
-                <i class="fas fa-search"></i> Buscar
-            </button>
         </div>
 
         <!-- Tabla -->
@@ -1065,8 +1068,8 @@
                         <th>Precio</th>
                         <th>Stock</th>
                         <th>Estado</th>
-                        <th>Ventas</th>
-                        <th>Acciones</th>
+                        <th style="text-align:center;width:80px">Ventas</th>
+                        <th style="text-align:center;width:110px">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="products-tbody">
@@ -1109,15 +1112,15 @@
         <div class="filters-bar">
             <div class="filter-group">
                 <label>Desde</label>
-                <input type="date" id="v-start">
+                <input type="date" id="v-start" onchange="loadSales()">
             </div>
             <div class="filter-group">
                 <label>Hasta</label>
-                <input type="date" id="v-end">
+                <input type="date" id="v-end" onchange="loadSales()">
             </div>
             <div class="filter-group">
                 <label>Método de pago</label>
-                <select id="v-payment">
+                <select id="v-payment" onchange="loadSales()">
                     <option value="">Todos</option>
                     <option value="efectivo">Efectivo</option>
                     <option value="transferencia">Transferencia</option>
@@ -1126,9 +1129,6 @@
                     <option value="tarjeta">Tarjeta</option>
                 </select>
             </div>
-            <button class="btn btn-primary" onclick="loadSales()">
-                <i class="fas fa-search"></i> Buscar
-            </button>
         </div>
 
         <div class="table-wrap">
@@ -1370,7 +1370,7 @@
                 </div>
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" id="sm-client-phone" placeholder="Opcional">
+                    <input type="tel" id="sm-client-phone" placeholder="Opcional" inputmode="numeric" pattern="[0-9]*" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                 </div>
                 <div class="form-group full">
                     <label>Método de pago *</label>
@@ -1419,7 +1419,7 @@
                 </div>
                 <!-- Filas dinámicas -->
                 <div id="sale-items-container">
-                    <div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem"></div>
+                    <div id="sale-items-empty" style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">Sin productos agregados</div>
                 </div>
             </div>
 
@@ -1465,6 +1465,22 @@
     </div>
 </div>
 
+<!-- ═══ MODAL: CONFIRMACIÓN ════════════════════════════════════════════════ -->
+<div id="confirm-modal" class="modal-overlay">
+    <div class="modal" style="max-width:420px">
+        <div class="modal-header" style="border-bottom:none;padding-bottom:0.5rem">
+            <span class="modal-title" id="confirm-title">Confirmar</span>
+        </div>
+        <div class="modal-body" style="padding-top:0.25rem;padding-bottom:0.5rem">
+            <p id="confirm-message" style="font-size:0.9rem;color:var(--gray-600);line-height:1.6;margin:0"></p>
+        </div>
+        <div class="modal-footer" style="border-top:none">
+            <button class="btn btn-secondary" id="confirm-cancel-btn">Cancelar</button>
+            <button class="btn" id="confirm-ok-btn">Confirmar</button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══ SCRIPTS ═══════════════════════════════════════════════════════════ -->
 <!-- 1. Librerías externas -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -1489,6 +1505,9 @@ axios.interceptors.response.use(
     err => {
         if (err.response?.status === 401 && !redirecting) {
             redirecting = true;
+            localStorage.removeItem('growhouse-auth-token');
+            localStorage.removeItem('growhouse-user-data');
+            localStorage.removeItem('growhouse-login-time');
             window.location.href = 'login.html';
         }
         return Promise.reject(err);
@@ -1624,9 +1643,9 @@ async function loadProducts(page = 1) {
                     ${p.quantity === 0 ? ' <i class="fas fa-times-circle" style="color:var(--red);font-size:0.75rem"></i>' : ''}
                 </td>
                 <td>${statusBadge(p.status)}</td>
-                <td style="font-family:'Poppins',monospace;font-size:0.82rem">${p.salesCount || 0}</td>
-                <td>
-                    <div class="action-btns">
+                <td style="font-family:'Poppins',monospace;font-size:0.82rem;text-align:center">${p.salesCount || 0}</td>
+                <td style="text-align:center">
+                    <div class="action-btns" style="justify-content:center">
                         <button class="icon-btn icon-btn-edit" onclick="editProduct('${p.id}')" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -1653,6 +1672,7 @@ function openProductModal(product = null) {
     document.getElementById('product-form').reset();
     document.getElementById('pm-id').value = '';
     document.getElementById('pm-title').textContent = 'Nuevo Producto';
+    resetImageUpload();
 
     if (product) {
         document.getElementById('pm-title').textContent      = 'Editar Producto';
@@ -1665,7 +1685,6 @@ function openProductModal(product = null) {
         document.getElementById('pm-quantity').value         = product.quantity;
         document.getElementById('pm-low-stock').value        = product.lowStockAlert || 10;
         document.getElementById('pm-description').value      = product.description;
-                // Mostrar imagen existente en el preview
         const preview = document.getElementById('pm-image-preview');
         preview.src   = product.mainImage;
         preview.style.display = 'block';
@@ -1732,7 +1751,12 @@ async function toggleFeatured(id) {
 }
 
 async function deleteProduct(id, name) {
-    if (!confirm(`¿Eliminar "${name}"?`)) return;
+    const ok = await showConfirm(`¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`, {
+        title: 'Eliminar producto',
+        okLabel: 'Eliminar',
+        danger: true
+    });
+    if (!ok) return;
     try {
         await axios.delete(`${PRODUCTS_URL}/${id}`);
         toast('Producto eliminado');
@@ -1740,8 +1764,10 @@ async function deleteProduct(id, name) {
     } catch { toast('Error al eliminar', 'error'); }
 }
 
-document.getElementById('p-search').addEventListener('keydown', e => {
-    if (e.key === 'Enter') loadProducts();
+let searchDebounce;
+document.getElementById('p-search').addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    searchDebounce = setTimeout(() => loadProducts(), 400);
 });
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1864,7 +1890,8 @@ function showSaleDetail(id) {
 // ── Sale modal ─────────────────────────────────────────────────────────────
 async function openSaleModal() {
     await loadAllProducts();
-    document.getElementById('sale-items-container');
+    const container = document.getElementById('sale-items-container');
+    container.innerHTML = '<div id="sale-items-empty" style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">Sin productos agregados</div>';
     document.getElementById('sm-search').value       = '';
     document.getElementById('sm-dropdown').style.display = 'none';
     document.getElementById('sm-client-name').value  = '';
@@ -1912,6 +1939,8 @@ function addSaleItem(productId, productName, productPrice, productStock) {
             <i class="fas fa-trash-alt"></i>
         </button>
     `;
+    const empty = document.getElementById('sale-items-empty');
+    if (empty) empty.remove();
     container.appendChild(row);
     calcSaleTotal();
 }
@@ -2041,7 +2070,12 @@ async function submitSale() {
 }
 
 async function deleteSale(id) {
-    if (!confirm('¿Eliminar esta venta? Se restaurará el inventario.')) return;
+    const ok = await showConfirm('¿Eliminar esta venta? El inventario de los productos se restaurará automáticamente.', {
+        title: 'Eliminar venta',
+        okLabel: 'Eliminar',
+        danger: true
+    });
+    if (!ok) return;
     try {
         await axios.delete(`${SALES_URL}/${id}`);
         toast('Venta eliminada y stock restaurado');
@@ -2053,9 +2087,18 @@ async function deleteSale(id) {
 // ESTADÍSTICAS
 // ══════════════════════════════════════════════════════════════════════════
 async function loadStats() {
-    if (redirecting) return; 
+    if (redirecting) return;
+
+    const topList = document.getElementById('top-products-list');
+    topList.innerHTML = '<div class="loading-spinner"><div class="spinner"></div> Cargando...</div>';
+
     try {
         const { data: res } = await axios.get(`${SALES_URL}/stats`);
+
+        if (!res.success || !res.data) {
+            throw new Error(res.message || 'Respuesta inesperada del servidor');
+        }
+
         const d = res.data;
 
         document.getElementById('s-today-total').textContent = fmt(d.summary?.today?.total);
@@ -2065,7 +2108,6 @@ async function loadStats() {
         document.getElementById('s-month-total').textContent = fmt(d.summary?.month?.total);
         document.getElementById('s-month-count').textContent = `${d.summary?.month?.count || 0} ventas`;
 
-        const topList = document.getElementById('top-products-list');
         if (d.topProducts?.length) {
             topList.innerHTML = d.topProducts.map((p, i) => `
                 <div class="top-product-item">
@@ -2084,14 +2126,46 @@ async function loadStats() {
         }
 
     } catch (err) {
-        console.error(err);
-        toast('Error al cargar estadísticas', 'error');
+        console.error('Error loadStats:', err);
+        const msg = err.response?.data?.message || err.message || 'Error de conexión con el servidor';
+        topList.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>${msg}</p></div>`;
+        toast(`Error al cargar estadísticas: ${msg}`, 'error');
     }
 }
 
+// ── Confirm modal ──────────────────────────────────────────────────────────
+function showConfirm(message, { title = 'Confirmar acción', okLabel = 'Confirmar', danger = false } = {}) {
+    return new Promise(resolve => {
+        document.getElementById('confirm-title').textContent   = title;
+        document.getElementById('confirm-message').textContent = message;
+        const okBtn = document.getElementById('confirm-ok-btn');
+        okBtn.textContent = okLabel;
+        okBtn.className   = `btn ${danger ? 'btn-destructive' : 'btn-primary'}`;
+        document.getElementById('confirm-modal').classList.add('open');
+
+        function cleanup(result) {
+            document.getElementById('confirm-modal').classList.remove('open');
+            okBtn.removeEventListener('click', onOk);
+            document.getElementById('confirm-cancel-btn').removeEventListener('click', onCancel);
+            resolve(result);
+        }
+        function onOk()     { cleanup(true);  }
+        function onCancel() { cleanup(false); }
+
+        okBtn.addEventListener('click', onOk);
+        document.getElementById('confirm-cancel-btn').addEventListener('click', onCancel);
+    });
+}
+
 // ── Logout ─────────────────────────────────────────────────────────────────
-function logout() {
-    if (adminAuth) adminAuth.logout();
+async function logout() {
+    const ok = await showConfirm('¿Estás seguro de que deseas cerrar sesión?', {
+        title: 'Cerrar sesión',
+        okLabel: 'Cerrar sesión',
+        danger: false
+    });
+    if (!ok) return;
+    if (adminAuth) adminAuth.logout(false);
     else {
         localStorage.removeItem('growhouse-auth-token');
         localStorage.removeItem('growhouse-user-data');

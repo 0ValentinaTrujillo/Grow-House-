@@ -12,7 +12,7 @@ class AdminAuth {
 
         if (!isAdminPage) return;
 
-        console.log('🛡️ Protegiendo ruta administrativa...');
+        console.log('Protegiendo ruta administrativa...');
 
         const token = localStorage.getItem(this.TOKEN_KEY);
         let user = null;
@@ -24,17 +24,19 @@ class AdminAuth {
             console.error('Error al leer datos de usuario');
         }
 
-        // ✅ Solo verifica que existan token y datos de sesión
         if (!token || !user) {
-            console.warn('⛔ Acceso no autorizado. Redirigiendo a login...');
+            console.warn('Acceso no autorizado. Redirigiendo a login...');
             this.redirectToLogin();
             return;
         }
 
-        console.log('✅ Acceso admin verificado:', user.email);
+        console.log('Acceso admin verificado');
     }
 
     redirectToLogin() {
+        localStorage.removeItem(this.TOKEN_KEY);
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem('growhouse-login-time');
         window.location.href = 'login.html';
     }
 

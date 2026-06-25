@@ -64,7 +64,7 @@ const saleSchema = new mongoose.Schema({
         type: String,
         required: [true, 'El método de pago es obligatorio'],
         enum: {
-            values: ['efectivo', 'tarjeta', 'transferencia', 'nequi'],
+            values: ['efectivo', 'tarjeta', 'transferencia', 'nequi', 'daviplata'],
             message: '{VALUE} no es un método de pago válido'
         }
     },
