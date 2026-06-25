@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build-css": "tailwindcss -i ./styles/input.css -o ./styles/output.css --watch",
-    "build":"tailwindcss -i ./styles/input.css -o ./styles/output.css",
+    "build": "chmod +x ./node_modules/.bin/tailwindcss && tailwindcss -i ./styles/input.css -o ./styles/output.css",
     "dev": "npm run build-css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
