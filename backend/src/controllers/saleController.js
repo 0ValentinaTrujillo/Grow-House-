@@ -94,6 +94,7 @@ const getAllSales = async (req, res) => {
             startDate,
             endDate,
             paymentMethod,
+            search,
             page  = 1,
             limit = 20
         } = req.query;
@@ -109,6 +110,17 @@ const getAllSales = async (req, res) => {
 
         // Filtro por método de pago
         if (paymentMethod) filter.paymentMethod = paymentMethod;
+
+        // Búsqueda por nombre de cliente o por producto vendido
+        if (search && search.trim()) {
+            // Se escapan los metacaracteres: un "(" suelto rompería el RegExp
+            const term = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const rx   = new RegExp(term, 'i');
+            filter.$or = [
+                { 'client.name': rx },
+                { 'items.name':  rx }
+            ];
+        }
 
         const skip  = (page - 1) * limit;
         const total = await Sale.countDocuments(filter);

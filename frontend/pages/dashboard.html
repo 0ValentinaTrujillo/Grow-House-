@@ -10,26 +10,42 @@
     <script src="../scripts/config.js"></script>
     <style>
         :root {
-            --green-dark:   #03651f;
-            --green-mid:    #057a2b;
-            --green-light:  #e8f5e9;
-            --green-accent: #2ecc71;
-            --gold:         #ffb916;
-            --gold-light:   #fef9ec;
-            --red:          #e53e3e;
+            /* ── Marca: verde esmeralda/teal, más sobrio que el verde vivo ── */
+            --green-dark:   #087f5b;   /* botones sólidos y texto de marca  */
+            --green-mid:    #06694b;   /* hover: un paso más oscuro         */
+            --green-accent: #0ca678;   /* anillo de foco                    */
+            --green-light:  #e6fcf5;   /* fondo de insignias y píldoras     */
+            --green-soft:   #96f2d7;   /* bordes                            */
+
+            /* ── Acentos: la gama deja de ser sólo verde ───────────────────- */
+            --blue:         #2563eb;
+            --blue-light:   #eff6ff;
+            --violet:       #6d28d9;
+            --violet-light: #ede9fe;
+
+            /* ── Semánticos: amarillo y rojo ──────────────────────────────── */
+            --yellow:       #eab308;   /* glifo de advertencia                         */
+            --yellow-light: #fef9c3;   /* tinte de advertencia (mismo peso que los demás) */
+            --yellow-ink:   #a16207;   /* texto e icono sobre el tinte de advertencia   */
+            --yellow-glyph: #eab308;   /* estrellas de destacado — token propio, sin cambios */
+            --red:          #dc2626;
+            --red-deep:     #c81e1e;
             --red-light:    #fff5f5;
-            --blue:         #3182ce;
-            --blue-light:   #ebf8ff;
-            --gray-50:      #f9fafb;
-            --gray-100:     #f3f4f6;
-            --gray-200:     #e5e7eb;
-            --gray-400:     #9ca3af;
-            --gray-600:     #4b5563;
-            --gray-800:     #1f2937;
+            --red-soft:     #fecaca;  
+
+            /* ── Neutros fríos (slate) ────────────────────────────────────── */
+            --gray-50:      #f8fafc;
+            --gray-100:     #f1f5f9;
+            --gray-200:     #e2e8f0;
+            --gray-400:     #64748b;
+            --gray-600:     #334155;
+            --gray-800:     #0f172a;
             --white:        #ffffff;
-            --shadow-sm:    0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md:    0 4px 16px rgba(0,0,0,0.08);
-            --shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+
+            /* ── Sombras con tinte del neutro, no negro puro ───────────────- */
+            --shadow-sm:    0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
+            --shadow-md:    0 4px 12px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.04);
+            --shadow-lg:    0 12px 32px rgba(15,23,42,0.12), 0 4px 8px rgba(15,23,42,0.05);
             --radius:       12px;
             --radius-sm:    8px;
         }
@@ -112,13 +128,10 @@
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--white);
-            background: var(--red);
+            background: var(--red-deep);   /* color fijo: no cambia al pasar el mouse */
             cursor: pointer;
-            transition: all 0.2s;
             font-family: 'DM Sans', sans-serif;
         }
-
-        .btn-logout:hover { background: #c53030; }
 
         /* ── TABS ────────────────────────────────────────────────────────── */
         .tabs-bar {
@@ -200,6 +213,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
         }
 
         .stat-label {
@@ -229,16 +248,12 @@
 
         /* ── FILTERS ─────────────────────────────────────────────────────── */
         .filters-bar {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 1rem 1.25rem;
+            padding: 0;
             margin-bottom: 1rem;
             display: flex;
             gap: 0.75rem;
             flex-wrap: wrap;
             align-items: flex-end;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--gray-200);
         }
 
         .filter-group {
@@ -250,11 +265,9 @@
         }
 
         .filter-group label {
-            font-size: 0.72rem;
+            font-size: 0.78rem;
             font-weight: 600;
             color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         .filter-group input,
@@ -265,7 +278,7 @@
             font-size: 0.85rem;
             font-family: 'DM Sans', sans-serif;
             color: var(--gray-800);
-            background: var(--gray-50);
+            background: var(--white);
             outline: none;
             transition: border-color 0.2s;
         }
@@ -273,7 +286,6 @@
         .filter-group input:focus,
         .filter-group select:focus {
             border-color: var(--green-dark);
-            background: var(--white);
         }
 
         /* ── BUTTONS ─────────────────────────────────────────────────────── */
@@ -292,10 +304,9 @@
         }
 
         .btn-primary {
-            background: var(--green-dark);
+            background: var(--green-dark);   /* color fijo: no cambia al pasar el mouse */
             color: var(--white);
         }
-        .btn-primary:hover { background: var(--green-mid); }
 
         .btn-secondary {
             background: var(--gray-100);
@@ -308,20 +319,14 @@
             background: var(--red);
             color: var(--white);
         }
-        .btn-destructive:hover { background: #c53030; }
+        .btn-destructive:hover { background: var(--red-deep); }
 
         .btn-danger {
             background: var(--red-light);
             color: var(--red);
-            border: 1px solid #fed7d7;
+            border: 1px solid var(--red-soft);
         }
-        .btn-danger:hover { background: #fed7d7; }
-
-        .btn-gold {
-            background: var(--gold-light);
-            color: #b7791f;
-            border: 1px solid #fbd38d;
-        }
+        .btn-danger:hover { background: var(--red-soft); }
 
         /* ── TABLE ───────────────────────────────────────────────────────── */
         .table-wrap {
@@ -345,11 +350,9 @@
         .table-wrap th {
             padding: 0.75rem 1rem;
             text-align: left;
-            font-size: 0.7rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            color: var(--gray-400);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+            color: var(--gray-600);
             white-space: nowrap;
         }
 
@@ -401,8 +404,24 @@
         .badge-gray   { background: var(--gray-100); color: var(--gray-600); }
         .badge-red    { background: var(--red-light); color: var(--red); }
         .badge-blue   { background: var(--blue-light); color: var(--blue); }
-        .badge-orange { background: #fff7ed; color: #c05621; }
-        .badge-purple { background: #faf5ff; color: #6b46c1; }
+        .badge-yellow { background: var(--yellow-light); color: var(--yellow-ink); }
+        .badge-purple { background: var(--violet-light); color: var(--violet); }
+
+        /* Stock bajo: número e icono dentro del mismo indicador, no separados */
+        .stock-alert {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 9999px;
+            background: var(--yellow-light);
+            color: var(--yellow-ink);
+            font-weight: 600;
+        }
+
+        .stock-alert i {
+            font-size: 0.72em;   /* proporcional al número, no fijo */
+        }
 
         .action-btns {
             display: flex;
@@ -425,23 +444,22 @@
         }
 
         .icon-btn-edit  { color: var(--blue); }
-        .icon-btn-edit:hover { color: #1a5fa8; }
+        .icon-btn-edit:hover { color: #1d4ed8; }
 
-        .icon-btn-star  { color: #f1c642; }
-        .icon-btn-star:hover { color: #f1c642; }
-        .icon-btn-star.starred { color: #f1c642; }
+        .icon-btn-star  { color: var(--yellow-glyph); }
+        .icon-btn-star:hover { color: var(--yellow-glyph); }
+        .icon-btn-star.starred { color: var(--yellow-glyph); }
 
         .icon-btn-del   { color: var(--red); }
-        .icon-btn-del:hover { color: #c53030; }
+        .icon-btn-del:hover { color: var(--red-deep); }
 
         /* ── PAGINATION ──────────────────────────────────────────────────── */
         .pagination {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.9rem 1rem;
-            border-top: 1px solid var(--gray-100);
-            background: var(--gray-50);
+            margin-top: 0.85rem;
+            padding: 0;
         }
 
         .pagination-info {
@@ -451,7 +469,15 @@
 
         .pagination-btns {
             display: flex;
+            align-items: center;
             gap: 0.4rem;
+        }
+
+        .pagination-pages {
+            padding: 0 0.5rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            font-variant-numeric: tabular-nums;
         }
 
         .page-btn {
@@ -476,7 +502,7 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.45);
+            background: rgba(15,23,42,0.55);
             z-index: 200;
             align-items: center;
             justify-content: center;
@@ -650,7 +676,7 @@
 
         .sale-total-bar {
             background: var(--green-light);
-            border: 1px solid #c6f6d5;
+            border: 1px solid var(--green-soft);
             border-radius: var(--radius-sm);
             padding: 0.75rem 1rem;
             display: flex;
@@ -673,78 +699,468 @@
         }
 
         /* ── STATS DASHBOARD ─────────────────────────────────────────────── */
+        .stats-panel {
+            /* Tokens de visualización — un solo lugar para el color de datos */
+            --viz-accent:  #087f5b;   /* serie única: ingresos                 */
+            --viz-track:   #c3fae8;   /* pista del medidor (mismo tono, claro) */
+            --viz-grid:    #eef2f7;   /* rejilla hairline, un paso del blanco  */
+            --viz-axis:    #cbd5e1;
+            --viz-muted:   #64748b;
+            --viz-surface: #ffffff;
+            --viz-up:      #087f5b;
+            --viz-down:    #dc2626;
+        }
+
+        .stats-updated {
+            font-size: 0.72rem;
+            color: var(--gray-400);
+            margin-top: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* ── KPI row ─────────────────────────────────────────────────────── */
         .stats-summary-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.9rem;
+            margin-bottom: 1.1rem;
         }
 
         .summary-card {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            background: var(--viz-surface);
             border: 1px solid var(--gray-200);
-            text-align: center;
+            border-radius: var(--radius);
+            padding: 1.1rem 1.2rem;
+            text-align: left;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+
+        .summary-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .summary-card .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
         }
 
         .summary-card .period {
-            font-size: 0.72rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--gray-400);
+            line-height: 1.3;
+        }
+
+        .summary-card .kpi-icon {
+            width: 30px;
+            height: 30px;
+            flex: none;
+            border-radius: 9px;
+            display: grid;
+            place-items: center;
+            font-size: 0.78rem;
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        /* Un acento por KPI: identifica la tarjeta sin recargar la vista */
+        .stats-summary-grid .summary-card:nth-child(2) .kpi-icon {
+            background: var(--blue-light);   color: var(--blue);
+        }
+        .stats-summary-grid .summary-card:nth-child(3) .kpi-icon {
+            background: var(--violet-light); color: var(--violet);
+        }
+        .stats-summary-grid .summary-card:nth-child(4) .kpi-icon {
+            background: var(--yellow-light); color: var(--yellow);
+        }
+
+        .summary-card .amount {
+            font-size: 1.65rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--gray-800);
+            font-family: 'DM Sans', sans-serif;
+            margin-top: 0.5rem;
+            line-height: 1.15;
+        }
+
+        .summary-card .kpi-foot {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 0.55rem;
+        }
+
+        .summary-card .count {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        .delta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 9999px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .delta i { font-size: 0.62rem; }
+        .delta.up   { color: var(--viz-up);   background: var(--green-light); }
+        .delta.down { color: var(--viz-down); background: var(--red-light); }
+        .delta.flat { color: var(--gray-600); background: var(--gray-100); }
+
+        /* ── Tarjeta de visualización ────────────────────────────────────── */
+        .viz-card {
+            background: var(--viz-surface);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .viz-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.05rem 1.25rem 0.9rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .viz-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .viz-sub {
+            font-size: 0.74rem;
+            color: var(--gray-400);
+            margin-top: 0.2rem;
+        }
+
+        .viz-body {
+            padding: 0.75rem 1rem 1rem;
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-wrap { position: relative; width: 100%; }
+        .chart-wrap svg { display: block; width: 100%; }
+        .chart-wrap:focus { outline: none; }
+        .chart-wrap:focus-visible {
+            outline: 2px solid var(--green-accent);
+            outline-offset: 3px;
+            border-radius: var(--radius-sm);
+        }
+
+        .viz-grid-line { stroke: var(--viz-grid); stroke-width: 1; shape-rendering: crispEdges; }
+        .viz-axis-line { stroke: var(--viz-axis); stroke-width: 1; shape-rendering: crispEdges; }
+        .viz-tick {
+            fill: var(--viz-muted);
+            font-size: 10.5px;
+            font-family: 'DM Sans', sans-serif;
+            font-variant-numeric: tabular-nums;
+        }
+        .viz-point-label {
+            fill: var(--gray-800);
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .viz-crosshair { stroke: var(--viz-axis); stroke-width: 1; }
+
+        /* Tooltip */
+        .viz-tip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 104px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            padding: 0.55rem 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .12s ease;
+            z-index: 5;
+        }
+        .viz-tip.show { opacity: 1; }
+        .viz-tip .tip-date {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--gray-400);
+            margin-bottom: 0.35rem;
+        }
+        .viz-tip .tip-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+        }
+        /* ── Grilla inferior ─────────────────────────────────────────────── */
+        .stats-bottom-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            align-items: stretch;
+        }
+
+        /* ── Métodos de pago ─────────────────────────────────────────────── */
+        .pm-bar {
+            display: flex;
+            gap: 2px;                 /* el separador es superficie, no un borde */
+            height: 14px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--viz-surface);
+            margin-bottom: 1rem;
+        }
+
+        .pm-seg {
+            flex: 1 1 0;
+            min-width: 3px;
+            transition: filter .15s ease;
+        }
+        .pm-seg:hover { filter: brightness(1.08); }
+
+        .pm-legend { display: flex; flex-direction: column; gap: 0.1rem; }
+
+        .pm-row {
+            display: grid;
+            grid-template-columns: 10px minmax(0, 1fr) auto auto;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.42rem 0.3rem;
+            border-radius: 6px;
+        }
+        .pm-row:hover { background: var(--gray-50); }
+
+        .pm-swatch { width: 10px; height: 10px; border-radius: 3px; }
+        .pm-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .pm-amount {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+        }
+        .pm-pct {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            font-variant-numeric: tabular-nums;
+            min-width: 44px;
+            text-align: right;
+        }
+
+        .pm-total {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-top: auto;
+            padding: 0.85rem 0.3rem 0.1rem;
+            border-top: 1px solid var(--gray-100);
+        }
+        .pm-total .lbl {
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             color: var(--gray-400);
-            margin-bottom: 0.5rem;
         }
-
-        .summary-card .amount {
-            font-size: 1.6rem;
+        .pm-total .val {
+            font-size: 0.95rem;
             font-weight: 700;
-            color: var(--green-dark);
-            font-family: 'Poppins', sans-serif ;
+            color: var(--gray-800);
         }
 
-        .summary-card .count {
-            font-size: 0.8rem;
-            color: var(--gray-400);
-            margin-top: 0.3rem;
-        }
-
+        /* ── Top productos ───────────────────────────────────────────────── */
         .top-products-list {
-            background: var(--white);
+            background: var(--viz-surface);
             border-radius: var(--radius);
             border: 1px solid var(--gray-200);
             overflow: hidden;
         }
 
         .top-products-list .list-header {
-            padding: 1rem 1.25rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            border-bottom: 1px solid var(--gray-200);
-            color: var(--gray-800);
-        }
-
-        .top-product-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 1.25rem;
+            padding: 1.05rem 1.25rem 0.9rem;
             border-bottom: 1px solid var(--gray-100);
         }
 
-        .top-product-item:last-child { border-bottom: none; }
+        .top-product-item {
+            display: grid;
+            grid-template-columns: 26px minmax(0, 1fr);
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+        }
+        .top-product-item + .top-product-item { border-top: 1px solid var(--gray-100); }
+        .top-product-item:hover { background: var(--gray-50); }
+
+        .top-rank {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-variant-numeric: tabular-nums;
+        }
+        .top-product-item:first-child .top-rank {
+            background: var(--green-dark);
+            color: var(--white);
+        }
+
+        .top-line {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
 
         .top-product-name {
-            font-size: 0.85rem;
+            font-size: 0.84rem;
             font-weight: 600;
+            color: var(--gray-800);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .top-product-qty {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+            flex: none;
+        }
+
+        .top-meter {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--viz-track);
+            margin-top: 0.45rem;
+            overflow: hidden;
+        }
+        .top-meter span {
+            display: block;
+            height: 100%;
+            border-radius: 0 3px 3px 0;
+            background: var(--viz-accent);
+        }
+
+        .top-revenue {
+            font-size: 0.72rem;
             color: var(--gray-400);
-            font-family: 'DM Mono', monospace;
+            margin-top: 0.3rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ── Registro del día ────────────────────────────────────────────── */
+        .log-card { margin-top: 1rem; }
+
+        .log-wrap {
+            max-height: 520px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .log-table {
+            width: 100%;
+            min-width: 520px;
+            border-collapse: collapse;
+        }
+
+        .log-table th,
+        .log-table td {
+            padding: 0.65rem 0.75rem;
+            text-align: left;
+            font-size: 0.8rem;
+        }
+
+        .log-table th:first-child,
+        .log-table td:first-child { padding-left: 1.25rem; }
+        .log-table th:last-child,
+        .log-table td:last-child  { padding-right: 1.25rem; }
+
+        .log-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gray-600);
+            white-space: nowrap;
+        }
+
+        .log-table tbody td { border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+        /* El .icon-btn es display:flex, así que no basta con text-align */
+        .log-table th.act,
+        .log-table td.act {
+            text-align: center;
+            width: 70px;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        .log-table td.act .icon-btn { margin: 0 auto; }
+        .log-table tbody tr:hover { background: var(--gray-50); }
+        .log-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        .log-time {
+            font-weight: 600;
+            color: var(--gray-800);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .log-client { color: var(--gray-800); white-space: nowrap; }
+
+        .log-total { font-weight: 700; color: var(--green-dark); }
+
+        .log-table tfoot td {
+            position: sticky;
+            bottom: 0;
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+            padding: 0.75rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+        .log-foot-lbl {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-400);
         }
 
         /* ── EMPTY / LOADING STATES ──────────────────────────────────────── */
@@ -801,10 +1217,15 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
+        @media (max-width: 1024px) {
+            .stats-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .stats-bottom-grid  { grid-template-columns: minmax(0, 1fr); }
+        }
+
         @media (max-width: 768px) {
             .form-grid { grid-template-columns: 1fr; }
-            .stats-summary-grid { grid-template-columns: 1fr; }
             .main { padding: 1rem; }
+            .viz-head { flex-direction: column; align-items: stretch; }
         }
 
         /* ── RESPONSIVE MOBILE ───────────────────────────────────────────────────── */
@@ -867,7 +1288,10 @@
             .stat-value { font-size: 1.3rem; }
             .stat-icon { width: 36px; height: 36px; font-size: 0.9rem; }
 
-            .stats-summary-grid { grid-template-columns: 1fr; }
+            .stats-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+            .summary-card { padding: 0.9rem 0.95rem; }
+            .summary-card .amount { font-size: 1.25rem; }
+            .summary-card .kpi-icon { display: none; }
         }
 
         /* Filters */
@@ -938,9 +1362,14 @@
             }
         }
 
-        /* Top products */
+        /* Top products / visualizaciones */
         @media (max-width: 600px) {
-            .top-product-item { flex-wrap: wrap; gap: 0.4rem; }
+            .top-product-item { padding: 0.7rem 0.9rem; }
+            .top-products-list .list-header,
+            .viz-head { padding-left: 0.9rem; padding-right: 0.9rem; }
+            .viz-body { padding: 0.6rem 0.65rem 0.9rem; }
+            .pm-row { grid-template-columns: 10px minmax(0, 1fr) auto; gap: 0.5rem; }
+            .pm-row .pm-pct { display: none; }
         }
     </style>
 </head>
@@ -1016,7 +1445,7 @@
                     <div class="stat-label">Stock Bajo</div>
                     <div class="stat-value" id="st-low">—</div>
                 </div>
-                <div class="stat-icon" style="background:#fff7ed;color:#ffd20b">
+                <div class="stat-icon" style="background:var(--yellow-light);color:var(--yellow)">
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
             </div>
@@ -1080,17 +1509,18 @@
                     </td></tr>
                 </tbody>
             </table>
-            <div class="pagination">
-                <span class="pagination-info" id="p-info">—</span>
-                <div class="pagination-btns">
-                    <button class="page-btn" id="p-prev" onclick="loadProducts(pPage-1)" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span style="padding:0 0.5rem;font-size:0.8rem;color:var(--gray-600);line-height:32px" id="p-pages">1/1</span>
-                    <button class="page-btn" id="p-next" onclick="loadProducts(pPage+1)" disabled>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+        </div>
+
+        <div class="pagination">
+            <span class="pagination-info" id="p-info">—</span>
+            <div class="pagination-btns">
+                <button class="page-btn" id="p-prev" onclick="loadProducts(pPage-1)" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="pagination-pages" id="p-pages">1/1</span>
+                <button class="page-btn" id="p-next" onclick="loadProducts(pPage+1)" disabled>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -1110,6 +1540,10 @@
 
         <!-- Filtros ventas -->
         <div class="filters-bar">
+            <div class="filter-group" style="flex:2">
+                <label>Buscar</label>
+                <input type="text" id="v-search" placeholder="Cliente o producto...">
+            </div>
             <div class="filter-group">
                 <label>Desde</label>
                 <input type="date" id="v-start" onchange="loadSales()">
@@ -1135,17 +1569,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th>id</th>
+                        <th>ID</th>
                         <th>Fecha</th>
                         <th>Cliente</th>
-                        <th>Productos</th>
                         <th>Método</th>
                         <th>Total</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="sales-tbody">
-                    <tr><td colspan="7">
+                    <tr><td colspan="6">
                         <div class="empty-state">
                             <i class="fas fa-receipt"></i>
                             <p>No hay ventas registradas aún</p>
@@ -1153,60 +1586,145 @@
                     </td></tr>
                 </tbody>
             </table>
-            <div class="pagination">
-                <span class="pagination-info" id="v-info">—</span>
-                <div class="pagination-btns">
-                    <button class="page-btn" id="v-prev" onclick="loadSales(vPage-1)" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span style="padding:0 0.5rem;font-size:0.8rem;color:var(--gray-600);line-height:32px" id="v-pages">1/1</span>
-                    <button class="page-btn" id="v-next" onclick="loadSales(vPage+1)" disabled>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+        </div>
+
+        <div class="pagination">
+            <span class="pagination-info" id="v-info">—</span>
+            <div class="pagination-btns">
+                <button class="page-btn" id="v-prev" onclick="loadSales(vPage-1)" disabled>
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span class="pagination-pages" id="v-pages">1/1</span>
+                <button class="page-btn" id="v-next" onclick="loadSales(vPage+1)" disabled>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
             </div>
         </div>
     </div>
     <!-- ═══ TAB: ESTADÍSTICAS ═════════════════════════════════════════════ -->
-    <div id="tab-estadisticas" class="tab-panel">
+    <div id="tab-estadisticas" class="tab-panel stats-panel">
 
         <div class="section-header">
             <div>
                 <div class="section-title">Estadísticas de Ventas</div>
                 <div class="section-sub">Resumen del rendimiento del negocio</div>
+                <div class="stats-updated" id="s-updated"></div>
             </div>
             <button class="btn btn-secondary" onclick="loadStats()">
                 <i class="fas fa-sync-alt"></i> Actualizar
             </button>
         </div>
 
+        <!-- ── KPIs ──────────────────────────────────────────────────────── -->
         <div class="stats-summary-grid">
             <div class="summary-card">
-                <div class="period">Hoy</div>
+                <div class="card-top">
+                    <div class="period">Hoy</div>
+                    <div class="kpi-icon"><i class="fas fa-bolt"></i></div>
+                </div>
                 <div class="amount" id="s-today-total">$0</div>
-                <div class="count" id="s-today-count">0 ventas</div>
+                <div class="kpi-foot">
+                    <span id="s-today-delta"></span>
+                    <span class="count" id="s-today-count">0 ventas</span>
+                </div>
             </div>
             <div class="summary-card">
-                <div class="period">Última semana</div>
+                <div class="card-top">
+                    <div class="period">Últimos 7 días</div>
+                    <div class="kpi-icon"><i class="fas fa-calendar-week"></i></div>
+                </div>
                 <div class="amount" id="s-week-total">$0</div>
-                <div class="count" id="s-week-count">0 ventas</div>
+                <div class="kpi-foot">
+                    <span id="s-week-delta"></span>
+                    <span class="count" id="s-week-count">0 ventas</span>
+                </div>
             </div>
             <div class="summary-card">
-                <div class="period">Último mes</div>
+                <div class="card-top">
+                    <div class="period">Últimos 30 días</div>
+                    <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
+                </div>
                 <div class="amount" id="s-month-total">$0</div>
-                <div class="count" id="s-month-count">0 ventas</div>
+                <div class="kpi-foot">
+                    <span class="count" id="s-month-count">0 ventas</span>
+                </div>
+            </div>
+            <div class="summary-card">
+                <div class="card-top">
+                    <div class="period">Ticket promedio</div>
+                    <div class="kpi-icon"><i class="fas fa-receipt"></i></div>
+                </div>
+                <div class="amount" id="s-ticket">$0</div>
+                <div class="kpi-foot">
+                    <span class="count">Promedio por venta · 30 días</span>
+                </div>
             </div>
         </div>
 
-        <div class="top-products-list">
-            <div class="list-header">Productos más vendidos</div>
-            <div id="top-products-list">
+        <!-- ── Tendencia diaria ──────────────────────────────────────────── -->
+        <div class="viz-card">
+            <div class="viz-head">
+                <div>
+                    <div class="viz-title">Ingresos diarios</div>
+                    <div class="viz-sub">Últimos 30 días</div>
+                </div>
+            </div>
+            <div class="viz-body">
+                <div class="chart-wrap" id="trend-chart" tabindex="0" role="img"
+                     aria-label="Gráfica de ingresos diarios de los últimos 30 días"></div>
+            </div>
+        </div>
+
+        <div class="stats-bottom-grid">
+
+            <!-- ── Métodos de pago ───────────────────────────────────────── -->
+            <div class="viz-card">
+                <div class="viz-head">
+                    <div>
+                        <div class="viz-title">Métodos de pago</div>
+                        <div class="viz-sub">Participación en ingresos · últimos 30 días</div>
+                    </div>
+                </div>
+                <div class="viz-body" id="pm-body">
+                    <div class="empty-state">
+                        <i class="fas fa-credit-card"></i>
+                        <p>No hay datos disponibles</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Top productos ─────────────────────────────────────────── -->
+            <div class="top-products-list">
+                <div class="list-header">
+                    <div class="viz-title">Productos más vendidos</div>
+                    <div class="viz-sub">Top 5 por unidades vendidas</div>
+                </div>
+                <div id="top-products-list">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No hay datos disponibles</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Registro diario -->
+        <div class="viz-card log-card">
+            <div class="viz-head">
+                <div>
+                    <div class="viz-title">Registro del día</div>
+                    <div class="viz-sub" id="log-sub">—</div>
+                </div>
+            </div>
+            <div class="log-wrap" id="log-body">
                 <div class="empty-state">
-                    <i class="fas fa-chart-bar"></i>
+                    <i class="fas fa-receipt"></i>
                     <p>No hay datos disponibles</p>
                 </div>
             </div>
         </div>
+
     </div>
 
 </main>
@@ -1547,7 +2065,7 @@ function toast(msg, type = 'success') {
 function catBadge(c) {
     const map = {
         plantas:      'badge-green',
-        materas:      'badge-orange',
+        materas:      'badge-yellow',
         decoraciones: 'badge-purple',
         implementos:  'badge-blue'
     };
@@ -1569,10 +2087,16 @@ function statusBadge(s) {
     return `<span class="badge ${cls}">${label}</span>`;
 }
 
-function stockColor(q, alert) {
-    if (q === 0) return 'color:var(--red)';
-    if (q <= alert) return 'color:#c05621';
-    return 'color:var(--green-dark)';
+function stockCell(q, alert) {
+    if (q === 0) {
+        return `<span style="font-weight:600;color:var(--red)">${q}</span>`
+             + ` <i class="fas fa-times-circle" style="color:var(--red);font-size:0.75rem"></i>`;
+    }
+    if (q <= alert) {
+        // El icono va dentro de la cápsula: número y alerta se leen como una unidad
+        return `<span class="stock-alert">${q}<i class="fas fa-exclamation-triangle"></i></span>`;
+    }
+    return `<span style="font-weight:600;color:var(--green-dark)">${q}</span>`;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1637,11 +2161,7 @@ async function loadProducts(page = 1) {
                     <div style="font-weight:600">${fmt(p.price)}</div>
                     ${p.originalPrice ? `<div style="font-size:0.75rem;color:var(--gray-400);text-decoration:line-through">${fmt(p.originalPrice)}</div>` : ''}
                 </td>
-                <td>
-                    <span style="font-weight:600;${stockColor(p.quantity, p.lowStockAlert)}">${p.quantity}</span>
-                    ${p.quantity <= p.lowStockAlert && p.quantity > 0 ? ' <i class="fas fa-exclamation-triangle" style="color:#c05621;font-size:0.75rem"></i>' : ''}
-                    ${p.quantity === 0 ? ' <i class="fas fa-times-circle" style="color:var(--red);font-size:0.75rem"></i>' : ''}
-                </td>
+                <td>${stockCell(p.quantity, p.lowStockAlert)}</td>
                 <td>${statusBadge(p.status)}</td>
                 <td style="font-family:'Poppins',monospace;font-size:0.82rem;text-align:center">${p.salesCount || 0}</td>
                 <td style="text-align:center">
@@ -1775,6 +2295,7 @@ document.getElementById('p-search').addEventListener('input', () => {
 // ══════════════════════════════════════════════════════════════════════════
 let vPage = 1, vTotal = 1, vLoaded = false;
 let allProducts = [];
+let salesCache  = [];
 
 async function loadAllProducts() {
     if (allProducts.length) return;
@@ -1782,21 +2303,23 @@ async function loadAllProducts() {
         const { data: res } = await axios.get(`${PRODUCTS_URL}?limit=200&status=active`);
         allProducts = res.data || [];
     } catch {}
-}
+}         
 
 async function loadSales(page = 1) {
     if (redirecting) return; 
     vPage   = page;
     vLoaded = true;
     const tbody = document.getElementById('sales-tbody');
-    tbody.innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><div class="spinner"></div> Cargando...</div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6"><div class="loading-spinner"><div class="spinner"></div> Cargando...</div></td></tr>';
 
     try {
+        const search  = document.getElementById('v-search').value.trim();
         const start   = document.getElementById('v-start').value;
         const end     = document.getElementById('v-end').value;
         const payment = document.getElementById('v-payment').value;
 
         let url = `${SALES_URL}?page=${page}&limit=20`;
+        if (search)  url += `&search=${encodeURIComponent(search)}`;
         if (start)   url += `&startDate=${start}`;
         if (end)     url += `&endDate=${end}`;
         if (payment) url += `&paymentMethod=${payment}`;
@@ -1813,21 +2336,20 @@ async function loadSales(page = 1) {
         document.getElementById('v-next').disabled     = page >= vTotal;
 
         if (!sales.length) {
-            tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-receipt"></i><p>No hay ventas en este período</p></div></td></tr>';
+            tbody.innerHTML = search
+                ? `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-search"></i><p>Ninguna venta coincide con "${esc(search)}"</p></div></td></tr>`
+                : '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-receipt"></i><p>No hay ventas en este período</p></div></td></tr>';
             return;
         }
 
         tbody.innerHTML = sales.map(s => {
-        console.log(s.items);
-        const totalProductos = s.items?.reduce((sum, i) => sum + i.quantity, 0) || 0;
         return `
             <tr>
                 <td style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--gray-400)">${(s._id || s.id || '------').toString().slice(-6).toUpperCase()}</td>
                 <td style="font-size:0.82rem">${new Date(s.createdAt).toLocaleDateString('es-CO', {day:'2-digit',month:'short',year:'numeric'})}</td>
                 <td style="font-size:0.82rem">${s.client?.name || 'Cliente ocasional'}</td>
-                <td style="font-size:0.82rem">${totalProductos} ${totalProductos === 1 ? 'producto' : 'productos'}</td>
-                <td><span class="badge badge-blue">${s.paymentMethod || '—'}</span></td>
-                <td style="font-weight:700;color:var(--green-dark);font-family:'DM Mono',monospace">${fmt(s.total)}</td>
+                <td><span class="badge badge-blue">${esc(PM_LABEL[s.paymentMethod] || s.paymentMethod || '—')}</span></td>
+                <td style="font-size:0.82rem;font-weight:700;color:var(--green-dark);font-variant-numeric:tabular-nums">${fmt(s.total)}</td>
                 <td>
                     <div class="action-btns">
                         <button class="icon-btn icon-btn-edit" onclick="showSaleDetail('${s._id || s.id}')" title="Ver detalle">
@@ -1844,13 +2366,14 @@ async function loadSales(page = 1) {
 
     } catch (err) {
         console.error(err);
-        tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>Error al cargar ventas</p></div></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>Error al cargar ventas</p></div></td></tr>';
     }
 }
 
 // Función del modal
 function showSaleDetail(id) {
-    const sale = salesCache.find(s => (s._id || s.id) === id);
+    const sale = salesCache.find(s => (s._id || s.id) === id)
+              || logCache.find(s => (s._id || s.id) === id);
     if (!sale) return;
 
     const items = sale.items.map(i => `
@@ -1865,7 +2388,7 @@ function showSaleDetail(id) {
     document.getElementById('sale-detail-content').innerHTML = `
         <p><strong>Cliente:</strong> ${sale.client?.name || 'Cliente ocasional'}</p>
         <p><strong>Teléfono:</strong> ${sale.client?.phone || '—'}</p>
-        <p><strong>Método:</strong> ${sale.paymentMethod}</p>
+        <p><strong>Método:</strong> ${esc(PM_LABEL[sale.paymentMethod] || sale.paymentMethod || '—')}</p>
         <p><strong>Fecha:</strong> ${new Date(sale.createdAt).toLocaleDateString('es-CO')}</p>
         <table style="width:100%;border-collapse:collapse;margin-top:1rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden">
             <thead style="background:var(--gray-50)">
@@ -2083,14 +2606,509 @@ async function deleteSale(id) {
     } catch { toast('Error al eliminar venta', 'error'); }
 }
 
+let vSearchDebounce;
+document.getElementById('v-search').addEventListener('input', () => {
+    clearTimeout(vSearchDebounce);
+    vSearchDebounce = setTimeout(() => loadSales(), 400);
+});
+
 // ══════════════════════════════════════════════════════════════════════════
 // ESTADÍSTICAS
 // ══════════════════════════════════════════════════════════════════════════
+
+// Serie única (ingresos / unidades): un solo color de marca.
+const VIZ_ACCENT  = '#087f5b';   // coincide con --viz-accent
+const VIZ_SURFACE = '#ffffff';
+const TREND_DAYS  = 30;
+
+// Paleta categórica fija por método de pago: el color sigue a la entidad,
+// nunca a su posición en el ranking.
+const PM_META = {
+    efectivo:      { label: 'Efectivo',      color: '#2a78d6' },
+    tarjeta:       { label: 'Tarjeta',       color: '#e34948' },
+    transferencia: { label: 'Transferencia', color: '#eda100' },
+    nequi:         { label: 'Nequi',         color: '#1baf7a' },
+    daviplata:     { label: 'Daviplata',     color: '#4a3aa7' }
+};
+const PM_FALLBACK = { label: 'Otro', color: '#e87ba4' };
+
+let statsData   = null;
+let trendSeries = [];
+let trendGeom   = null;
+let trendHover  = null;
+let trendBound  = false;
+
+// ── Helpers de formato ─────────────────────────────────────────────────────
+function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+function fmtInt(n) {
+    return new Intl.NumberFormat('es-CO').format(Math.round(n || 0));
+}
+
+// Compacto para ejes: $1,2 M · $450 k
+function fmtCompact(n) {
+    n = Math.round(n || 0);
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(1).replace('.', ',') + ' MM';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1).replace('.', ',') + ' M';
+    if (n >= 1e3) return '$' + Math.round(n / 1e3) + ' k';
+    return '$' + n;
+}
+
+function fmtPct(n) {
+    return n.toFixed(1).replace('.', ',') + '%';
+}
+
+function plural(n, singular, pluralWord) {
+    return `${fmtInt(n)} ${Math.round(n || 0) === 1 ? singular : pluralWord}`;
+}
+
+function dayLabelShort(d) {
+    return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
+}
+
+function dayLabelLong(d) {
+    return d.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'long' });
+}
+
+// ── Serie diaria: rellena los días sin ventas con 0 ────────────────────────
+function buildTrendSeries(salesByDay) {
+    const map = new Map();
+    (salesByDay || []).forEach(d => {
+        if (!d || !d._id) return;
+        const k = `${d._id.year}-${d._id.month}-${d._id.day}`;
+        map.set(k, { total: d.total || 0, count: d.count || 0 });
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const out = [];
+    for (let i = TREND_DAYS - 1; i >= 0; i--) {
+        const dt = new Date(today);
+        dt.setDate(today.getDate() - i);
+        const v = map.get(`${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`) || { total: 0, count: 0 };
+        out.push({ date: dt, total: v.total, count: v.count });
+    }
+    return out;
+}
+
+function sumRange(from, to, field) {
+    let s = 0;
+    for (let i = Math.max(0, from); i < Math.min(trendSeries.length, to); i++) {
+        s += trendSeries[i][field] || 0;
+    }
+    return s;
+}
+
+// ── Píldora de variación ───────────────────────────────────────────────────
+function deltaPill(current, previous) {
+    if (!previous) {
+        return current > 0
+            ? '<span class="delta up"><i class="fas fa-arrow-up"></i> Nuevo</span>'
+            : '<span class="delta flat"><i class="fas fa-minus"></i> Sin datos</span>';
+    }
+    const pct = ((current - previous) / previous) * 100;
+    const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'down' : 'flat';
+    const ico = cls === 'up' ? 'fa-arrow-up' : cls === 'down' ? 'fa-arrow-down' : 'fa-minus';
+    const abs = Math.abs(pct);
+    const val = abs >= 999 ? '+999%' : fmtPct(abs);
+    return `<span class="delta ${cls}"><i class="fas ${ico}"></i> ${val}</span>`;
+}
+
+// ── Escala «bonita» para el eje Y ──────────────────────────────────────────
+function niceMax(v) {
+    if (!v || v <= 0) return 4;
+    const exp  = Math.floor(Math.log10(v));
+    const base = Math.pow(10, exp);
+    const n    = v / base;
+    const step = n <= 1 ? 1 : n <= 2 ? 2 : n <= 4 ? 4 : n <= 5 ? 5 : 10;
+    return step * base;
+}
+
+// ── Gráfica de tendencia (área + línea, serie única) ───────────────────────
+function renderTrend() {
+    const host = document.getElementById('trend-chart');
+    if (!host) return;
+
+    if (!trendSeries.length) {
+        host.innerHTML = '<div class="empty-state"><i class="fas fa-chart-area"></i><p>Sin datos en el período</p></div>';
+        trendGeom = null;
+        return;
+    }
+
+    const vals = trendSeries.map(p => p.total);
+    const n    = vals.length;
+
+    const W    = Math.max(300, Math.round(host.clientWidth || 640));
+    const H    = W < 520 ? 210 : 270;
+    const padL = W < 520 ? 46 : 64;
+    const padR = 16, padT = 26, padB = 28;
+    const iw   = W - padL - padR;
+    const ih   = H - padT - padB;
+
+    const max = niceMax(Math.max.apply(null, vals.concat([0])));
+    const X   = i => padL + (n === 1 ? iw / 2 : (i * iw) / (n - 1));
+    const Y   = v => padT + ih - (Math.max(0, v) / max) * ih;
+
+    // Rejilla hairline sólida + ticks redondeados
+    let grid = '';
+    for (let t = 0; t <= 4; t++) {
+        const v  = (max / 4) * t;
+        const gy = Math.round(Y(v)) + 0.5;
+        grid += `<line class="${t === 0 ? 'viz-axis-line' : 'viz-grid-line'}" `
+             +  `x1="${padL}" y1="${gy}" x2="${padL + iw}" y2="${gy}"/>`
+             +  `<text class="viz-tick" x="${padL - 9}" y="${gy + 3.5}" text-anchor="end">`
+             +  `${esc(fmtCompact(v))}</text>`;
+    }
+
+    // Etiquetas de fecha: repartidas, sin colisión, siempre con el primer y último día
+    const want = Math.max(2, Math.min(6, Math.floor(iw / 95) + 1));
+    let xlab = '';
+    for (let k = 0; k < want; k++) {
+        const i = Math.round((k * (n - 1)) / (want - 1));
+        const anchor = k === 0 ? 'start' : k === want - 1 ? 'end' : 'middle';
+        xlab += `<text class="viz-tick" x="${X(i).toFixed(1)}" y="${padT + ih + 17}" `
+             +  `text-anchor="${anchor}">${esc(dayLabelShort(trendSeries[i].date))}</text>`;
+    }
+
+    const line = trendSeries
+        .map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)} ${Y(p.total).toFixed(1)}`)
+        .join(' ');
+    const area = `${line} L${X(n - 1).toFixed(1)} ${(padT + ih).toFixed(1)} `
+               + `L${X(0).toFixed(1)} ${(padT + ih).toFixed(1)} Z`;
+
+    // Etiqueta directa sólo en el máximo (nunca un número en cada punto)
+    let peakI = 0;
+    vals.forEach((v, i) => { if (v > vals[peakI]) peakI = i; });
+    let marks = '';
+    if (vals[peakI] > 0) {
+        const px = X(peakI), py = Y(vals[peakI]);
+        const anchor = px < padL + 40 ? 'start' : px > padL + iw - 40 ? 'end' : 'middle';
+        marks += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="4" fill="${VIZ_ACCENT}" `
+              +  `stroke="${VIZ_SURFACE}" stroke-width="2"/>`
+              +  `<text class="viz-point-label" x="${px.toFixed(1)}" y="${(py - 11).toFixed(1)}" `
+              +  `text-anchor="${anchor}">${esc(fmtCompact(vals[peakI]))}</text>`;
+    }
+    if (peakI !== n - 1) {
+        marks += `<circle cx="${X(n - 1).toFixed(1)}" cy="${Y(vals[n - 1]).toFixed(1)}" r="4" `
+              +  `fill="${VIZ_ACCENT}" stroke="${VIZ_SURFACE}" stroke-width="2"/>`;
+    }
+
+    host.innerHTML =
+        `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">
+            <defs>
+                <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="${VIZ_ACCENT}" stop-opacity="0.16"/>
+                    <stop offset="100%" stop-color="${VIZ_ACCENT}" stop-opacity="0.01"/>
+                </linearGradient>
+            </defs>
+            ${grid}
+            <path d="${area}" fill="url(#trendFill)"/>
+            <path d="${line}" fill="none" stroke="${VIZ_ACCENT}" stroke-width="2"
+                  stroke-linejoin="round" stroke-linecap="round"/>
+            ${marks}
+            ${xlab}
+            <line class="viz-crosshair" data-cross y1="${padT}" y2="${padT + ih}"
+                  x1="0" x2="0" style="display:none"/>
+            <circle data-hoverdot r="4.5" fill="${VIZ_ACCENT}" stroke="${VIZ_SURFACE}"
+                    stroke-width="2" style="display:none"/>
+        </svg>
+        <div class="viz-tip" data-tip></div>`;
+
+    trendGeom = { W, padL, padT, iw, ih, n, X, Y };
+    trendHover = null;
+    bindTrendHover(host);
+}
+
+function bindTrendHover(host) {
+    if (trendBound) return;
+    trendBound = true;
+
+    const indexAt = clientX => {
+        const g = trendGeom;
+        const svg = host.querySelector('svg');
+        if (!g || !svg) return null;
+        const r = svg.getBoundingClientRect();
+        const i = Math.round(((clientX - r.left - g.padL) / (g.iw || 1)) * (g.n - 1));
+        return Math.max(0, Math.min(g.n - 1, i));
+    };
+
+    host.addEventListener('pointermove', e => {
+        const i = indexAt(e.clientX);
+        if (i !== null) showTrendHover(i);
+    });
+    host.addEventListener('pointerleave', hideTrendHover);
+    host.addEventListener('blur', hideTrendHover);
+    host.addEventListener('focus', () => {
+        if (trendGeom) showTrendHover(trendHover == null ? trendGeom.n - 1 : trendHover);
+    });
+    host.addEventListener('keydown', e => {
+        if (!trendGeom) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const base = trendHover == null ? trendGeom.n - 1 : trendHover;
+            showTrendHover(base + (e.key === 'ArrowRight' ? 1 : -1));
+        } else if (e.key === 'Home') {
+            e.preventDefault(); showTrendHover(0);
+        } else if (e.key === 'End') {
+            e.preventDefault(); showTrendHover(trendGeom.n - 1);
+        } else if (e.key === 'Escape') {
+            hideTrendHover();
+        }
+    });
+}
+
+function showTrendHover(i) {
+    const g    = trendGeom;
+    const host = document.getElementById('trend-chart');
+    if (!g || !host || !trendSeries.length) return;
+
+    const cross = host.querySelector('[data-cross]');
+    const dot   = host.querySelector('[data-hoverdot]');
+    const tip   = host.querySelector('[data-tip]');
+    if (!cross || !dot || !tip) return;
+
+    i = Math.max(0, Math.min(g.n - 1, i));
+    trendHover = i;
+
+    const p  = trendSeries[i];
+    const px = g.X(i);
+    const py = g.Y(p.total);
+
+    cross.setAttribute('x1', px.toFixed(1));
+    cross.setAttribute('x2', px.toFixed(1));
+    cross.style.display = '';
+    dot.setAttribute('cx', px.toFixed(1));
+    dot.setAttribute('cy', py.toFixed(1));
+    dot.style.display = '';
+
+    tip.textContent = '';
+    const head = document.createElement('div');
+    head.className = 'tip-date';
+    head.textContent = dayLabelLong(p.date);      // datos → textContent
+    const val = document.createElement('div');
+    val.className = 'tip-val';
+    val.textContent = fmt(p.total);
+    tip.appendChild(head);
+    tip.appendChild(val);
+    tip.classList.add('show');
+
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    tip.style.left = Math.max(2, Math.min(g.W - tw - 2, px - tw / 2)).toFixed(0) + 'px';
+    tip.style.top  = Math.max(0, py - th - 14).toFixed(0) + 'px';
+}
+
+function hideTrendHover() {
+    const host = document.getElementById('trend-chart');
+    if (!host) return;
+    const cross = host.querySelector('[data-cross]');
+    const dot   = host.querySelector('[data-hoverdot]');
+    const tip   = host.querySelector('[data-tip]');
+    if (cross) cross.style.display = 'none';
+    if (dot)   dot.style.display   = 'none';
+    if (tip)   tip.classList.remove('show');
+}
+
+// ── Métodos de pago: barra apilada 100% + leyenda con valores visibles ─────
+function renderPaymentMethods(list) {
+    const host = document.getElementById('pm-body');
+    if (!host) return;
+
+    const data = (list || [])
+        .map(r => {
+            const meta = PM_META[r._id] || PM_FALLBACK;
+            return { label: meta.label, color: meta.color, total: r.total || 0 };
+        })
+        .filter(r => r.total > 0)
+        .sort((a, b) => b.total - a.total);
+
+    if (!data.length) {
+        host.innerHTML = '<div class="empty-state"><i class="fas fa-credit-card"></i>'
+                       + '<p>Sin ventas en los últimos 30 días</p></div>';
+        return;
+    }
+
+    const total = data.reduce((s, r) => s + r.total, 0);
+
+    const bar = data.map(r => {
+        const pct = (r.total / total) * 100;
+        return `<span class="pm-seg" style="flex-grow:${pct.toFixed(4)};background:${r.color}" `
+             + `title="${esc(r.label)} — ${esc(fmt(r.total))} (${esc(fmtPct(pct))})"></span>`;
+    }).join('');
+
+    const legend = data.map(r => {
+        const pct = (r.total / total) * 100;
+        return `
+        <div class="pm-row">
+            <span class="pm-swatch" style="background:${r.color}"></span>
+            <span class="pm-name">${esc(r.label)}</span>
+            <span class="pm-amount">${esc(fmt(r.total))}</span>
+            <span class="pm-pct">${esc(fmtPct(pct))}</span>
+        </div>`;
+    }).join('');
+
+    host.innerHTML = `<div class="pm-bar">${bar}</div>`
+                   + `<div class="pm-legend">${legend}</div>`
+                   + `<div class="pm-total"><span class="lbl">Total recaudado</span>`
+                   + `<span class="val">${esc(fmt(total))}</span></div>`;
+}
+
+// ── Top productos: medidor por unidades, un solo color ─────────────────────
+function renderTopProducts(list) {
+    const host = document.getElementById('top-products-list');
+    if (!host) return;
+
+    const data = (list || []).filter(p => (p.quantity || 0) > 0);
+    if (!data.length) {
+        host.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i>'
+                       + '<p>Sin datos de ventas aún</p></div>';
+        return;
+    }
+
+    const max = Math.max.apply(null, data.map(p => p.quantity || 0));
+    host.innerHTML = data.map((p, i) => {
+        const pct = max ? Math.max(4, (p.quantity / max) * 100) : 0;
+        return `
+        <div class="top-product-item">
+            <span class="top-rank">${i + 1}</span>
+            <div>
+                <div class="top-line">
+                    <span class="top-product-name" title="${esc(p.name)}">${esc(p.name)}</span>
+                    <span class="top-product-qty">${plural(p.quantity, 'ud', 'uds')}</span>
+                </div>
+                <div class="top-meter"><span style="width:${pct.toFixed(1)}%"></span></div>
+                <div class="top-revenue">${esc(fmt(p.revenue))} en ingresos</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── Registro del día ───────────────────────────────────────────────────────
+const PM_LABEL = {
+    efectivo: 'Efectivo', tarjeta: 'Tarjeta', transferencia: 'Transferencia',
+    nequi: 'Nequi', daviplata: 'Daviplata'
+};
+
+let logCache = [];   // ventas de hoy, para abrir su detalle
+
+function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear()
+        && a.getMonth()    === b.getMonth()
+        && a.getDate()     === b.getDate();
+}
+
+async function loadTodayLog() {
+    if (redirecting) return;
+
+    const host = document.getElementById('log-body');
+    const sub  = document.getElementById('log-sub');
+    if (!host) return;
+
+    const today = new Date();
+    const key   = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
+                + `-${String(today.getDate()).padStart(2, '0')}`;
+
+    sub.textContent = today.toLocaleDateString('es-CO', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+    host.innerHTML = '<div class="loading-spinner"><div class="spinner"></div> Cargando...</div>';
+
+    try {
+        const { data: res } = await axios.get(
+            `${SALES_URL}?startDate=${key}&endDate=${key}&limit=100`
+        );
+
+        // El filtro del servidor usa UTC en el límite inferior: nos quedamos
+        // sólo con las ventas cuya fecha local sea realmente la de hoy.
+        const sales = (res.data?.sales || [])
+            .filter(s => isSameDay(new Date(s.createdAt), today));
+        logCache = sales;
+
+        if (!sales.length) {
+            host.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i>'
+                           + '<p>Aún no hay ventas registradas hoy</p></div>';
+            return;
+        }
+
+        const total = sales.reduce((acc, s) => acc + (s.total || 0), 0);
+
+        const rows = sales.map(s => {
+            const id = s._id || s.id;
+            return `
+            <tr>
+                <td class="log-time">${esc(new Date(s.createdAt).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }))}</td>
+                <td class="log-client">${esc(s.client?.name || 'Cliente ocasional')}</td>
+                <td><span class="badge badge-blue">${esc(PM_LABEL[s.paymentMethod] || s.paymentMethod || '—')}</span></td>
+                <td class="num log-total">${esc(fmt(s.total))}</td>
+                <td class="act">
+                    <button class="icon-btn icon-btn-edit" onclick="showSaleDetail('${esc(id)}')"
+                            title="Ver detalle de la venta">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        host.innerHTML = `
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Método</th>
+                        <th class="num">Total</th>
+                        <th class="act">Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">
+                            <span class="log-foot-lbl">Total del día</span>
+                        </td>
+                        <td class="num">${esc(fmt(total))}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>`;
+
+    } catch (err) {
+        console.error('Error loadTodayLog:', err);
+        const msg = err.response?.data?.message || err.message || 'Error de conexión con el servidor';
+        host.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>${esc(msg)}</p></div>`;
+    }
+}
+
+// ── Controles ──────────────────────────────────────────────────────────────
+let trendResizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(trendResizeTimer);
+    trendResizeTimer = setTimeout(() => {
+        const panel = document.getElementById('tab-estadisticas');
+        if (!panel || !panel.classList.contains('active')) return;
+        if (trendSeries.length) renderTrend();
+    }, 160);
+});
+
+// ── Carga ──────────────────────────────────────────────────────────────────
 async function loadStats() {
     if (redirecting) return;
 
     const topList = document.getElementById('top-products-list');
-    topList.innerHTML = '<div class="loading-spinner"><div class="spinner"></div> Cargando...</div>';
+    const pmBody  = document.getElementById('pm-body');
+    const chart   = document.getElementById('trend-chart');
+    const spinner = '<div class="loading-spinner"><div class="spinner"></div> Cargando...</div>';
+
+    topList.innerHTML = spinner;
+    pmBody.innerHTML  = spinner;
+    // En una recarga la gráfica conserva su render anterior atenuado: sin saltos.
+    if (chart.querySelector('svg')) chart.style.opacity = '0.45';
+    else chart.innerHTML = spinner;
 
     try {
         const { data: res } = await axios.get(`${SALES_URL}/stats`);
@@ -2100,35 +3118,53 @@ async function loadStats() {
         }
 
         const d = res.data;
+        statsData   = d;
+        trendSeries = buildTrendSeries(d.salesByDay);
+
+        const last     = trendSeries.length - 1;
+        const todayRev = trendSeries[last] ? trendSeries[last].total : 0;
+        const yestRev  = last > 0 ? trendSeries[last - 1].total : 0;
+        const week     = sumRange(trendSeries.length - 7,  trendSeries.length,     'total');
+        const prevWeek = sumRange(trendSeries.length - 14, trendSeries.length - 7, 'total');
+
+        const monthTotal = d.summary?.month?.total || 0;
+        const monthCount = d.summary?.month?.count || 0;
 
         document.getElementById('s-today-total').textContent = fmt(d.summary?.today?.total);
-        document.getElementById('s-today-count').textContent = `${d.summary?.today?.count || 0} ventas`;
-        document.getElementById('s-week-total').textContent  = fmt(d.summary?.week?.total);
-        document.getElementById('s-week-count').textContent  = `${d.summary?.week?.count || 0} ventas`;
-        document.getElementById('s-month-total').textContent = fmt(d.summary?.month?.total);
-        document.getElementById('s-month-count').textContent = `${d.summary?.month?.count || 0} ventas`;
+        document.getElementById('s-today-count').textContent =
+            `${plural(d.summary?.today?.count, 'venta', 'ventas')} · vs. ayer`;
+        document.getElementById('s-today-delta').innerHTML = deltaPill(todayRev, yestRev);
 
-        if (d.topProducts?.length) {
-            topList.innerHTML = d.topProducts.map((p, i) => `
-                <div class="top-product-item">
-                    <div style="display:flex;align-items:center;gap:0.75rem">
-                        <span style="font-size:1rem">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'•'}</span>
-                        <div>
-                            <div class="top-product-name">${p.name}</div>
-                            <div style="font-size:0.75rem;color:var(--gray-400)">${fmt(p.revenue)} en ingresos</div>
-                        </div>
-                    </div>
-                    <span class="top-product-qty">${p.quantity} uds</span>
-                </div>
-            `).join('');
-        } else {
-            topList.innerHTML = '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Sin datos de ventas aún</p></div>';
-        }
+        document.getElementById('s-week-total').textContent = fmt(d.summary?.week?.total);
+        document.getElementById('s-week-count').textContent =
+            `${plural(d.summary?.week?.count, 'venta', 'ventas')} · vs. 7 días previos`;
+        document.getElementById('s-week-delta').innerHTML = deltaPill(week, prevWeek);
+
+        document.getElementById('s-month-total').textContent = fmt(monthTotal);
+        document.getElementById('s-month-count').textContent =
+            `${plural(monthCount, 'venta', 'ventas')} en el período`;
+
+        document.getElementById('s-ticket').textContent = fmt(monthCount ? monthTotal / monthCount : 0);
+
+        document.getElementById('s-updated').innerHTML =
+            `<i class="fas fa-clock"></i> Actualizado a las ` +
+            new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+
+        chart.style.opacity = '';
+        renderTrend();
+        renderPaymentMethods(d.byPaymentMethod);
+        renderTopProducts(d.topProducts);
+        loadTodayLog();
 
     } catch (err) {
         console.error('Error loadStats:', err);
-        const msg = err.response?.data?.message || err.message || 'Error de conexión con el servidor';
-        topList.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>${msg}</p></div>`;
+        const msg  = err.response?.data?.message || err.message || 'Error de conexión con el servidor';
+        const html = `<div class="empty-state"><i class="fas fa-exclamation-circle" style="color:var(--red)"></i><p>${esc(msg)}</p></div>`;
+        chart.style.opacity = '';
+        chart.innerHTML   = html;
+        pmBody.innerHTML  = html;
+        topList.innerHTML = html;
+        trendGeom = null;
         toast(`Error al cargar estadísticas: ${msg}`, 'error');
     }
 }
