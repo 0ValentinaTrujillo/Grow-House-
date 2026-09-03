@@ -26,7 +26,7 @@
             /* ── Semánticos: amarillo y rojo ──────────────────────────────── */
             --yellow:       #eab308;   /* glifo de advertencia                         */
             --yellow-light: #fef9c3;   /* tinte de advertencia (mismo peso que los demás) */
-            --yellow-ink:   #a16207;   /* texto e icono sobre el tinte de advertencia   */
+            --yellow-ink:   #eab308;   /* texto e icono sobre el tinte de advertencia   */
             --yellow-glyph: #eab308;   /* estrellas de destacado — token propio, sin cambios */
             --red:          #dc2626;
             --red-deep:     #c81e1e;
@@ -406,22 +406,6 @@
         .badge-blue   { background: var(--blue-light); color: var(--blue); }
         .badge-yellow { background: var(--yellow-light); color: var(--yellow-ink); }
         .badge-purple { background: var(--violet-light); color: var(--violet); }
-
-        /* Stock bajo: número e icono dentro del mismo indicador, no separados */
-        .stock-alert {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 9999px;
-            background: var(--yellow-light);
-            color: var(--yellow-ink);
-            font-weight: 600;
-        }
-
-        .stock-alert i {
-            font-size: 0.72em;   /* proporcional al número, no fijo */
-        }
 
         .action-btns {
             display: flex;
@@ -1194,27 +1178,109 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── TOAST ───────────────────────────────────────────────────────── */
-        .toast {
+        /* ── AVISOS ──────────────────────────────────────────────────────
+           Los avisos se apilan en un contenedor. Antes cada uno se posicionaba
+           por su cuenta en la misma esquina y se tapaban entre sí.          */
+        .toast-stack {
             position: fixed;
             bottom: 1.5rem;
             right: 1.5rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--white);
             z-index: 9999;
-            box-shadow: var(--shadow-lg);
-            animation: slideUp 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.55rem;
+            width: min(380px, calc(100vw - 2rem));
+            /* El hueco entre avisos no debe interceptar clics de la página */
+            pointer-events: none;
         }
 
-        .toast-success { background: var(--green-dark); }
-        .toast-error   { background: var(--red); }
+        .toast {
+            pointer-events: auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: flex-start;
+            gap: 0.7rem;
+            padding: 0.8rem 0.85rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-left: 3px solid var(--gray-400);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            animation: toastIn 0.24s ease-out;
+        }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
+        .toast.leaving { animation: toastOut 0.18s ease-in forwards; }
+
+        .toast-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 0.92rem;
+            line-height: 1.35;
+            color: var(--gray-400);
+        }
+
+        .toast-body { min-width: 0; }
+
+        .toast-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            line-height: 1.35;
+        }
+
+        .toast-msg {
+            margin-top: 0.12rem;
+            font-size: 0.82rem;
+            color: var(--gray-600);
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .toast-close {
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 0.1rem 0.15rem;
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            line-height: 1.35;
+        }
+
+        .toast-close:hover { color: var(--gray-800); }
+
+        /* El color sólo marca el tipo: filete lateral e icono, no el fondo */
+        .toast-success { border-left-color: var(--green-dark); }
+        .toast-success .toast-icon { color: var(--green-dark); }
+        .toast-error   { border-left-color: var(--red); }
+        .toast-error   .toast-icon { color: var(--red); }
+        .toast-warning { border-left-color: var(--yellow-ink); }
+        .toast-warning .toast-icon { color: var(--yellow-ink); }
+        .toast-info    { border-left-color: var(--blue); }
+        .toast-info    .toast-icon { color: var(--blue); }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateY(6px); }
+        }
+
+        @media (max-width: 600px) {
+            .toast-stack {
+                left: 0.75rem;
+                right: 0.75rem;
+                bottom: 0.75rem;
+                width: auto;
+            }
+        }
+
+        /* Quien prefiera menos movimiento, lo recibe sin animación */
+        @media (prefers-reduced-motion: reduce) {
+            .toast, .toast.leaving { animation: none; }
         }
 
         @media (max-width: 1024px) {
@@ -1370,6 +1436,417 @@
             .viz-body { padding: 0.6rem 0.65rem 0.9rem; }
             .pm-row { grid-template-columns: 10px minmax(0, 1fr) auto; gap: 0.5rem; }
             .pm-row .pm-pct { display: none; }
+        }
+
+        /* ══ DETALLE DE VENTA ═════════════════════════════════════════════ */
+        /* Vista de lectura: superficie más ancha que un formulario          */
+        .modal.sd-modal { max-width: 780px; }
+
+        /* Sin reglas de separación arriba ni abajo: las cards ya delimitan
+           el contenido. Sólo aquí, el resto de modales las conserva.      */
+        .sd-modal .modal-footer { border-top: none; }
+
+        /* ── Cabecera: identidad de la venta + estado ───────────────────── */
+        .sd-head {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        /* Logo del vivero: sin recuadro, se apoya directo sobre el blanco */
+        .sd-head-logo {
+            flex: none;
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            margin-top: 0.05rem;
+        }
+
+        .sd-head-main { flex: 1 1 auto; min-width: 0; }
+
+        .sd-head-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            line-height: 1.25;
+        }
+
+        .sd-head-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.45rem;
+        }
+
+        .sd-ref {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 9999px;
+            padding: 0.18rem 0.6rem;
+        }
+
+        /* El prefijo va en la fuente de texto; el código, en monoespaciada.
+           El color lo hereda de .sd-ref para que ambos vayan al mismo tono. */
+        .sd-ref-mark { font-family: 'DM Sans', sans-serif; }
+
+        .sd-badge { gap: 0.32rem; }
+        .sd-badge i { font-size: 0.62rem; }
+
+        /* ── Lienzo del cuerpo ─────────────────────────────────────────── */
+        .sd-body {
+            padding: 1.15rem;
+            background: var(--white);
+        }
+
+        .sd-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        /* ── Tarjeta base: borde sutil, esquinas 2xl ────────────────────── */
+        /* Sobre blanco, el borde hairline basta: sin sombras que ensucien */
+        .sd-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .sd-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .sd-card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .sd-card-title i { color: var(--gray-400); font-size: 0.8rem; }
+
+        /* ── Resumen superior: cliente · fecha ───────────────────────────
+           Sin contenedor ni divisores: los datos se apoyan directamente en
+           el blanco y se separan sólo por espacio.                        */
+        .sd-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.9rem 2rem;
+            padding: 0.15rem 0.25rem 0.4rem;
+        }
+
+        .sd-tile { min-width: 0; }
+
+        .sd-tile-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-400);
+        }
+
+        .sd-tile-label i { font-size: 0.72rem; }
+
+        .sd-tile-value {
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+
+        .sd-tile-meta {
+            margin-top: 0.15rem;
+            font-size: 0.74rem;
+            color: var(--gray-400);
+            overflow-wrap: anywhere;
+        }
+
+        /* ── Productos vendidos ─────────────────────────────────────────
+           Encabezado y filas comparten la misma rejilla, definida una sola
+           vez para que nunca se desalineen.                               */
+        .sd-items {
+            --sd-cols: minmax(0, 1fr) 104px 92px 116px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sd-items-head {
+            display: grid;
+            grid-template-columns: var(--sd-cols);
+            gap: 0.9rem;
+            /* Ahora abre la card: necesita algo más de aire arriba */
+            padding: 0.8rem 1.1rem 0.65rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-400);
+        }
+
+        .sd-items-head span:nth-child(2) { text-align: right; }
+        .sd-items-head span:nth-child(3) { text-align: center; }
+        .sd-items-head span:nth-child(4) { text-align: right; }
+
+        .sd-item {
+            display: grid;
+            grid-template-columns: var(--sd-cols);
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0.75rem 1.1rem;
+            transition: background 0.15s;
+        }
+
+        .sd-item + .sd-item { border-top: 1px solid var(--gray-100); }
+        .sd-item:hover { background: var(--gray-50); }
+
+        .sd-item-main { grid-column: 1; min-width: 0; }
+
+        .sd-item-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .sd-item-sub {
+            margin-top: 0.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.3rem 0.45rem;
+            font-size: 0.75rem;
+            color: var(--gray-400);
+        }
+
+        /* La píldora de categoría es el mismo componente del listado, un punto
+           más pequeña para no competir con el nombre del producto */
+        .sd-item-sub .badge { font-size: 0.68rem; padding: 0.1rem 0.45rem; }
+
+        .sd-item-price {
+            grid-column: 2;
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .sd-item-qty {
+            grid-column: 3;
+            justify-self: center;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 9999px;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-size: 0.74rem;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .sd-item-amount {
+            grid-column: 4;
+            text-align: right;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        /* ── Desglose de pago: sin card, alineado con el resumen superior ─ */
+        .sd-pay .sd-card-head {
+            padding: 0.85rem 0.25rem 0.45rem;
+            border-bottom: none;
+        }
+
+        .sd-totals { padding: 0 0.25rem; }
+
+        .sd-total-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+
+        .sd-total-row + .sd-total-row { border-top: 1px dashed var(--gray-100); }
+
+        .sd-total-key { color: var(--gray-600); }
+
+        .sd-total-val {
+            font-weight: 500;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .sd-total-val.neg { color: var(--red); }
+
+        /* Fila final: manda por escala y contraste, sobre blanco y sin caja */
+        .sd-grand {
+            margin-top: 0.55rem;
+            padding: 0.9rem 0.25rem 0.2rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .sd-grand-label { display: flex; flex-direction: column; gap: 0.15rem; }
+
+        .sd-grand-label strong {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .sd-grand-label span { font-size: 0.76rem; color: var(--gray-600); }
+
+        .sd-grand-value {
+            font-size: 1.65rem;
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+            color: var(--gray-800);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        /* ── Notas ─────────────────────────────────────────────────────── */
+        .sd-notes {
+            display: flex;
+            gap: 0.65rem;
+            padding: 0.9rem 1.1rem;
+            font-size: 0.82rem;
+            color: var(--gray-600);
+            line-height: 1.55;
+        }
+
+        .sd-notes i { color: var(--yellow-ink); margin-top: 0.15rem; }
+        .sd-notes p { overflow-wrap: anywhere; }
+
+        .sd-empty {
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--gray-400);
+        }
+
+        /* ── Responsive ────────────────────────────────────────────────── */
+        @media (max-width: 560px) {
+            .sd-head { padding: 1rem 1.1rem; gap: 0.7rem; }
+            .sd-head-logo { width: 32px; height: 32px; }
+            .sd-head-title { font-size: 0.98rem; }
+            .sd-body { padding: 0.85rem; }
+            .sd-stack { gap: 0.7rem; }
+            .sd-summary {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+                gap: 0.8rem 1.2rem;
+                padding: 0.1rem 0.1rem 0.3rem;
+            }
+            .sd-notes { padding-left: 0.9rem; padding-right: 0.9rem; }
+
+            /* El desglose no tiene card: se alinea con el resumen superior */
+            .sd-pay .sd-card-head { padding: 0.75rem 0.1rem 0.4rem; }
+            .sd-totals { padding-left: 0.1rem; padding-right: 0.1rem; }
+            .sd-grand  { padding: 0.85rem 0.1rem 0.15rem; }
+            .sd-grand-value { font-size: 1.35rem; }
+
+            /* Sin espacio para columnas: se ocultan los títulos y cada
+               producto pasa a dos líneas, nombre arriba y cifras abajo   */
+            .sd-items-head { display: none; }
+
+            .sd-item {
+                grid-template-columns: auto auto minmax(0, 1fr);
+                gap: 0.55rem;
+                row-gap: 0.45rem;
+                padding: 0.75rem 0.9rem;
+            }
+            .sd-item-main   { grid-row: 1; grid-column: 1 / -1; }
+            .sd-item-qty    { grid-row: 2; grid-column: 1; justify-self: start; }
+            .sd-item-price  { grid-row: 2; grid-column: 2; justify-self: start; text-align: left; }
+            .sd-item-amount { grid-row: 2; grid-column: 3; }
+
+            /* Sin encabezado que lo explique, el precio lleva su unidad */
+            .sd-item-price::after { content: ' c/u'; color: var(--gray-400); }
+        }
+
+        /* ── Impresión: sale sólo el detalle de venta ───────────────────── */
+        @media print {
+            @page { margin: 14mm; }
+
+            /* Fuera el chrome del panel y cualquier otro modal */
+            .topbar,
+            .tabs-bar,
+            .main,
+            .toast-stack,
+            #product-modal,
+            #sale-modal,
+            #confirm-modal { display: none !important; }
+
+            /* El overlay deja de ser una capa fija para fluir en la hoja,
+               si no el navegador imprimiría sólo la primera página        */
+            #sale-detail-modal {
+                position: static;
+                display: block;
+                padding: 0;
+                background: none;
+            }
+
+            #sale-detail-modal .modal {
+                max-width: none;
+                max-height: none;
+                overflow: visible;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .sd-head { position: static; padding: 0 0 1rem; }
+            .sd-body { padding: 0; }
+
+            /* Controles que no tienen sentido en papel */
+            .sd-head-close,
+            #sale-detail-modal .modal-footer { display: none !important; }
+
+            /* Las insignias pierden su relleno al imprimir si no se fuerza */
+            .badge {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            /* Evita cortar un producto entre dos páginas */
+            .sd-item { break-inside: avoid; page-break-inside: avoid; }
+            .sd-item:hover { background: none; }
         }
     </style>
 </head>
@@ -1965,19 +2442,28 @@
 
 <!-- ═══ MODAL: DETALLE VENTA ═════════════════════════════════════════════ -->
 <div id="sale-detail-modal" class="modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="modal">
-        <div class="modal-header">
-            <span class="modal-title">Detalle de Venta</span>
-            <button class="modal-close" onclick="document.getElementById('sale-detail-modal').classList.remove('open')">
+    <div class="modal sd-modal">
+        <div class="sd-head">
+            <img class="sd-head-logo"
+                 src="../assets/images/Green%20and%20White%20Plants%20Organic%20Logo.png"
+                 alt="Grow House" onerror="this.style.display='none'">
+            <div class="sd-head-main">
+                <div class="sd-head-title">Detalle de venta</div>
+                <div class="sd-head-meta" id="sale-detail-head"></div>
+            </div>
+            <button class="modal-close sd-head-close" onclick="document.getElementById('sale-detail-modal').classList.remove('open')">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body sd-body">
             <div id="sale-detail-content"></div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="document.getElementById('sale-detail-modal').classList.remove('open')">
                 Cerrar
+            </button>
+            <button class="btn btn-primary" onclick="printSaleDetail()">
+                <i class="fas fa-print"></i> Imprimir
             </button>
         </div>
     </div>
@@ -1998,6 +2484,10 @@
         </div>
     </div>
 </div>
+
+<!-- ═══ AVISOS ════════════════════════════════════════════════════════════ -->
+<!-- aria-live: el lector de pantalla anuncia los avisos sin robar el foco -->
+<div id="toast-stack" class="toast-stack" aria-live="polite" aria-atomic="false"></div>
 
 <!-- ═══ SCRIPTS ═══════════════════════════════════════════════════════════ -->
 <!-- 1. Librerías externas -->
@@ -2054,12 +2544,112 @@ function fmt(n) {
     }).format(n || 0);
 }
 
-function toast(msg, type = 'success') {
+// ── Avisos ────────────────────────────────────────────────────────────────
+const TOAST_META = {
+    success: { icon: 'fa-circle-check',         title: 'Listo',        ms: 3500 },
+    error:   { icon: 'fa-circle-exclamation',   title: 'No se pudo',   ms: 6500 },
+    warning: { icon: 'fa-triangle-exclamation', title: 'Atención',     ms: 7000 },
+    info:    { icon: 'fa-circle-info',          title: 'Información',  ms: 4500 }
+};
+
+const TOAST_MAX = 4;   // más de esto en pantalla deja de leerse
+
+/**
+ * toast('mensaje')                     → éxito
+ * toast('mensaje', 'error')            → error
+ * toast('mensaje', 'warning', { title, icon, duration })
+ * La firma antigua (msg, type) se mantiene: las llamadas previas no cambian.
+ */
+function toast(msg, type = 'success', opts = {}) {
+    const meta  = TOAST_META[type] || TOAST_META.info;
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+
+    // Los más antiguos ceden el sitio a los nuevos
+    while (stack.children.length >= TOAST_MAX) stack.firstElementChild.remove();
+
     const el = document.createElement('div');
     el.className = `toast toast-${type}`;
-    el.textContent = msg;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 3000);
+    el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    el.innerHTML = `
+        <i class="toast-icon fas ${opts.icon || meta.icon}"></i>
+        <div class="toast-body">
+            <p class="toast-title">${esc(opts.title || meta.title)}</p>
+            <p class="toast-msg">${esc(msg)}</p>
+        </div>
+        <button class="toast-close" type="button" aria-label="Cerrar aviso">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    let timer;
+    function dismiss() {
+        if (el.dataset.leaving) return;
+        el.dataset.leaving = '1';
+        clearTimeout(timer);
+        el.classList.add('leaving');
+        // Por tiempo, no por animationend: con "prefers-reduced-motion" no hay
+        // animación y el evento nunca llegaría, dejando el aviso pegado
+        setTimeout(() => el.remove(), 200);
+    }
+
+    el.querySelector('.toast-close').addEventListener('click', dismiss);
+
+    // No se va mientras se está leyendo con el puntero encima
+    el.addEventListener('mouseenter', () => clearTimeout(timer));
+    el.addEventListener('mouseleave', () => { timer = setTimeout(dismiss, 1500); });
+
+    timer = setTimeout(dismiss, opts.duration || meta.ms);
+    stack.appendChild(el);
+}
+
+// ── Alertas de inventario ─────────────────────────────────────────────────
+// Une nombres en una lista legible y la recorta cuando son demasiados
+function joinNames(names, max = 3) {
+    if (names.length === 1) return names[0];
+    if (names.length <= max) {
+        return names.slice(0, -1).join(', ') + ' y ' + names[names.length - 1];
+    }
+    return `${names.slice(0, max).join(', ')} y ${names.length - max} más`;
+}
+
+// Avisa de los productos agotados o por debajo de su mínimo.
+// Recibe [{ name, left }]: `left` son las unidades que quedan.
+function notifyStockAlerts(alerts) {
+    if (!alerts.length) return;
+
+    const out = alerts.filter(a => a.left <= 0);
+    const low = alerts.filter(a => a.left > 0);
+
+    if (out.length) {
+        toast(
+            `${joinNames(out.map(a => a.name))} ${out.length > 1 ? 'quedaron' : 'quedó'} sin unidades disponibles.`,
+            'error',
+            { title: out.length > 1 ? 'Productos agotados' : 'Producto agotado', icon: 'fa-circle-xmark' }
+        );
+    }
+
+    if (low.length) {
+        const detail = low.slice(0, 3).map(a => `${a.name} (${a.left})`).join(', ');
+        const extra  = low.length > 3 ? ` y ${low.length - 3} más` : '';
+        toast(
+            `Quedan pocas unidades de ${detail}${extra}. Conviene reponer.`,
+            'warning',
+            { title: 'Stock bajo' }
+        );
+    }
+}
+
+// Compara lo vendido contra el stock que cada producto tenía en caché.
+// Debe llamarse ANTES de invalidar allProducts.
+function stockAlertsAfterSale(items) {
+    return items.map(it => {
+        const p = allProducts.find(x => (x._id || x.id) === it.productId);
+        if (!p) return null;
+        const left = (p.quantity || 0) - it.quantity;
+        const min  = Number.isFinite(p.lowStockAlert) ? p.lowStockAlert : 10;
+        return left <= min ? { name: p.name, left } : null;
+    }).filter(Boolean);
 }
 
 function catBadge(c) {
@@ -2093,8 +2683,9 @@ function stockCell(q, alert) {
              + ` <i class="fas fa-times-circle" style="color:var(--red);font-size:0.75rem"></i>`;
     }
     if (q <= alert) {
-        // El icono va dentro de la cápsula: número y alerta se leen como una unidad
-        return `<span class="stock-alert">${q}<i class="fas fa-exclamation-triangle"></i></span>`;
+        // Misma estructura que "sin stock": número + icono sueltos, solo cambia el color
+        return `<span style="font-weight:600;color:var(--yellow-ink)">${q}</span>`
+             + ` <i class="fas fa-exclamation-triangle" style="color:var(--yellow-ink);font-size:0.75rem"></i>`;
     }
     return `<span style="font-weight:600;color:var(--green-dark)">${q}</span>`;
 }
@@ -2251,11 +2842,20 @@ async function submitProduct() {
     try {
         if (id) {
             await axios.put(`${PRODUCTS_URL}/${id}`, payload);
-            toast('Producto actualizado ✓');
+            toast(`"${payload.name}" quedó actualizado.`);
         } else {
             await axios.post(PRODUCTS_URL, payload);
-            toast('Producto creado ✓');
+            toast(`"${payload.name}" se agregó al catálogo.`);
         }
+
+        allProducts = [];   // el inventario cambió: el selector debe releerlo
+
+        // El stock guardado puede quedar ya por debajo del mínimo configurado
+        if (Number.isFinite(payload.quantity) && Number.isFinite(payload.lowStockAlert)
+            && payload.quantity <= payload.lowStockAlert) {
+            notifyStockAlerts([{ name: payload.name, left: payload.quantity }]);
+        }
+
         closeProductModal();
         loadProducts(pPage);
     } catch (err) {
@@ -2279,7 +2879,8 @@ async function deleteProduct(id, name) {
     if (!ok) return;
     try {
         await axios.delete(`${PRODUCTS_URL}/${id}`);
-        toast('Producto eliminado');
+        allProducts = [];   // el inventario cambió: el selector debe releerlo
+        toast(`"${name}" se eliminó del catálogo.`);
         loadProducts(pPage);
     } catch { toast('Error al eliminar', 'error'); }
 }
@@ -2370,44 +2971,169 @@ async function loadSales(page = 1) {
     }
 }
 
+// ── Detalle de venta ───────────────────────────────────────────────────────
+// Presentación de una venta ya cargada en caché: no consulta al backend ni
+// transforma los datos, sólo los ordena visualmente.
+
+// Icono y color por método de pago — coherente con las píldoras del listado
+const SD_PM_META = {
+    efectivo:      { icon: 'fa-money-bill-wave',      cls: 'badge-green'  },
+    tarjeta:       { icon: 'fa-credit-card',          cls: 'badge-blue'   },
+    transferencia: { icon: 'fa-building-columns',     cls: 'badge-purple' },
+    nequi:         { icon: 'fa-mobile-screen-button', cls: 'badge-purple' },
+    daviplata:     { icon: 'fa-mobile-screen-button', cls: 'badge-red'    }
+};
+
+// Estados posibles. Hoy el modelo no persiste `status`: toda venta registrada
+// está pagada, así que ése es el valor por defecto. Si el backend llegara a
+// enviarlo, la insignia se adapta sola.
+const SALE_STATUS = {
+    pagada:      { label: 'Pagada',      cls: 'badge-green',  icon: 'fa-circle-check' },
+    pendiente:   { label: 'Pendiente',   cls: 'badge-yellow', icon: 'fa-clock'        },
+    anulada:     { label: 'Anulada',     cls: 'badge-red',    icon: 'fa-ban'          },
+    reembolsada: { label: 'Reembolsada', cls: 'badge-purple', icon: 'fa-rotate-left'  }
+};
+
+function saleStatusMeta(sale) {
+    const key = String(sale.status || 'pagada').toLowerCase();
+    return SALE_STATUS[key]
+        || { label: String(sale.status), cls: 'badge-gray', icon: 'fa-circle-info' };
+}
+
 // Función del modal
 function showSaleDetail(id) {
     const sale = salesCache.find(s => (s._id || s.id) === id)
               || logCache.find(s => (s._id || s.id) === id);
     if (!sale) return;
 
-    const items = sale.items.map(i => `
-        <tr>
-            <td style="padding:8px 12px;font-size:0.83rem">${i.name}</td>
-            <td style="padding:8px 12px;font-size:0.83rem;text-align:center">${i.quantity}</td>
-            <td style="padding:8px 12px;font-size:0.83rem;text-align:right">${fmt(i.unitPrice)}</td>
-            <td style="padding:8px 12px;font-size:0.83rem;font-weight:700;text-align:right">${fmt(i.subtotal)}</td>
-        </tr>
-    `).join('');
+    const items    = Array.isArray(sale.items) ? sale.items : [];
+    const ref      = (sale._id || sale.id || '------').toString().slice(-6).toUpperCase();
+    const date     = new Date(sale.createdAt);
+    const pmKey    = sale.paymentMethod;
+    const pm       = SD_PM_META[pmKey] || { icon: 'fa-wallet', cls: 'badge-gray' };
+    const pmLabel  = PM_LABEL[pmKey] || pmKey || '—';
+    const status   = saleStatusMeta(sale);
+    const units    = items.reduce((n, i) => n + (Number(i.quantity)  || 0), 0);
+    const subtotal = items.reduce((n, i) => n + (Number(i.subtotal)  || 0), 0);
+    const discount = Number(sale.discount || 0);
+    const tax      = Number(sale.tax || 0);
 
-    document.getElementById('sale-detail-content').innerHTML = `
-        <p><strong>Cliente:</strong> ${sale.client?.name || 'Cliente ocasional'}</p>
-        <p><strong>Teléfono:</strong> ${sale.client?.phone || '—'}</p>
-        <p><strong>Método:</strong> ${esc(PM_LABEL[sale.paymentMethod] || sale.paymentMethod || '—')}</p>
-        <p><strong>Fecha:</strong> ${new Date(sale.createdAt).toLocaleDateString('es-CO')}</p>
-        <table style="width:100%;border-collapse:collapse;margin-top:1rem;border:1px solid var(--gray-200);border-radius:8px;overflow:hidden">
-            <thead style="background:var(--gray-50)">
-                <tr>
-                    <th style="padding:8px 12px;text-align:left;font-size:0.75rem;color:var(--gray-400)">Producto</th>
-                    <th style="padding:8px 12px;text-align:center;font-size:0.75rem;color:var(--gray-400)">Cant.</th>
-                    <th style="padding:8px 12px;text-align:right;font-size:0.75rem;color:var(--gray-400)">Precio</th>
-                    <th style="padding:8px 12px;text-align:right;font-size:0.75rem;color:var(--gray-400)">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>${items}</tbody>
-        </table>
-        <div style="margin-top:1rem;text-align:right;font-size:1.1rem;font-weight:700;color:var(--green-dark)">
-            Total: ${fmt(sale.total)}
-        </div>
-        ${sale.notes ? `<p style="margin-top:0.75rem;font-size:0.85rem;color:var(--gray-400)"><strong>Notas:</strong> ${sale.notes}</p>` : ''}
+    // ── Cabecera: identificador + estado + método ──────────────────────────
+    document.getElementById('sale-detail-head').innerHTML = `
+        <span class="sd-ref"><span class="sd-ref-mark">Nº</span><span class="sd-ref-code">${esc(ref)}</span></span>
+        <span class="badge sd-badge ${status.cls}">
+            <i class="fas ${status.icon}"></i>${esc(status.label)}
+        </span>
+        <span class="badge sd-badge ${pm.cls}">
+            <i class="fas ${pm.icon}"></i>${esc(pmLabel)}
+        </span>
     `;
 
+    // ── Productos vendidos ─────────────────────────────────────────────────
+    const productRows = items.map(i => {
+        const p = (i.product && typeof i.product === 'object') ? i.product : null;
+
+        return `
+        <div class="sd-item">
+            <div class="sd-item-main">
+                <p class="sd-item-name">${esc(i.name)}</p>
+                ${p?.category ? `<p class="sd-item-sub">${catBadge(p.category)}</p>` : ''}
+            </div>
+            <span class="sd-item-price">${fmt(i.unitPrice)}</span>
+            <span class="sd-item-qty">×${fmtInt(i.quantity)}</span>
+            <span class="sd-item-amount">${fmt(i.subtotal)}</span>
+        </div>`;
+    }).join('');
+
+    // ── Composición final ──────────────────────────────────────────────────
+    document.getElementById('sale-detail-content').innerHTML = `
+    <div class="sd-stack">
+
+        <section class="sd-summary">
+            <div class="sd-tile">
+                <span class="sd-tile-label"><i class="fas fa-user"></i>Cliente</span>
+                <p class="sd-tile-value">${esc(sale.client?.name || 'Cliente ocasional')}</p>
+                <p class="sd-tile-meta">
+                    <i class="fas fa-phone" style="font-size:0.65rem"></i>
+                    ${esc(sale.client?.phone || 'Sin teléfono')}
+                </p>
+            </div>
+
+            <div class="sd-tile">
+                <span class="sd-tile-label"><i class="fas fa-calendar-day"></i>Fecha</span>
+                <p class="sd-tile-value">${date.toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+                <p class="sd-tile-meta">${date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+
+        </section>
+
+        <section class="sd-card">
+            ${items.length
+                ? `<div class="sd-items">
+                       <div class="sd-items-head">
+                           <span>Producto</span>
+                           <span>Precio</span>
+                           <span>Cantidad</span>
+                           <span>Subtotal</span>
+                       </div>
+                       ${productRows}
+                   </div>`
+                : `<div class="sd-empty">Esta venta no tiene productos asociados</div>`}
+        </section>
+
+        <section class="sd-pay">
+            <header class="sd-card-head">
+                <span class="sd-card-title"><i class="fas fa-receipt"></i>Resumen de pago</span>
+            </header>
+            <div class="sd-totals">
+                <div class="sd-total-row">
+                    <span class="sd-total-key">Subtotal</span>
+                    <span class="sd-total-val">${fmt(subtotal)}</span>
+                </div>
+                ${discount > 0 ? `
+                <div class="sd-total-row">
+                    <span class="sd-total-key">Descuentos</span>
+                    <span class="sd-total-val neg">− ${fmt(discount)}</span>
+                </div>` : ''}
+                ${tax > 0 ? `
+                <div class="sd-total-row">
+                    <span class="sd-total-key">Impuestos</span>
+                    <span class="sd-total-val">${fmt(tax)}</span>
+                </div>` : ''}
+            </div>
+            <div class="sd-grand">
+                <span class="sd-grand-label">
+                    <strong>Total pagado</strong>
+                    <span>${esc(pmLabel)} · ${plural(units, 'unidad', 'unidades')}</span>
+                </span>
+                <span class="sd-grand-value">${fmt(sale.total)}</span>
+            </div>
+        </section>
+
+        ${sale.notes ? `
+        <section class="sd-card">
+            <div class="sd-notes">
+                <i class="fas fa-note-sticky"></i>
+                <p>${esc(sale.notes)}</p>
+            </div>
+        </section>` : ''}
+
+    </div>`;
+
     document.getElementById('sale-detail-modal').classList.add('open');
+}
+
+// Imprime sólo esta vista: el bloque @media print oculta el resto del panel.
+// No se abre ninguna ventana nueva ni se duplica el marcado.
+function printSaleDetail() {
+    const code = document.querySelector('#sale-detail-head .sd-ref-code');
+    const prev = document.title;
+
+    // El navegador toma el título como nombre por defecto al guardar en PDF
+    if (code) document.title = `Venta Nº ${code.textContent.trim()} - Grow House`;
+    window.addEventListener('afterprint', () => { document.title = prev; }, { once: true });
+
+    window.print();
 }
 
 // ── Sale modal ─────────────────────────────────────────────────────────────
@@ -2583,7 +3309,14 @@ async function submitSale() {
 
     try {
         await axios.post(SALES_URL, payload);
-        toast('¡Venta registrada exitosamente! ✓');
+
+        // Se calcula antes de invalidar la caché, que es de donde sale el stock previo
+        const alerts = stockAlertsAfterSale(items);
+        allProducts  = [];   // el inventario cambió: el selector debe releerlo
+
+        toast('La venta quedó registrada.');
+        notifyStockAlerts(alerts);
+
         closeSaleModal();
         loadSales(1);
         loadProducts(pPage);
@@ -2601,8 +3334,10 @@ async function deleteSale(id) {
     if (!ok) return;
     try {
         await axios.delete(`${SALES_URL}/${id}`);
-        toast('Venta eliminada y stock restaurado');
+        allProducts = [];   // se devolvieron unidades al inventario
+        toast('Venta eliminada. Las unidades volvieron al inventario.');
         loadSales(vPage);
+        loadProducts(pPage);
     } catch { toast('Error al eliminar venta', 'error'); }
 }
 
