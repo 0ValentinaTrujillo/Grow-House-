@@ -319,3 +319,46 @@ color: #444;
 .w-\[18px\]      { width: 18px; }
 .h-\[18px\]      { height: 18px; }
 .min-w-\[120px\] { min-width: 120px; }
+
+/*--------ENCABEZADO CATÁLOGO (título + barra de búsqueda)--------*/
+/* El output.css compilado define .flex-col/.w-full sin media query y se carga
+   después del CDN de Tailwind, anulando las variantes sm:. Por eso la
+   distribución del encabezado se define aquí de forma explícita. */
+.catalog-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    width: 100%;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2rem;
+}
+
+.catalog-header .catalog-header__title {
+    margin: 0;
+    text-align: left;
+    flex: 0 1 auto;
+}
+
+.catalog-header .catalog-header__search {
+    display: flex;
+    align-items: center;
+    flex: 1 1 20rem;
+    width: auto;
+    max-width: 28rem;
+    min-width: 0;
+    margin-left: auto;
+}
+
+/* En pantallas angostas el buscador pasa a una segunda fila a todo el ancho */
+@media (max-width: 639px) {
+    .catalog-header .catalog-header__search {
+        flex: 1 1 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+}
